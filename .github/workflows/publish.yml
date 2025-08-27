@@ -45,7 +45,7 @@ jobs:
           echo "Conteúdo:"
           ls -la "$APP_DIR"
 
-            # Empacota apenas o CONTEÚDO de dist/<app>
+      # Empacota apenas o CONTEÚDO de dist/<app>
       - name: Pack dist
         shell: bash
         run: |
