@@ -45,15 +45,16 @@ jobs:
           echo "Conteúdo:"
           ls -la "$APP_DIR"
 
-      # Empacota apenas o CONTEÚDO de dist/<app> (ponto final é importante!)
+            # Empacota apenas o CONTEÚDO de dist/<app>
       - name: Pack dist
         shell: bash
         run: |
           mkdir -p package
           tar -czf package/dist.tar.gz -C "${{ steps.finddist.outputs.dist_dir }}" .
+          ls -lh package/dist.tar.gz
 
-      # Teste rápido de SSH
-      - name: SSH smoke test
+      # Garante pasta destino e "limpa" upload anterior
+      - name: Prepare remote tmp folder
         uses: appleboy/ssh-action@v1.1.0
         with:
           host: ${{ secrets.DO_HOST }}
@@ -62,10 +63,11 @@ jobs:
           port: 22
           timeout: 60s
           script: |
-            uname -a
-            ls -la /root/apps/mindsteps/web || true
+            set -e
+            mkdir -p /root/apps/mindsteps/web/tmp_dist
+            rm -f /root/apps/mindsteps/web/tmp_dist/dist.tar.gz
 
-      # Upload do pacote
+      # Upload do pacote com nome final (sem subpastas)
       - name: Upload dist.tar.gz via SCP
         uses: appleboy/scp-action@v0.1.7
         with:
@@ -75,9 +77,23 @@ jobs:
           port: 22
           timeout: 120s
           source: "package/dist.tar.gz"
-          target: "/root/apps/mindsteps/web/tmp_dist"
+          target: "/root/apps/mindsteps/web/tmp_dist/dist.tar.gz"  # <- destino com NOME do arquivo
 
-      # Deploy atômico: extrai em staging e sincroniza em /web/dist
+      # Verifica se o arquivo realmente chegou no caminho certo
+      - name: Check uploaded file
+        uses: appleboy/ssh-action@v1.1.0
+        with:
+          host: ${{ secrets.DO_HOST }}
+          username: ${{ secrets.DO_USER }}
+          key: ${{ secrets.DO_KEY }}
+          port: 22
+          timeout: 60s
+          script: |
+            set -e
+            ls -lh /root/apps/mindsteps/web/tmp_dist
+            test -f /root/apps/mindsteps/web/tmp_dist/dist.tar.gz
+
+      # Deploy atômico
       - name: Atomic replace dist
         uses: appleboy/ssh-action@v1.1.0
         with:
@@ -89,10 +105,9 @@ jobs:
           script: |
             set -e
             mkdir -p /root/apps/mindsteps/web/dist \
-                     /root/apps/mindsteps/web/tmp_dist \
                      /root/apps/mindsteps/web/dist_new
 
-            # Garante rsync e tar instalados
+            # Garante rsync e tar
             if ! command -v rsync >/dev/null 2>&1; then
               apt-get update -y && apt-get install -y rsync
             fi
@@ -100,10 +115,10 @@ jobs:
               apt-get update -y && apt-get install -y tar
             fi
 
-            # Extrai apenas o CONTEÚDO para uma pasta staging
+            # Extrai o pacote
             tar -xzf /root/apps/mindsteps/web/tmp_dist/dist.tar.gz -C /root/apps/mindsteps/web/dist_new
 
-            # Sincroniza conteúdo para dist/ (sem criar dist/dist)
+            # Sincroniza conteúdo para dist/
             rsync -a --delete /root/apps/mindsteps/web/dist_new/ /root/apps/mindsteps/web/dist/
 
             # Limpeza
