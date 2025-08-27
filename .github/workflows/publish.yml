@@ -9,7 +9,6 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
-    # Se o front NÃO está na raiz, ajuste aqui (ex.: "frontend")
     defaults:
       run:
         working-directory: .
@@ -43,8 +42,17 @@ jobs:
           APP_DIR="${APP_DIR%/}"
           echo "dist_dir=$APP_DIR" >> "$GITHUB_OUTPUT"
           echo "Found dist at: $APP_DIR"
+          echo "Conteúdo:"
+          ls -la "$APP_DIR"
 
-      # Teste rápido de SSH (valida conectividade/porta/chave)
+      # Empacota apenas o CONTEÚDO de dist/<app> (ponto final é importante!)
+      - name: Pack dist
+        shell: bash
+        run: |
+          mkdir -p package
+          tar -czf package/dist.tar.gz -C "${{ steps.finddist.outputs.dist_dir }}" .
+
+      # Teste rápido de SSH
       - name: SSH smoke test
         uses: appleboy/ssh-action@v1.1.0
         with:
@@ -57,8 +65,8 @@ jobs:
             uname -a
             ls -la /root/apps/mindsteps/web || true
 
-      # Upload do dist para pasta temporária no servidor
-      - name: Upload dist via SCP
+      # Upload do pacote
+      - name: Upload dist.tar.gz via SCP
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.DO_HOST }}
@@ -66,10 +74,10 @@ jobs:
           key: ${{ secrets.DO_KEY }}
           port: 22
           timeout: 120s
-          source: "${{ steps.finddist.outputs.dist_dir }}/*"
+          source: "package/dist.tar.gz"
           target: "/root/apps/mindsteps/web/tmp_dist"
 
-      # Deploy atômico: substitui /web/dist/ pelo novo conteúdo
+      # Deploy atômico: extrai em staging e sincroniza em /web/dist
       - name: Atomic replace dist
         uses: appleboy/ssh-action@v1.1.0
         with:
@@ -80,10 +88,23 @@ jobs:
           timeout: 120s
           script: |
             set -e
-            mkdir -p /root/apps/mindsteps/web/dist
-            # Garante rsync instalado (caso a imagem da Droplet não tenha)
+            mkdir -p /root/apps/mindsteps/web/dist \
+                     /root/apps/mindsteps/web/tmp_dist \
+                     /root/apps/mindsteps/web/dist_new
+
+            # Garante rsync e tar instalados
             if ! command -v rsync >/dev/null 2>&1; then
               apt-get update -y && apt-get install -y rsync
             fi
-            rsync -a --delete /root/apps/mindsteps/web/tmp_dist/ /root/apps/mindsteps/web/dist/
-            rm -rf /root/apps/mindsteps/web/tmp_dist
+            if ! command -v tar >/dev/null 2>&1; then
+              apt-get update -y && apt-get install -y tar
+            fi
+
+            # Extrai apenas o CONTEÚDO para uma pasta staging
+            tar -xzf /root/apps/mindsteps/web/tmp_dist/dist.tar.gz -C /root/apps/mindsteps/web/dist_new
+
+            # Sincroniza conteúdo para dist/ (sem criar dist/dist)
+            rsync -a --delete /root/apps/mindsteps/web/dist_new/ /root/apps/mindsteps/web/dist/
+
+            # Limpeza
+            rm -rf /root/apps/mindsteps/web/tmp_dist /root/apps/mindsteps/web/dist_new
