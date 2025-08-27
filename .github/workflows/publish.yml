@@ -9,8 +9,7 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
-    # Se o front não está na raiz do repo, ajuste aqui:
-    # ex.: working-directory: frontend
+    # Se o front NÃO está na raiz, ajuste aqui (ex.: "frontend")
     defaults:
       run:
         working-directory: .
@@ -34,24 +33,39 @@ jobs:
       - name: Build (production)
         run: npm run build -- --configuration production
 
-      # Descobre automaticamente qual subpasta foi gerada dentro de dist/
+      # Descobre automaticamente a subpasta gerada dentro de dist/
       - name: Find dist folder
         id: finddist
         shell: bash
         run: |
+          set -e
           APP_DIR="$(ls -d dist/*/ | head -n 1)"
-          # remove a barra final
           APP_DIR="${APP_DIR%/}"
           echo "dist_dir=$APP_DIR" >> "$GITHUB_OUTPUT"
           echo "Found dist at: $APP_DIR"
 
-      # Sobe para uma pasta temporária no servidor
+      # Teste rápido de SSH (valida conectividade/porta/chave)
       - name: SSH smoke test
+        uses: appleboy/ssh-action@v1.1.0
+        with:
+          host: ${{ secrets.DO_HOST }}
+          username: ${{ secrets.DO_USER }}
+          key: ${{ secrets.DO_KEY }}
+          port: 22
+          timeout: 60s
+          script: |
+            uname -a
+            ls -la /root/apps/mindsteps/web || true
+
+      # Upload do dist para pasta temporária no servidor
+      - name: Upload dist via SCP
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.DO_HOST }}
           username: ${{ secrets.DO_USER }}
           key: ${{ secrets.DO_KEY }}
+          port: 22
+          timeout: 120s
           source: "${{ steps.finddist.outputs.dist_dir }}/*"
           target: "/root/apps/mindsteps/web/tmp_dist"
 
@@ -67,5 +81,9 @@ jobs:
           script: |
             set -e
             mkdir -p /root/apps/mindsteps/web/dist
+            # Garante rsync instalado (caso a imagem da Droplet não tenha)
+            if ! command -v rsync >/dev/null 2>&1; then
+              apt-get update -y && apt-get install -y rsync
+            fi
             rsync -a --delete /root/apps/mindsteps/web/tmp_dist/ /root/apps/mindsteps/web/dist/
             rm -rf /root/apps/mindsteps/web/tmp_dist
