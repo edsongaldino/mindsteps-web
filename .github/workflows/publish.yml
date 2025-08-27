@@ -46,11 +46,12 @@ jobs:
           ls -la "$APP_DIR"
 
       # Empacota apenas o CONTEÚDO de dist/<app>
-      - name: Pack dist
+      - name: Pack dist (Angular CSR only)
         shell: bash
         run: |
           mkdir -p package
-          tar -czf package/dist.tar.gz -C "${{ steps.finddist.outputs.dist_dir }}" .
+          # se steps.finddist.outputs.dist_dir = dist/MindSteps, empacotamos apenas o browser/
+          tar -czf package/dist.tar.gz -C "${{ steps.finddist.outputs.dist_dir }}/browser" .
           ls -lh package/dist.tar.gz
 
       # Prepara destino remoto (garante diretório limpo)
@@ -96,46 +97,43 @@ jobs:
             find /root/apps/mindsteps/web/tmp_dist -type f -name 'dist.tar.gz' -maxdepth 2 -print -quit
 
       # Deploy atômico: encontra o .tar.gz (independe da subpasta) e extrai
-      - name: Atomic replace dist
+      - name: Atomic replace dist (safe)
         uses: appleboy/ssh-action@v1.1.0
         with:
           host: ${{ secrets.DO_HOST }}
           username: ${{ secrets.DO_USER }}
           key: ${{ secrets.DO_KEY }}
           port: 22
-          timeout: 120s
+          timeout: 180s
           script: |
             set -e
             BASE=/root/apps/mindsteps/web
             mkdir -p "$BASE/dist" "$BASE/dist_new"
-
-            # Garante rsync e tar
-            if ! command -v rsync >/dev/null 2>&1; then
-              apt-get update -y && apt-get install -y rsync
-            fi
-            if ! command -v tar >/dev/null 2>&1; then
-              apt-get update -y && apt-get install -y tar
-            fi
-
-            # Localiza o arquivo real (pode estar em tmp_dist/ ou tmp_dist/package/)
-            PKG="$(find "$BASE/tmp_dist" -type f -name 'dist.tar.gz' -maxdepth 2 -print -quit)"
-            if [ -z "$PKG" ]; then
-              echo "ERRO: dist.tar.gz não encontrado em $BASE/tmp_dist"; exit 1
-            fi
-            echo "Usando pacote: $PKG"
-
-            # Extrai conteúdo para staging
-            rm -rf "$BASE/dist_new/*"
+      
+            command -v rsync >/dev/null || (apt-get update -y && apt-get install -y rsync)
+            command -v tar   >/dev/null || (apt-get update -y && apt-get install -y tar)
+      
+            PKG="$BASE/tmp_dist/dist.tar.gz"
+            test -f "$PKG" || (echo "ERRO: pacote não encontrado em $PKG" && exit 1)
+      
+            rm -rf "$BASE/dist_new"
+            mkdir -p "$BASE/dist_new"
             tar -xzf "$PKG" -C "$BASE/dist_new"
-
-            # Sincroniza conteúdo para dist/ (sem criar dist/dist)
+      
+            # ABORTA se staging estiver vazio ou sem index (proteções anti 'apagar tudo')
+            if [ -z "$(ls -A "$BASE/dist_new")" ]; then
+              echo "ABORT: staging vazio. Não vou rodar rsync --delete."; exit 1
+            fi
+            if [ ! -f "$BASE/dist_new/index.html" ] && [ ! -f "$BASE/dist_new/index.csr.html" ]; then
+              echo "ABORT: sem index.html (ou index.csr.html) no staging."; exit 1
+            fi
+      
+            # Se o Angular gerou index.csr.html, usa-o como index.html
+            if [ -f "$BASE/dist_new/index.csr.html" ] && [ ! -f "$BASE/dist_new/index.html" ]; then
+              mv "$BASE/dist_new/index.csr.html" "$BASE/dist_new/index.html"
+            fi
+      
             rsync -a --delete "$BASE/dist_new/" "$BASE/dist/"
-
-            # Limpeza
+      
             rm -rf "$BASE/tmp_dist" "$BASE/dist_new"
-            echo "Deploy concluído. Conteúdo final:"
-            ls -lah "$BASE/dist"
-
-
-            # Limpeza
-            rm -rf /root/apps/mindsteps/web/tmp_dist /root/apps/mindsteps/web/dist_new
+            ls -lah "$BASE/dist" | sed -n '1,80p'
