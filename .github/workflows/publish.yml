@@ -109,31 +109,38 @@ jobs:
             set -e
             BASE=/root/apps/mindsteps/web
             mkdir -p "$BASE/dist" "$BASE/dist_new"
-      
+
             command -v rsync >/dev/null || (apt-get update -y && apt-get install -y rsync)
             command -v tar   >/dev/null || (apt-get update -y && apt-get install -y tar)
-      
-            PKG="$BASE/tmp_dist/dist.tar.gz"
-            test -f "$PKG" || (echo "ERRO: pacote não encontrado em $PKG" && exit 1)
-      
+
+            # Encontra o pacote (pode estar em tmp_dist/ ou tmp_dist/package/)
+            PKG="$(find "$BASE/tmp_dist" -maxdepth 2 -type f -name 'dist.tar.gz' -print -quit)"
+            if [ -z "$PKG" ]; then
+              echo "ERRO: pacote dist.tar.gz não encontrado em $BASE/tmp_dist"
+              echo "Conteúdo de $BASE/tmp_dist:"
+              ls -lah "$BASE/tmp_dist" || true
+              exit 1
+            fi
+            echo "Usando pacote: $PKG"
+
             rm -rf "$BASE/dist_new"
             mkdir -p "$BASE/dist_new"
             tar -xzf "$PKG" -C "$BASE/dist_new"
-      
-            # ABORTA se staging estiver vazio ou sem index (proteções anti 'apagar tudo')
+
+            # Proteções anti 'apagar tudo'
             if [ -z "$(ls -A "$BASE/dist_new")" ]; then
               echo "ABORT: staging vazio. Não vou rodar rsync --delete."; exit 1
             fi
             if [ ! -f "$BASE/dist_new/index.html" ] && [ ! -f "$BASE/dist_new/index.csr.html" ]; then
               echo "ABORT: sem index.html (ou index.csr.html) no staging."; exit 1
             fi
-      
-            # Se o Angular gerou index.csr.html, usa-o como index.html
+
+            # Se vier index.csr.html, usa como index.html
             if [ -f "$BASE/dist_new/index.csr.html" ] && [ ! -f "$BASE/dist_new/index.html" ]; then
               mv "$BASE/dist_new/index.csr.html" "$BASE/dist_new/index.html"
             fi
-      
+
             rsync -a --delete "$BASE/dist_new/" "$BASE/dist/"
-      
+
             rm -rf "$BASE/tmp_dist" "$BASE/dist_new"
             ls -lah "$BASE/dist" | sed -n '1,80p'
