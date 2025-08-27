@@ -53,7 +53,7 @@ jobs:
           tar -czf package/dist.tar.gz -C "${{ steps.finddist.outputs.dist_dir }}" .
           ls -lh package/dist.tar.gz
 
-      # Garante pasta destino e "limpa" upload anterior
+      # Prepara destino remoto (garante diretório limpo)
       - name: Prepare remote tmp folder
         uses: appleboy/ssh-action@v1.1.0
         with:
@@ -65,9 +65,9 @@ jobs:
           script: |
             set -e
             mkdir -p /root/apps/mindsteps/web/tmp_dist
-            rm -f /root/apps/mindsteps/web/tmp_dist/dist.tar.gz
+            rm -rf /root/apps/mindsteps/web/tmp_dist/*
 
-      # Upload do pacote com nome final (sem subpastas)
+      # Upload do pacote para o DIRETÓRIO (sem tentar renomear)
       - name: Upload dist.tar.gz via SCP
         uses: appleboy/scp-action@v0.1.7
         with:
@@ -77,10 +77,10 @@ jobs:
           port: 22
           timeout: 120s
           source: "package/dist.tar.gz"
-          target: "/root/apps/mindsteps/web/tmp_dist/dist.tar.gz"  # <- destino com NOME do arquivo
+          target: "/root/apps/mindsteps/web/tmp_dist"
 
-      # Verifica se o arquivo realmente chegou no caminho certo
-      - name: Check uploaded file
+      # Conferência do que chegou (debug)
+      - name: Check uploaded files
         uses: appleboy/ssh-action@v1.1.0
         with:
           host: ${{ secrets.DO_HOST }}
@@ -90,10 +90,12 @@ jobs:
           timeout: 60s
           script: |
             set -e
-            ls -lh /root/apps/mindsteps/web/tmp_dist
-            test -f /root/apps/mindsteps/web/tmp_dist/dist.tar.gz
+            echo "Conteúdo de /tmp_dist:"
+            ls -lah /root/apps/mindsteps/web/tmp_dist
+            echo "Buscando dist.tar.gz real (arquivo):"
+            find /root/apps/mindsteps/web/tmp_dist -type f -name 'dist.tar.gz' -maxdepth 2 -print -quit
 
-      # Deploy atômico
+      # Deploy atômico: encontra o .tar.gz (independe da subpasta) e extrai
       - name: Atomic replace dist
         uses: appleboy/ssh-action@v1.1.0
         with:
@@ -104,8 +106,8 @@ jobs:
           timeout: 120s
           script: |
             set -e
-            mkdir -p /root/apps/mindsteps/web/dist \
-                     /root/apps/mindsteps/web/dist_new
+            BASE=/root/apps/mindsteps/web
+            mkdir -p "$BASE/dist" "$BASE/dist_new"
 
             # Garante rsync e tar
             if ! command -v rsync >/dev/null 2>&1; then
@@ -115,11 +117,25 @@ jobs:
               apt-get update -y && apt-get install -y tar
             fi
 
-            # Extrai o pacote
-            tar -xzf /root/apps/mindsteps/web/tmp_dist/dist.tar.gz -C /root/apps/mindsteps/web/dist_new
+            # Localiza o arquivo real (pode estar em tmp_dist/ ou tmp_dist/package/)
+            PKG="$(find "$BASE/tmp_dist" -type f -name 'dist.tar.gz' -maxdepth 2 -print -quit)"
+            if [ -z "$PKG" ]; then
+              echo "ERRO: dist.tar.gz não encontrado em $BASE/tmp_dist"; exit 1
+            fi
+            echo "Usando pacote: $PKG"
 
-            # Sincroniza conteúdo para dist/
-            rsync -a --delete /root/apps/mindsteps/web/dist_new/ /root/apps/mindsteps/web/dist/
+            # Extrai conteúdo para staging
+            rm -rf "$BASE/dist_new/*"
+            tar -xzf "$PKG" -C "$BASE/dist_new"
+
+            # Sincroniza conteúdo para dist/ (sem criar dist/dist)
+            rsync -a --delete "$BASE/dist_new/" "$BASE/dist/"
+
+            # Limpeza
+            rm -rf "$BASE/tmp_dist" "$BASE/dist_new"
+            echo "Deploy concluído. Conteúdo final:"
+            ls -lah "$BASE/dist"
+
 
             # Limpeza
             rm -rf /root/apps/mindsteps/web/tmp_dist /root/apps/mindsteps/web/dist_new
