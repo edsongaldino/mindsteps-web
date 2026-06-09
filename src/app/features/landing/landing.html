@@ -1,0 +1,300 @@
+<div class="landing-page">
+  <header class="header" [class.scrolled]="isScrolled">
+    <div class="container nav">
+      <a class="brand" (click)="scrollToSection('top')" aria-label="MindSteps">
+        <img src="/logo.png" alt="MindSteps" />
+      </a>
+      <nav>
+        <a (click)="scrollToSection('recursos')">Recursos</a>
+        <a (click)="scrollToSection('jogos')">Jogos</a>
+        <a (click)="scrollToSection('psicologos')">Para psicólogos</a>
+        <a (click)="scrollToSection('planos')">Planos</a>
+        <a (click)="scrollToSection('contato')">Contato</a>
+      </nav>
+      <a class="btn btn-primary" (click)="openRegisterModal()">Solicitar demonstração →</a>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <div class="pill">Plataforma terapêutica para psicólogos</div>
+          <h1>A terapia continua mesmo depois da <span>sessão.</span></h1>
+          <p>Acompanhe emoções, atividades terapêuticas e evolução cognitiva dos seus pacientes adolescentes em um único lugar.</p>
+          <div class="actions">
+            <a class="btn btn-primary btn-lg" (click)="openRegisterModal()">Solicitar demonstração →</a>
+            <a class="btn btn-outline btn-lg" (click)="scrollToSection('recursos')">Conhecer recursos ↓</a>
+          </div>
+          <div class="trust-row">
+            <span>🛡️ Seguro e criptografado</span>
+            <span>🔒 Conforme a LGPD</span>
+            <span>✅ Testado por psicólogos</span>
+          </div>
+        </div>
+
+        <div class="hero-visual" aria-label="Mockups do dashboard e aplicativo">
+          <div class="blob blob-one"></div>
+          <div class="blob blob-two"></div>
+          <img class="dashboard" src="assets/images/dashboard-psicologo.svg" alt="Dashboard do psicólogo" />
+          <img class="phone" src="assets/images/app-paciente.svg" alt="Aplicativo do paciente adolescente" />
+          <div class="floating-card card-one"><strong>Lucas</strong><small>Engajamento</small><b>92%</b></div>
+          <div class="floating-card card-two"><strong>Humor hoje</strong><small>🙂 Muito bem</small></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="recursos" class="section features-section">
+      <div class="container">
+        <div class="section-title centered">
+          <h2>Tudo o que acontece <span>entre as sessões.</span></h2>
+        </div>
+        <div class="feature-grid">
+          <article class="feature-card" *ngFor="let item of features">
+            <img [src]="'assets/images/' + item.image" [alt]="item.title" />
+            <div class="feature-card-content">
+              <h3>{{ item.title }}</h3>
+              <p>{{ item.text }}</p>
+              <a (click)="openFeatureModal(item)">Saiba mais →</a>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section how-section">
+      <div class="container">
+        <div class="section-title centered compact">
+          <h2>Como o <span>MindSteps</span> funciona</h2>
+        </div>
+        <div class="steps">
+          <div class="step"><div>👤</div><strong>1. Psicólogo</strong><p>Avalia e define objetivos terapêuticos.</p></div>
+          <span class="arrow">→</span>
+          <div class="step"><div>📝</div><strong>2. Cria atividades</strong><p>Seleciona ou cria atividades e envia para o paciente.</p></div>
+          <span class="arrow">→</span>
+          <div class="step"><div>📱</div><strong>3. Paciente realiza</strong><p>O adolescente acessa pelo app e realiza as atividades.</p></div>
+          <span class="arrow">→</span>
+          <div class="step"><div>📊</div><strong>4. Sistema analisa</strong><p>Os dados são processados e transformados em insights.</p></div>
+          <span class="arrow">→</span>
+          <div class="step"><div>👁️</div><strong>5. Você acompanha</strong><p>Acompanhe o progresso e ajuste o plano terapêutico.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="jogos" class="section games-section">
+      <div class="container game-panel">
+        <div class="game-intro">
+          <div class="pill">Jogos terapêuticos</div>
+          <h2>Jogos que transformam tarefas terapêuticas em experiências envolventes.</h2>
+          <p>Desenvolvidos por psicólogos e baseados em evidências para treinar habilidades essenciais de forma divertida.</p>
+          <a class="btn btn-outline" (click)="openRegisterModal()">Ver todos os jogos →</a>
+        </div>
+        <div class="games-list">
+          <article class="game-card" *ngFor="let game of games">
+            <img [src]="'/' + game.image" [alt]="game.title" />
+            <div class="game-body">
+              <h3>{{ game.title }}</h3>
+              <p>{{ game.subtitle }}</p>
+              <div class="game-stats"><span>{{ game.uses }} utilizações</span><b>{{ game.engagement }} engaj.</b></div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="psicologos" class="section insights-section">
+      <div class="container insights-grid">
+        <div class="insight-dashboard">
+          <aside>
+            <div class="avatar">👦</div>
+            <h3>Lucas, 14 anos</h3>
+            <p>TDAH • Ansiedade</p>
+            <nav><span>Visão geral</span><span>Emoções</span><span>Atividades</span><span>Relatórios</span></nav>
+          </aside>
+          <div class="report">
+            <h3>Evolução do paciente</h3>
+            <div class="metric-row"><div><small>Humor médio</small><b>8,6</b><em>↑ 15%</em></div><div><small>Engajamento</small><b>92%</b><em>↑ 8%</em></div><div><small>Atividades</small><b>14 / 15</b><em>Concluídas</em></div><div><small>Frequência</small><b>85%</b><em>↑ 12%</em></div></div>
+            <div class="chart"></div>
+            <div class="skill"><span>Controle Inibitório</span><b>Melhorando</b></div>
+            <div class="skill"><span>Flexibilidade Cognitiva</span><b>Melhorando</b></div>
+            <div class="skill"><span>Memória Operacional</span><b>Estável</b></div>
+          </div>
+        </div>
+        <div class="insight-copy">
+          <div class="pill">Indicadores inteligentes</div>
+          <h2>Dados que ajudam você a tomar melhores decisões clínicas.</h2>
+          <p>Visualizações claras, relatórios completos e insights que mostram o que realmente importa na evolução do paciente.</p>
+          <ul>
+            <li>Tendências emocionais</li>
+            <li>Desempenho em funções executivas</li>
+            <li>Engajamento e frequência</li>
+            <li>Relatórios para evolução clínica</li>
+          </ul>
+          <a class="btn btn-outline" (click)="openRegisterModal()">Ver exemplo de relatório →</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="planos" class="section pricing-section">
+      <div class="container">
+        <div class="section-title centered">
+          <div class="pill">Planos e preços</div>
+          <h2>Planos que crescem com você</h2>
+          <p>Pague apenas pelo que você precisa. Comece com 7 dias grátis no plano Starter.</p>
+        </div>
+        <div class="pricing-grid">
+          <article class="plan" *ngFor="let plan of plans" [class.featured]="plan.popular">
+            <div class="badge" *ngIf="plan.popular">Mais popular</div>
+            <h3>{{ plan.name }}</h3>
+            <p>{{ plan.desc }}</p>
+            <div class="price" *ngIf="plan.price !== 'Sob consulta'">R$ <strong>{{ plan.price }}</strong><span>/mês</span></div>
+            <div class="price consult" *ngIf="plan.price === 'Sob consulta'"><strong>Sob consulta</strong></div>
+            <div class="plan-trial-badge" *ngIf="plan.trial">{{ plan.trial }}</div>
+            <h4>{{ plan.patients }}</h4>
+            <ul>
+              <li *ngFor="let f of plan.features">{{ f }}</li>
+            </ul>
+            <a class="btn" [class.btn-primary]="plan.popular" [class.btn-outline]="!plan.popular" (click)="openRegisterModal()">{{ plan.cta }}</a>
+          </article>
+        </div>
+        <div class="pricing-notes"><span>🛡️ Sem cartão de crédito</span><span>✓ Cancele quando quiser</span><span>✓ Migre de plano a qualquer momento</span></div>
+      </div>
+    </section>
+
+    <section class="section science-section">
+      <div class="container security-container">
+        <div class="security-card centered-card">
+          <span class="security-icon">🛡️</span>
+          <h3>Segurança e privacidade</h3>
+          <p>Seus dados e os de seus pacientes são totalmente protegidos com criptografia e em conformidade com a LGPD.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section social-section">
+      <div class="container social-container">
+        <h2>Psicólogos que já transformam a terapia com o <span>MindSteps</span></h2>
+        
+        <blockquote class="testimonial-card">
+          <div class="quote-icon">“</div>
+          <p class="quote-text">“O MindSteps me ajuda a acompanhar o processo terapêutico durante toda a semana. Isso aumenta o engajamento dos meus pacientes e torna minhas intervenções muito mais assertivas.”</p>
+          
+          <div class="testimonial-author">
+            <div class="quote-avatar"></div>
+            <div class="author-info">
+              <cite>Juliana Martins</cite>
+              <span>Psicóloga Clínica • CRP 08/12345</span>
+            </div>
+          </div>
+        </blockquote>
+      </div>
+    </section>
+
+    <section class="container final-cta">
+      <div>
+        <h2>Leve sua terapia para além dos <span>50 minutos</span> de sessão.</h2>
+        <p>Acompanhe adolescentes, aumente o engajamento e tome decisões clínicas baseadas em dados.</p>
+      </div>
+      <div class="actions"><a class="btn btn-green" (click)="openRegisterModal()">Solicitar demonstração →</a><a class="btn btn-light" (click)="scrollToSection('planos')">Ver planos</a></div>
+    </section>
+  </main>
+
+  <footer id="contato" class="footer">
+    <div class="container footer-grid">
+      <div class="footer-brand">
+        <img src="/logo-transparente-branca-h.fw.png" alt="MindSteps Logo" class="footer-logo-horizontal"/>
+        <p>Plataforma terapêutica para psicólogos que desejam levar a terapia além da sessão.</p>
+        <div class="socials"><span>◎</span><span>f</span><span>in</span><span>▶</span></div>
+      </div>
+      <div><h4>Produto</h4><a (click)="scrollToSection('recursos')">Recursos</a><a (click)="scrollToSection('jogos')">Jogos Terapêuticos</a><a (click)="scrollToSection('psicologos')">Para psicólogos</a><a (click)="scrollToSection('planos')">Planos e preços</a></div>
+      <div><h4>Empresa</h4><a (click)="scrollToSection('top')">Sobre nós</a><a href="#">Blog</a><a href="#">Carreiras</a><a (click)="scrollToSection('contato')">Contato</a></div>
+      <div><h4>Suporte</h4><a href="#">Central de ajuda</a><a href="#">Tutoriais</a><a href="#">Privacidade</a><a href="#">Termos de uso</a></div>
+      <div><h4>Newsletter</h4><p>Receba conteúdos e novidades sobre terapia e inovação.</p><label><input placeholder="Seu e-mail"/><button>→</button></label></div>
+    </div>
+    <div class="container copyright">🔒 Seguro e em conformidade com a LGPD <span>© 2026 MindSteps. Todos os direitos reservados.</span></div>
+  </footer>
+
+  <!-- Modal -->
+  <div class="modal-overlay" *ngIf="isRegisterModalOpen">
+    <div class="modal-card">
+      <button class="modal-close" (click)="closeRegisterModal()">✕</button>
+      <div class="modal-header">
+        <h3>Cadastrar no MindSteps</h3>
+        <p>Preencha as informações para solicitar o cadastro. Sua conta passará por análise e será ativada via confirmação de CRP.</p>
+      </div>
+      <div *ngIf="successMessage" class="alert-success">
+        {{ successMessage }}
+        <button class="btn-primary-blue mt-3" style="width: 100%;" (click)="closeRegisterModal()">Entendi</button>
+      </div>
+      <div *ngIf="errorMessage" class="alert-danger">{{ errorMessage }}</div>
+      <form (ngSubmit)="register()" #modalForm="ngForm" *ngIf="!successMessage">
+        <div class="form-group">
+          <label>Nome Completo</label>
+          <input type="text" [(ngModel)]="nome" name="nome" required placeholder="Ex: Dr. Marcelo Silva" #nameInput="ngModel">
+        </div>
+        <div class="form-group">
+          <label>E-mail Profissional</label>
+          <input type="email" [(ngModel)]="email" name="email" required email placeholder="Ex: contato@clinica.com" #emailInput="ngModel">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Telefone / WhatsApp</label>
+            <input type="text" [(ngModel)]="telefone" name="telefone" required placeholder="Ex: (11) 99999-9999">
+          </div>
+          <div class="form-group">
+            <label>CRP</label>
+            <input type="text" [(ngModel)]="crp" name="crp" required placeholder="Ex: CRP 06/12345">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Senha de Acesso</label>
+          <input type="password" [(ngModel)]="senha" name="senha" required minlength="6" placeholder="Mínimo 6 caracteres">
+        </div>
+        <div class="form-group">
+          <label>Especialidade / Bio (Opcional)</label>
+          <textarea [(ngModel)]="bio" name="bio" rows="2" placeholder="Fale brevemente sobre sua atuação..."></textarea>
+        </div>
+        <div class="modal-notice">
+          🛡️ <strong>Importante:</strong> Para garantir a segurança dos pacientes, analisamos e validamos o registro profissional (CRP) de todos os psicólogos antes da ativação do acesso.
+        </div>
+        <button type="submit" class="submit-btn" [disabled]="modalForm.invalid || isSubmitting">
+          <span *ngIf="!isSubmitting">Solicitar Cadastro</span>
+          <span *ngIf="isSubmitting">Enviando solicitação...</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Feature Detail Modal -->
+  <div class="modal-overlay" *ngIf="isFeatureModalOpen" (click)="closeFeatureModal()">
+    <div class="modal-card feature-detail-card" (click)="$event.stopPropagation()">
+      <button class="modal-close" (click)="closeFeatureModal()">✕</button>
+      <div class="feature-detail-grid" *ngIf="selectedFeature">
+        <div class="feature-detail-visual">
+          <img [src]="'assets/images/' + selectedFeature.image" [alt]="selectedFeature.title" />
+          <div class="feature-glow" [style.background]="selectedFeature.color"></div>
+        </div>
+        <div class="feature-detail-info">
+          <span class="detail-badge" [style.color]="selectedFeature.color" [style.background]="selectedFeature.color + '15'">Recurso da plataforma</span>
+          <h2>{{ selectedFeature.title }}</h2>
+          <p class="detail-desc">{{ selectedFeature.description }}</p>
+          
+          <div class="detail-benefits">
+            <h4>O que inclui o módulo:</h4>
+            <ul>
+              <li *ngFor="let benefit of selectedFeature.benefits">
+                <span class="check-icon" [style.color]="selectedFeature.color">✓</span>
+                {{ benefit }}
+              </li>
+            </ul>
+          </div>
+          
+          <button class="btn btn-primary detail-cta" (click)="closeFeatureModal(); openRegisterModal()">
+            Solicitar demonstração grátis →
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

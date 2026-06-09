@@ -1,1 +1,16 @@
 /* You can add global styles to this file, and also import other style files */
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: 'Plus Jakarta Sans', Arial, sans-serif;
+  background: #f8fbff;
+  color: #0f2344;
+}
+a {
+  color: inherit;
+  text-decoration: none;
+}
+button, input, select, textarea {
+  font-family: inherit;
+}
