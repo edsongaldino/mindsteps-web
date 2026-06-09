@@ -1,17 +1,128 @@
-<div class="login-container">
-  <h2>Login Painel</h2>
-  <form (ngSubmit)="login()">
-    <div>
-      <label for="email">E-mail</label>
-      <input type="email" [(ngModel)]="email" name="email" required>
+<div class="login-page">
+  <!-- Coluna Esquerda: Banner Institucional -->
+  <div class="login-banner">
+    <div class="banner-content">
+      <div class="logo-wrapper" (click)="voltarHome()">
+        <svg class="logo-icon" viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" stroke-width="4"></circle>
+          <path d="M50 15 C30 15, 20 35, 20 50 C20 65, 30 85, 50 85 C65 85, 75 75, 78 60 C70 65, 60 62, 55 55 C50 48, 52 40, 48 32 C44 24, 35 25, 35 35 C35 45, 50 45, 50 55 C50 65, 38 70, 32 60" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"></path>
+          <circle cx="50" cy="50" r="6" fill="currentColor"></circle>
+        </svg>
+        <span class="logo-text">MindSteps</span>
+      </div>
+      
+      <p class="logo-tagline">Um passo de cada vez.</p>
+      
+      <h1 class="banner-title">Sistema Web<br><span class="highlight">Administradores</span><br>e <span class="highlight-teal">Psicólogos</span></h1>
+      <p class="banner-desc">Plataforma completa para gestão da terapia além das sessões.</p>
+      
+      <div class="role-cards">
+        <div class="role-card admin">
+          <div class="role-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+            </svg>
+          </div>
+          <div class="role-info">
+            <h4>ADMINISTRADOR</h4>
+            <p>Gestão da plataforma, psicólogos, planos e suporte.</p>
+          </div>
+        </div>
+        
+        <div class="role-card psi">
+          <div class="role-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+          </div>
+          <div class="role-info">
+            <h4>PSICÓLOGO</h4>
+            <p>Gestão clínica, pacientes, atividades e relatórios.</p>
+          </div>
+        </div>
+      </div>
     </div>
-    <div>
-      <label for="senha">Senha</label>
-      <input type="password" [(ngModel)]="senha" name="senha" required>
+    
+    <!-- Decoração de fundo com curvas SVG -->
+    <div class="banner-bg-decor">
+      <svg viewBox="0 0 500 500" fill="none">
+        <path d="M0,500 C150,450 250,350 200,200 C150,50 300,100 500,0 L500,500 Z" fill="rgba(76, 53, 189, 0.03)"></path>
+        <path d="M0,500 C100,480 180,420 180,300 C180,180 280,150 500,100 L500,500 Z" fill="rgba(14, 181, 148, 0.02)"></path>
+      </svg>
     </div>
-    <div *ngIf="errorMessage" class="error-message">
-      {{ errorMessage }}
+  </div>
+  
+  <!-- Coluna Direita: Formulário de Login -->
+  <div class="login-form-container">
+    <div class="form-card">
+      <div class="form-header">
+        <div class="mobile-logo">
+          <span class="logo-text">MindSteps</span>
+        </div>
+        <h2>Bem-vindo(a) de volta!</h2>
+        <p>Faça login para continuar</p>
+      </div>
+      
+      <form (ngSubmit)="login()">
+        <div class="form-group">
+          <label for="ambiente">Selecione o ambiente</label>
+          <div class="select-wrapper">
+            <select id="ambiente" [(ngModel)]="ambiente" name="ambiente" required>
+              <option value="Psicologo">Portal do Psicólogo</option>
+              <option value="Administrador">Portal do Administrador</option>
+            </select>
+            <span class="select-arrow"></span>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="email">E-mail</label>
+          <div class="input-wrapper">
+            <input type="email" id="email" [(ngModel)]="email" name="email" placeholder="seu@email.com" required>
+            <span class="input-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                <polyline points="22,6 12,13 2,6"></polyline>
+              </svg>
+            </span>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="senha">Senha</label>
+          <div class="input-wrapper">
+            <input type="password" id="senha" [(ngModel)]="senha" name="senha" placeholder="••••••••" required>
+            <span class="input-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+              </svg>
+            </span>
+          </div>
+        </div>
+        
+        <div *ngIf="errorMessage" class="error-message">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+          <span>{{ errorMessage }}</span>
+        </div>
+        
+        <button type="submit" class="btn-login" [class.loading]="isSubmitting" [disabled]="isSubmitting">
+          <span *ngIf="!isSubmitting">Entrar</span>
+          <span *ngIf="isSubmitting" class="spinner"></span>
+        </button>
+      </form>
+      
+      <div class="form-footer">
+        <p>Ainda não tem acesso? <a (click)="voltarHome()" class="link-fale-conosco">Fale conosco.</a></p>
+      </div>
     </div>
-    <button type="submit">Entrar</button>
-  </form>
+  </div>
 </div>
+

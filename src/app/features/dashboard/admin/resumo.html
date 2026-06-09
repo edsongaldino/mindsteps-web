@@ -1,0 +1,189 @@
+<div class="admin-resumo-container">
+  <!-- Grid de Estatísticas Rápidas -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-header">
+        <span class="stat-title">Psicólogos ativos</span>
+        <span class="trend-badge positive">{{ stats.psicologosTendencia.split(' ')[0] }}</span>
+      </div>
+      <div class="stat-value">{{ stats.psicologosAtivos | number }}</div>
+      <div class="stat-desc">vs mês anterior</div>
+    </div>
+    
+    <div class="stat-card">
+      <div class="stat-header">
+        <span class="stat-title">Pacientes ativos</span>
+        <span class="trend-badge positive">{{ stats.pacientesTendencia.split(' ')[0] }}</span>
+      </div>
+      <div class="stat-value">{{ stats.pacientesAtivos | number }}</div>
+      <div class="stat-desc">vs mês anterior</div>
+    </div>
+    
+    <div class="stat-card">
+      <div class="stat-header">
+        <span class="stat-title">Atividades realizadas</span>
+        <span class="trend-badge positive">{{ stats.atividadesTendencia.split(' ')[0] }}</span>
+      </div>
+      <div class="stat-value">{{ stats.atividadesRealizadas | number }}</div>
+      <div class="stat-desc">vs mês anterior</div>
+    </div>
+    
+    <div class="stat-card">
+      <div class="stat-header">
+        <span class="stat-title">Engajamento médio</span>
+        <span class="trend-badge positive">{{ stats.engajamentoTendencia.split(' ')[0] }}</span>
+      </div>
+      <div class="stat-value">{{ stats.engajamentoMedio }}%</div>
+      <div class="stat-desc">vs mês anterior</div>
+    </div>
+  </div>
+
+  <!-- Seção de Gráficos Centrais -->
+  <div class="charts-row">
+    <!-- Gráfico 1: Evolução de Usuários (Line Chart) -->
+    <div class="chart-card flex-2">
+      <div class="chart-header">
+        <h3>Evolução de usuários</h3>
+        <div class="chart-legend">
+          <span class="legend-item"><span class="dot purple"></span> Psicólogos</span>
+          <span class="legend-item"><span class="dot teal"></span> Pacientes</span>
+        </div>
+      </div>
+      
+      <div class="chart-body">
+        <!-- SVG Line Chart Dinâmico -->
+        <svg class="line-chart-svg" viewBox="0 0 500 200">
+          <!-- Grids -->
+          <line x1="40" y1="20" x2="480" y2="20" stroke="#f1f5f9" stroke-width="1"></line>
+          <line x1="40" y1="65" x2="480" y2="65" stroke="#f1f5f9" stroke-width="1"></line>
+          <line x1="40" y1="110" x2="480" y2="110" stroke="#f1f5f9" stroke-width="1"></line>
+          <line x1="40" y1="155" x2="480" y2="155" stroke="#f1f5f9" stroke-width="1"></line>
+          
+          <!-- Eixos e Textos -->
+          <text x="15" y="24" fill="#94a3b8" font-size="9" text-anchor="middle">3k</text>
+          <text x="15" y="69" fill="#94a3b8" font-size="9" text-anchor="middle">2k</text>
+          <text x="15" y="114" fill="#94a3b8" font-size="9" text-anchor="middle">1k</text>
+          <text x="15" y="159" fill="#94a3b8" font-size="9" text-anchor="middle">0</text>
+          
+          <!-- Linhas Verticais e Dias -->
+          <text x="40" y="175" fill="#94a3b8" font-size="9" text-anchor="middle">10/04</text>
+          <text x="128" y="175" fill="#94a3b8" font-size="9" text-anchor="middle">24/04</text>
+          <text x="216" y="175" fill="#94a3b8" font-size="9" text-anchor="middle">08/05</text>
+          <text x="304" y="175" fill="#94a3b8" font-size="9" text-anchor="middle">22/05</text>
+          <text x="392" y="175" fill="#94a3b8" font-size="9" text-anchor="middle">05/06</text>
+          <text x="480" y="175" fill="#94a3b8" font-size="9" text-anchor="middle">19/06</text>
+
+          <!-- Definições de Gradientes -->
+          <defs>
+            <linearGradient id="grad-purple" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#4c35bd" stop-opacity="0.15" />
+              <stop offset="100%" stop-color="#4c35bd" stop-opacity="0.0" />
+            </linearGradient>
+            <linearGradient id="grad-teal" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#0eb594" stop-opacity="0.15" />
+              <stop offset="100%" stop-color="#0eb594" stop-opacity="0.0" />
+            </linearGradient>
+          </defs>
+          
+          <!-- Área Sombreada de Pacientes (Teal) -->
+          <path d="M40,155 Q128,125 216,90 T392,60 L480,45 L480,155 Z" fill="url(#grad-teal)"></path>
+          <!-- Área Sombreada de Psicólogos (Purple) -->
+          <path d="M40,155 Q128,145 216,130 T392,110 L480,95 L480,155 Z" fill="url(#grad-purple)"></path>
+
+          <!-- Linha de Pacientes (Teal) -->
+          <path d="M40,155 Q128,125 216,90 T392,60 L480,45" fill="none" stroke="#0eb594" stroke-width="3" stroke-linecap="round"></path>
+          
+          <!-- Linha de Psicólogos (Purple) -->
+          <path d="M40,155 Q128,145 216,130 T392,110 L480,95" fill="none" stroke="#4c35bd" stroke-width="3" stroke-linecap="round"></path>
+          
+          <!-- Pontos Interativos no final -->
+          <circle cx="480" cy="45" r="5" fill="#0eb594" stroke="#ffffff" stroke-width="2"></circle>
+          <circle cx="480" cy="95" r="5" fill="#4c35bd" stroke="#ffffff" stroke-width="2"></circle>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Gráfico 2: Distribuição de Planos (Doughnut) -->
+    <div class="chart-card flex-1">
+      <div class="chart-header">
+        <h3>Distribuição de planos</h3>
+      </div>
+      <div class="chart-body flex-col align-center">
+        <!-- SVG Donut Chart -->
+        <div class="donut-wrapper">
+          <svg class="donut-chart-svg" viewBox="0 0 100 100">
+            <!-- Essencial: 38% (83.5 de 220) -->
+            <circle cx="50" cy="50" r="35" fill="transparent" stroke="#4c35bd" stroke-width="12" stroke-dasharray="83.5 220" stroke-dashoffset="0"></circle>
+            <!-- Profissional: 45% (99.0 de 220) -->
+            <circle cx="50" cy="50" r="35" fill="transparent" stroke="#0eb594" stroke-width="12" stroke-dasharray="99 220" stroke-dashoffset="-83.5"></circle>
+            <!-- Avançado: 17% (37.4 de 220) -->
+            <circle cx="50" cy="50" r="35" fill="transparent" stroke="#2563eb" stroke-width="12" stroke-dasharray="37.5 220" stroke-dashoffset="-182.5"></circle>
+          </svg>
+          <div class="donut-center">
+            <span class="donut-val">{{ stats.psicologosAtivos }}</span>
+            <span class="donut-lbl">Planos</span>
+          </div>
+        </div>
+        
+        <div class="donut-legend">
+          <div class="legend-row">
+            <span class="legend-badge p-purple"></span>
+            <span class="legend-name">Essencial</span>
+            <span class="legend-val">38%</span>
+          </div>
+          <div class="legend-row">
+            <span class="legend-badge p-teal"></span>
+            <span class="legend-name">Profissional</span>
+            <span class="legend-val">45%</span>
+          </div>
+          <div class="legend-row">
+            <span class="legend-badge p-blue"></span>
+            <span class="legend-name">Avançado</span>
+            <span class="legend-val">17%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Linha Inferior: Listas e Faixas Etárias -->
+  <div class="bottom-row">
+    <!-- Atividades Mais Utilizadas -->
+    <div class="card flex-1">
+      <div class="card-header">
+        <h3>Atividades mais utilizadas</h3>
+      </div>
+      <div class="card-body">
+        <div class="activity-list">
+          <div class="activity-item" *ngFor="let act of atividadesPopulares">
+            <div class="activity-icon-box" [style.background-color]="act.cor + '15'" [style.color]="act.cor">
+              🧩
+            </div>
+            <div class="activity-details">
+              <h4>{{ act.nome }}</h4>
+              <p>{{ act.usos }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Engajamento Médio por Faixa Etária -->
+    <div class="card flex-1">
+      <div class="card-header">
+        <h3>Engajamento médio por faixa-etária</h3>
+      </div>
+      <div class="card-body flex-col justify-center gap-20">
+        <div class="age-progress-item" *ngFor="let age of faixaEtaria">
+          <div class="progress-info">
+            <span class="age-range">{{ age.faixa }}</span>
+            <span class="progress-val">{{ age.engajamento }}%</span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-bar" [style.width]="age.engajamento + '%'"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

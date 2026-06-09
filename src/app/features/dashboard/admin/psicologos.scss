@@ -1,0 +1,241 @@
+.psicologos-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  
+  .header-left {
+    h3 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 4px;
+    }
+    p {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+  }
+}
+
+/* Filtros */
+.filter-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  background: var(--bg-card);
+  padding: 16px;
+  border-radius: var(--border-radius-md);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+.search-box {
+  position: relative;
+  flex: 1;
+  max-width: 400px;
+  
+  input {
+    width: 100%;
+    padding: 10px 16px 10px 38px;
+    border: 1.5px solid var(--border-color);
+    border-radius: var(--border-radius-md);
+    background-color: #fafbfe;
+    font-size: 0.875rem;
+    outline: none;
+    transition: all var(--transition-fast);
+    
+    &:focus {
+      border-color: var(--primary);
+      background-color: #ffffff;
+      box-shadow: 0 0 0 3px var(--primary-glow);
+    }
+  }
+  
+  .search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.9rem;
+    color: var(--text-light);
+  }
+}
+
+.select-filter {
+  padding: 10px 16px;
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  background-color: #fafbfe;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-main);
+  outline: none;
+  cursor: pointer;
+  
+  &:focus {
+    border-color: var(--primary);
+  }
+}
+
+/* Célula de Informações do Psicólogo */
+.psi-info-cell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.psi-avatar-mini {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: var(--primary-light);
+  color: var(--primary);
+  font-weight: 700;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.psi-name {
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.plan-tag {
+  background-color: #f1f5f9;
+  color: var(--text-main);
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+/* Ações */
+.actions-cell {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.btn-action {
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  
+  &.approve {
+    background-color: #e2f8f0;
+    color: #0a8c62;
+    
+    &:hover {
+      background-color: #c6f6e5;
+    }
+  }
+  
+  &.reject {
+    background-color: #fef2f2;
+    color: #b91c1c;
+    
+    &:hover {
+      background-color: #fee2e2;
+    }
+  }
+}
+
+.text-verified {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--success);
+}
+
+.loading-container {
+  padding: 60px;
+}
+
+.text-center {
+  text-align: center;
+  color: var(--text-muted);
+  padding: 30px;
+}
+
+/* Modal Form Layout */
+.form-group-row {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+  
+  .form-group {
+    margin-bottom: 0;
+  }
+  
+  @media (max-width: 576px) {
+    flex-direction: column;
+    gap: 16px;
+  }
+}
+
+.form-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 16px;
+  
+  label {
+    font-size: 0.825rem;
+    font-weight: 600;
+    color: var(--text-main);
+    margin-bottom: 6px;
+  }
+  
+  input, textarea {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1.5px solid var(--border-color);
+    border-radius: var(--border-radius-md);
+    background-color: #fafbfe;
+    font-size: 0.9rem;
+    outline: none;
+    transition: all var(--transition-fast);
+    
+    &:focus {
+      border-color: var(--primary);
+      background-color: #ffffff;
+      box-shadow: 0 0 0 3px var(--primary-glow);
+    }
+  }
+}
+
+.success-message {
+  background-color: var(--success-bg);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  color: var(--success-text);
+  padding: 10px 14px;
+  border-radius: var(--border-radius-md);
+  margin-bottom: 16px;
+  font-size: 0.85rem;
+}
+
+.modal-footer {
+  margin-top: 24px;
+  border-top: 1px solid var(--border-color);
+  padding-top: 16px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}

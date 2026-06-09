@@ -1,0 +1,275 @@
+<div class="paciente-perfil-container" *ngIf="!loading">
+  <!-- Voltar -->
+  <div class="back-nav" (click)="voltar()">
+    <span>← Voltar para pacientes</span>
+  </div>
+
+  <!-- Cabeçalho do Prontuário -->
+  <div class="patient-header-card">
+    <div class="patient-profile-main">
+      <div class="pat-avatar-large">
+        {{ paciente.nome.charAt(0).toUpperCase() }}
+      </div>
+      <div class="pat-meta-details">
+        <div class="name-row">
+          <h3>{{ paciente.nome }}</h3>
+          <span class="diagnostic-badge">{{ paciente.diagnostico || 'Sem diagnóstico' }}</span>
+        </div>
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="lbl">Idade:</span>
+            <span class="val">{{ paciente.idade || 14 }} anos</span>
+          </div>
+          <div class="info-item">
+            <span class="lbl">Responsável:</span>
+            <span class="val">{{ paciente.responsavel || 'Não cadastrado' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="lbl">Nível do App:</span>
+            <span class="val gamified">Nível {{ paciente.nivel }} ({{ paciente.pontos }} XP)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Abas de Navegação -->
+  <div class="profile-tabs">
+    <button class="tab-btn" [class.active]="activeTab === 'resumo'" (click)="mudarTab('resumo')">Resumo</button>
+    <button class="tab-btn" [class.active]="activeTab === 'evolucao'" (click)="mudarTab('evolucao')">Evolução</button>
+    <button class="tab-btn" [class.active]="activeTab === 'atividades'" (click)="mudarTab('atividades')">Atividades</button>
+    <button class="tab-btn" [class.active]="activeTab === 'relatorios'" (click)="mudarTab('relatorios')">Relatórios</button>
+    <button class="tab-btn" [class.active]="activeTab === 'anotacoes'" (click)="mudarTab('anotacoes')">Anotações Particulares</button>
+  </div>
+
+  <!-- Área de Conteúdo das Abas -->
+  <div class="tab-content-pane">
+    
+    <!-- ABA 1: RESUMO -->
+    <div class="tab-pane" *ngIf="activeTab === 'resumo'">
+      <div class="resumo-grid">
+        <!-- Coluna Esquerda: Engajamento -->
+        <div class="resumo-col-left">
+          <div class="card-inner">
+            <h4>Visão Geral do Engajamento</h4>
+            <div class="engagement-indicator">
+              <span class="eng-pct">92%</span>
+              <p class="eng-trend positive">✓ Alto engajamento no aplicativo</p>
+            </div>
+            
+            <div class="chart-wrapper">
+              <svg viewBox="0 0 400 160" class="svg-inline-chart">
+                <line x1="30" y1="20" x2="380" y2="20" stroke="#f1f5f9" stroke-width="1"></line>
+                <line x1="30" y1="70" x2="380" y2="70" stroke="#f1f5f9" stroke-width="1"></line>
+                <line x1="30" y1="120" x2="380" y2="120" stroke="#f1f5f9" stroke-width="1"></line>
+                <path d="M30,120 Q117.5,90 205,50 T380,30" fill="none" stroke="#0eb594" stroke-width="3" stroke-linecap="round"></path>
+                <circle cx="380" cy="30" r="5" fill="#0eb594" stroke="white" stroke-width="2"></circle>
+              </svg>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Coluna Direita: Habilidades -->
+        <div class="resumo-col-right">
+          <div class="card-inner">
+            <h4>Principais Habilidades Desenvolvidas (Jogos)</h4>
+            <div class="skills-list">
+              <div class="skill-item">
+                <div class="skill-info">
+                  <span>Regulação Emocional</span>
+                  <span class="pct">85%</span>
+                </div>
+                <div class="progress-track"><div class="progress-bar" style="width: 85%"></div></div>
+              </div>
+              <div class="skill-item">
+                <div class="skill-info">
+                  <span>Controle Inibitório</span>
+                  <span class="pct">70%</span>
+                </div>
+                <div class="progress-track"><div class="progress-bar" style="width: 70%"></div></div>
+              </div>
+              <div class="skill-item">
+                <div class="skill-info">
+                  <span>Flexibilidade Cognitiva</span>
+                  <span class="pct">72%</span>
+                </div>
+                <div class="progress-track"><div class="progress-bar" style="width: 72%"></div></div>
+              </div>
+              <div class="skill-item">
+                <div class="skill-info">
+                  <span>Atenção Focada</span>
+                  <span class="pct">68%</span>
+                </div>
+                <div class="progress-track"><div class="progress-bar" style="width: 68%"></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ABA 2: EVOLUÇÃO (CHECKINS E REGISTROS) -->
+    <div class="tab-pane" *ngIf="activeTab === 'evolucao'">
+      <div class="evolucao-layout">
+        <!-- 1. Check-ins Emocionais -->
+        <div class="section-box">
+          <h4>Histórico de Check-ins Emocionais (Diário)</h4>
+          <div class="checkins-list">
+            <div class="checkin-item-card" *ngFor="let check of checkIns">
+              <div class="checkin-mood-header">
+                <div class="mood-box" [style.background-color]="check.notaHumor >= 4 ? '#e2f8f0' : (check.notaHumor === 3 ? '#fff3e0' : '#fef2f2')">
+                  <span class="mood-emoji">{{ check.notaHumor >= 4 ? '😊' : (check.notaHumor === 3 ? '😐' : '😢') }}</span>
+                  <span class="mood-score">{{ check.notaHumor }}/5</span>
+                </div>
+                <span class="checkin-date">{{ check.dataCheckIn }}</span>
+              </div>
+              <p class="feelings"><strong>Sentimentos:</strong> {{ check.sentimentos }}</p>
+              <p class="notes" *ngIf="check.anotacoes">"{{ check.anotacoes }}"</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. Registro de Pensamentos TCC -->
+        <div class="section-box margin-top">
+          <h4>Registro de Pensamentos Automáticos (TCC)</h4>
+          <div class="table-responsive">
+            <table class="table-premium">
+              <thead>
+                <tr>
+                  <th>Situação</th>
+                  <th>Pensamento Automático</th>
+                  <th>Distorção Mapeada</th>
+                  <th>Comportamento / Emoção</th>
+                  <th>Data</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let pens of pensamentos">
+                  <td>{{ pens.situacao }}</td>
+                  <td><em class="thought-text">"{{ pens.pensamentoAutomatico }}"</em></td>
+                  <td><span class="distortion-badge">{{ pens.distorcaoMapeada }}</span></td>
+                  <td>
+                    <span class="block-span">🎭 {{ pens.emocao }}</span>
+                    <span class="block-span">🏃‍♂️ {{ pens.comportamento }}</span>
+                  </td>
+                  <td>{{ pens.dataRegistro }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ABA 3: ATIVIDADES -->
+    <div class="tab-pane" *ngIf="activeTab === 'atividades'">
+      <div class="section-box">
+        <h4>Atividades Prescritas ao Paciente</h4>
+        <div class="table-responsive">
+          <table class="table-premium">
+            <thead>
+              <tr>
+                <th>Atividade</th>
+                <th>Tipo</th>
+                <th>Enviado Em</th>
+                <th>Status</th>
+                <th>Resposta do Paciente</th>
+                <th>Feedback do Psicólogo</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let act of atividades">
+                <td>
+                  <strong>{{ act.atividade.titulo }}</strong>
+                  <p class="desc-text">{{ act.atividade.descricao }}</p>
+                </td>
+                <td>{{ act.atividade.tipo === 1 ? 'Jogo Terapêutico' : 'Tarefa / Diário' }}</td>
+                <td>{{ act.dataEnvio | date:'dd/MM/yyyy' }}</td>
+                <td>
+                  <span class="badge" [class.badge-success]="act.status === 2" [class.badge-warning]="act.status === 0">
+                    {{ act.status === 2 ? 'Concluída' : 'Pendente' }}
+                  </span>
+                </td>
+                <td>
+                  <span *ngIf="act.respostaTexto" class="block-span">💬 "{{ act.respostaTexto }}"</span>
+                  <span *ngIf="act.notaHumor" class="block-span">🎭 Nota humor pós-atividade: {{ act.notaHumor }}/5</span>
+                  <span *ngIf="!act.respostaTexto && act.status === 0" class="text-light">Aguardando resposta...</span>
+                </td>
+                <td>
+                  <div *ngIf="act.feedbackPsicologo" class="feedback-saved">
+                    <span>✓ {{ act.feedbackPsicologo }}</span>
+                  </div>
+                  <div *ngIf="!act.feedbackPsicologo && act.status === 2" class="feedback-form">
+                    <input type="text" #feedbackInput placeholder="Escrever feedback clínico...">
+                    <button class="btn-send-feedback" (click)="enviarFeedback(act.id, feedbackInput.value)">Enviar</button>
+                  </div>
+                  <span *ngIf="act.status === 0" class="text-light">Atividade pendente</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ABA 4: RELATÓRIOS / INDICADORES -->
+    <div class="tab-pane" *ngIf="activeTab === 'relatorios'">
+      <div class="relatorios-grid" *ngIf="dashboard">
+        <!-- Distorções Cognitivas Mapeadas -->
+        <div class="section-box">
+          <h4>Distorções Cognitivas Frequentes (Identificadas nos Jogos)</h4>
+          <div class="distortion-charts">
+            <div class="dist-row" *ngFor="let entry of dashboard.escapeRoom.distorcoesIdentificadas | keyvalue">
+              <span class="dist-name">{{ entry.key }}</span>
+              <div class="dist-bar-track">
+                <div class="dist-bar-fill" [style.width]="(getAsNumber(entry.value) * 20) + '%'"></div>
+              </div>
+              <span class="dist-count">{{ entry.value }} registros</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mascote da Ansiedade -->
+        <div class="section-box">
+          <h4>Mascote da Ansiedade (Customizado pelo Paciente)</h4>
+          <div class="mascote-card" [style.border-color]="'#0eb594'">
+            <div class="mascote-avatar-box">
+              🤖
+            </div>
+            <div class="mascote-details">
+              <h5>Nome: <span class="highlight">{{ dashboard.monstro.nome || 'Trovão' }}</span></h5>
+              <p><strong>Cor:</strong> {{ dashboard.monstro.cor || 'Azul' }}</p>
+              <p><strong>Frequência de Medos:</strong> {{ dashboard.monstro.frequenciaMedos }} vezes</p>
+              <div class="medos-tags">
+                <span class="medo-tag" *ngFor="let medo of dashboard.monstro.medosAparecem">{{ medo }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ABA 5: ANOTAÇÕES PARTICULARES -->
+    <div class="tab-pane" *ngIf="activeTab === 'anotacoes'">
+      <div class="anotacoes-wrapper">
+        <h4>Anotações Clínicas Particulares</h4>
+        <p class="desc">Essas anotações são confidenciais e visíveis apenas para você. Elas não são enviadas ao paciente.</p>
+        
+        <textarea [(ngModel)]="anotacoesClinicas" rows="12" placeholder="Escreva aqui as evoluções clínicas, notas de sessões e observações importantes sobre o paciente..."></textarea>
+        
+        <div class="anotacoes-actions">
+          <span class="status-msg" *ngIf="anotacoesStatus === 'salvando'">💾 Salvando alterações...</span>
+          <span class="status-msg success" *ngIf="anotacoesStatus === 'sucesso'">✓ Anotações salvas com sucesso!</span>
+          <button class="btn-premium btn-secondary" [disabled]="anotacoesStatus === 'salvando'" (click)="salvarAnotacoes()">
+            Salvar anotações
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="flex-center loading-container" *ngIf="loading">
+  <span class="spinner"></span>
+</div>

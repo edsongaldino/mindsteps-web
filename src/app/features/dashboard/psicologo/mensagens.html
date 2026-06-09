@@ -1,0 +1,83 @@
+<div class="mensagens-container">
+  <!-- Sidebar de Contatos -->
+  <aside class="chat-sidebar">
+    <div class="sidebar-header">
+      <h4>Conversas</h4>
+    </div>
+    
+    <div class="contacts-list" *ngIf="!loadingPacientes">
+      <div class="contact-item" 
+           *ngFor="let pat of pacientes" 
+           [class.active]="selectedPaciente?.id === pat.id"
+           (click)="selecionarPaciente(pat)">
+        <div class="contact-avatar">
+          {{ (pat.nome || pat.usuario?.nome)?.charAt(0).toUpperCase() }}
+        </div>
+        <div class="contact-meta">
+          <span class="contact-name">{{ pat.nome || pat.usuario?.nome }}</span>
+          <span class="contact-preview">Ver histórico de conversa...</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="flex-center loading-sidebar" *ngIf="loadingPacientes">
+      <span class="spinner"></span>
+    </div>
+  </aside>
+
+  <!-- Janela de Chat Ativo -->
+  <main class="chat-window" *ngIf="selectedPaciente">
+    <!-- Header do Chat -->
+    <header class="chat-header">
+      <div class="active-avatar">
+        {{ (selectedPaciente.nome || selectedPaciente.usuario?.nome)?.charAt(0).toUpperCase() }}
+      </div>
+      <div class="active-meta">
+        <h4>{{ selectedPaciente.nome || selectedPaciente.usuario?.nome }}</h4>
+        <span class="status-indicator online">Disponível no app</span>
+      </div>
+    </header>
+
+    <!-- Corpo de Mensagens -->
+    <div class="chat-body" #chatScroll>
+      <div class="messages-container" *ngIf="!loadingMensagens">
+        <div class="msg-bubble-row" 
+             *ngFor="let msg of mensagens" 
+             [class.sent]="msg.remetentePerfil === 'Psicologo'" 
+             [class.received]="msg.remetentePerfil !== 'Psicologo'">
+          
+          <div class="msg-bubble">
+            <p class="msg-text">{{ msg.conteudo }}</p>
+            <span class="msg-time">{{ msg.dataEnvio | date:'HH:mm' }}</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="flex-center loading-chat" *ngIf="loadingMensagens">
+        <span class="spinner"></span>
+      </div>
+    </div>
+
+    <!-- Input Footer -->
+    <footer class="chat-footer">
+      <form (ngSubmit)="enviar()" class="chat-input-form">
+        <input type="text" 
+               [(ngModel)]="novoTexto" 
+               name="texto" 
+               placeholder="Escreva sua mensagem clínica..." 
+               autocomplete="off" 
+               required>
+        <button type="submit" class="btn-send">
+          Enviar ➜
+        </button>
+      </form>
+    </footer>
+  </main>
+  
+  <div class="chat-empty-state" *ngIf="!selectedPaciente && !loadingPacientes">
+    <div class="empty-box">
+      <span>💬</span>
+      <p>Selecione um paciente na barra lateral para iniciar a conversa.</p>
+    </div>
+  </div>
+</div>
