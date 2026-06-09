@@ -9,8 +9,6 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
-    # Se o front não está na raiz do repo, ajuste aqui:
-    # ex.: working-directory: frontend
     defaults:
       run:
         working-directory: .
@@ -34,36 +32,115 @@ jobs:
       - name: Build (production)
         run: npm run build -- --configuration production
 
-      # Descobre automaticamente qual subpasta foi gerada dentro de dist/
+      # Descobre automaticamente a subpasta gerada dentro de dist/
       - name: Find dist folder
         id: finddist
         shell: bash
         run: |
+          set -e
           APP_DIR="$(ls -d dist/*/ | head -n 1)"
-          # remove a barra final
           APP_DIR="${APP_DIR%/}"
           echo "dist_dir=$APP_DIR" >> "$GITHUB_OUTPUT"
           echo "Found dist at: $APP_DIR"
+          echo "Conteúdo:"
+          ls -la "$APP_DIR"
 
-      # Sobe para uma pasta temporária no servidor
-      - name: Upload dist via SCP
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.DO_HOST }}
-          username: ${{ secrets.DO_USER }}
-          key: ${{ secrets.DO_KEY }}
-          source: "${{ steps.finddist.outputs.dist_dir }}/*"
-          target: "/root/apps/mindsteps/web/tmp_dist"
+      # Empacota apenas o CONTEÚDO de dist/<app>
+      - name: Pack dist (Angular CSR only)
+        shell: bash
+        run: |
+          mkdir -p package
+          # se steps.finddist.outputs.dist_dir = dist/MindSteps, empacotamos apenas o browser/
+          tar -czf package/dist.tar.gz -C "${{ steps.finddist.outputs.dist_dir }}/browser" .
+          ls -lh package/dist.tar.gz
 
-      # Deploy atômico: substitui /web/dist/ pelo novo conteúdo
-      - name: Atomic replace dist
+      # Prepara destino remoto (garante diretório limpo)
+      - name: Prepare remote tmp folder
         uses: appleboy/ssh-action@v1.1.0
         with:
           host: ${{ secrets.DO_HOST }}
           username: ${{ secrets.DO_USER }}
           key: ${{ secrets.DO_KEY }}
+          port: 22
+          timeout: 60s
           script: |
             set -e
-            mkdir -p /root/apps/mindsteps/web/dist
-            rsync -a --delete /root/apps/mindsteps/web/tmp_dist/ /root/apps/mindsteps/web/dist/
-            rm -rf /root/apps/mindsteps/web/tmp_dist
+            mkdir -p /root/apps/mindsteps/web/tmp_dist
+            rm -rf /root/apps/mindsteps/web/tmp_dist/*
+
+      # Upload do pacote para o DIRETÓRIO (sem tentar renomear)
+      - name: Upload dist.tar.gz via SCP
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.DO_HOST }}
+          username: ${{ secrets.DO_USER }}
+          key: ${{ secrets.DO_KEY }}
+          port: 22
+          timeout: 120s
+          source: "package/dist.tar.gz"
+          target: "/root/apps/mindsteps/web/tmp_dist"
+
+      # Conferência do que chegou (debug)
+      - name: Check uploaded files
+        uses: appleboy/ssh-action@v1.1.0
+        with:
+          host: ${{ secrets.DO_HOST }}
+          username: ${{ secrets.DO_USER }}
+          key: ${{ secrets.DO_KEY }}
+          port: 22
+          timeout: 60s
+          script: |
+            set -e
+            echo "Conteúdo de /tmp_dist:"
+            ls -lah /root/apps/mindsteps/web/tmp_dist
+            echo "Buscando dist.tar.gz real (arquivo):"
+            find /root/apps/mindsteps/web/tmp_dist -type f -name 'dist.tar.gz' -maxdepth 2 -print -quit
+
+      # Deploy atômico: encontra o .tar.gz (independe da subpasta) e extrai
+      - name: Atomic replace dist (safe)
+        uses: appleboy/ssh-action@v1.1.0
+        with:
+          host: ${{ secrets.DO_HOST }}
+          username: ${{ secrets.DO_USER }}
+          key: ${{ secrets.DO_KEY }}
+          port: 22
+          timeout: 180s
+          script: |
+            set -e
+            BASE=/root/apps/mindsteps/web
+            mkdir -p "$BASE/dist" "$BASE/dist_new"
+
+            command -v rsync >/dev/null || (apt-get update -y && apt-get install -y rsync)
+            command -v tar   >/dev/null || (apt-get update -y && apt-get install -y tar)
+
+            # Encontra o pacote (pode estar em tmp_dist/ ou tmp_dist/package/)
+            PKG="$(find "$BASE/tmp_dist" -maxdepth 2 -type f -name 'dist.tar.gz' -print -quit)"
+            if [ -z "$PKG" ]; then
+              echo "ERRO: pacote dist.tar.gz não encontrado em $BASE/tmp_dist"
+              echo "Conteúdo de $BASE/tmp_dist:"
+              ls -lah "$BASE/tmp_dist" || true
+              exit 1
+            fi
+            echo "Usando pacote: $PKG"
+
+            rm -rf "$BASE/dist_new"
+            mkdir -p "$BASE/dist_new"
+            tar -xzf "$PKG" -C "$BASE/dist_new"
+
+            # Proteções anti 'apagar tudo'
+            if [ -z "$(ls -A "$BASE/dist_new")" ]; then
+              echo "ABORT: staging vazio. Não vou rodar rsync --delete."; exit 1
+            fi
+            if [ ! -f "$BASE/dist_new/index.html" ] && [ ! -f "$BASE/dist_new/index.csr.html" ]; then
+              echo "ABORT: sem index.html (ou index.csr.html) no staging."; exit 1
+            fi
+
+            # Se vier index.csr.html, usa como index.html
+            if [ -f "$BASE/dist_new/index.csr.html" ] && [ ! -f "$BASE/dist_new/index.html" ]; then
+              mv "$BASE/dist_new/index.csr.html" "$BASE/dist_new/index.html"
+            fi
+
+            rsync -a --delete "$BASE/dist_new/" "$BASE/dist/"
+
+            rm -rf "$BASE/tmp_dist" "$BASE/dist_new"
+            ls -lah "$BASE/dist" | sed -n '1,80p'
