@@ -1,0 +1,144 @@
+<div class="psicologos-container">
+  <!-- Topo da Tela -->
+  <div class="page-header">
+    <div class="header-left">
+      <h3>Psicólogos</h3>
+      <p>Gerencie os psicólogos cadastrados na plataforma</p>
+    </div>
+    <button class="btn-premium btn-primary" (click)="openRegisterModal()">
+      <span>+ Novo psicólogo</span>
+    </button>
+  </div>
+
+  <!-- Barra de Filtros e Pesquisa -->
+  <div class="filter-bar">
+    <div class="search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" [(ngModel)]="searchTerm" (ngModelChange)="applyFilter()" placeholder="Buscar por nome, e-mail ou CRP...">
+    </div>
+    
+    <div class="filter-options">
+      <select [(ngModel)]="filterStatus" (change)="applyFilter()" class="select-filter">
+        <option value="todos">Todos os Status</option>
+        <option value="ativos">Ativos (Aprovados)</option>
+        <option value="pendentes">Pendentes de Aprovação</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Tabela de Psicólogos -->
+  <div class="table-responsive" *ngIf="!loading">
+    <table class="table-premium">
+      <thead>
+        <tr>
+          <th>Nome</th>
+          <th>E-mail</th>
+          <th>CRP</th>
+          <th>Plano</th>
+          <th>Status</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let psi of filteredPsicologos">
+          <td>
+            <div class="psi-info-cell">
+              <div class="psi-avatar-mini">
+                {{ psi.usuario?.nome?.charAt(0).toUpperCase() }}
+              </div>
+              <span class="psi-name">{{ psi.usuario?.nome }}</span>
+            </div>
+          </td>
+          <td>{{ psi.usuario?.email }}</td>
+          <td>{{ psi.crp }}</td>
+          <td>
+            <span class="plan-tag">{{ psi.plano || 'Profissional' }}</span>
+          </td>
+          <td>
+            <span class="badge" [class.badge-success]="psi.aprovado" [class.badge-warning]="!psi.aprovado">
+              {{ psi.aprovado ? 'Ativo' : 'Pendente' }}
+            </span>
+          </td>
+          <td>
+            <div class="actions-cell">
+              <button *ngIf="!psi.aprovado" class="btn-action approve" (click)="aprovar(psi.id)" title="Aprovar Psicólogo">
+                ✓ Aprovar
+              </button>
+              <button *ngIf="!psi.aprovado" class="btn-action reject" (click)="reprovar(psi.id)" title="Reprovar/Excluir">
+                ✗ Reprovar
+              </button>
+              <span *ngIf="psi.aprovado" class="text-verified">✓ Verificado</span>
+            </div>
+          </td>
+        </tr>
+        <tr *ngIf="filteredPsicologos.length === 0">
+          <td colspan="6" class="text-center">Nenhum psicólogo encontrado com as especificações.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Loading State -->
+  <div class="flex-center loading-container" *ngIf="loading">
+    <span class="spinner"></span>
+  </div>
+
+  <!-- Modal de Cadastro de Psicólogo -->
+  <div class="modal-overlay" *ngIf="isRegisterModalOpen">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Cadastrar Novo Psicólogo</h3>
+        <button class="btn-close" (click)="closeRegisterModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <form (ngSubmit)="cadastrar()">
+          <div class="form-group-row">
+            <div class="form-group">
+              <label for="nome">Nome Completo</label>
+              <input type="text" id="nome" [(ngModel)]="nome" name="nome" placeholder="Dr(a). Nome" required>
+            </div>
+          </div>
+
+          <div class="form-group-row">
+            <div class="form-group">
+              <label for="email">E-mail</label>
+              <input type="email" id="email" [(ngModel)]="email" name="email" placeholder="email@exemplo.com" required>
+            </div>
+            <div class="form-group">
+              <label for="telefone">Telefone</label>
+              <input type="text" id="telefone" [(ngModel)]="telefone" name="telefone" placeholder="(00) 00000-0000" required>
+            </div>
+          </div>
+
+          <div class="form-group-row">
+            <div class="form-group">
+              <label for="crp">CRP (Registro Profissional)</label>
+              <input type="text" id="crp" [(ngModel)]="crp" name="crp" placeholder="06/12345" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="bio">Biografia / Descrição Clínica</label>
+            <textarea id="bio" [(ngModel)]="bio" name="bio" rows="3" placeholder="Fale brevemente sobre a especialização clínica..."></textarea>
+          </div>
+
+          <div *ngIf="errorMessage" class="error-message">
+            <span>⚠️ {{ errorMessage }}</span>
+          </div>
+
+          <div *ngIf="successMessage" class="success-message">
+            <span>✓ {{ successMessage }}</span>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn-premium btn-outline" (click)="closeRegisterModal()">Cancelar</button>
+            <button type="submit" class="btn-premium btn-primary" [disabled]="isSubmitting">
+              <span *ngIf="!isSubmitting">Salvar</span>
+              <span *ngIf="isSubmitting" class="spinner"></span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

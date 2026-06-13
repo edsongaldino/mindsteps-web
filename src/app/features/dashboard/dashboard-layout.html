@@ -1,0 +1,125 @@
+<div class="dashboard-wrapper">
+  <!-- Barra Lateral (Sidebar) -->
+  <aside class="sidebar" [class.theme-admin]="userPerfil === 'Administrador'" [class.theme-psi]="userPerfil === 'Psicologo'">
+    <div class="sidebar-brand">
+      <svg class="logo-icon" viewBox="0 0 100 100">
+        <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" stroke-width="4"></circle>
+        <path d="M50 15 C30 15, 20 35, 20 50 C20 65, 30 85, 50 85 C65 85, 75 75, 78 60 C70 65, 60 62, 55 55 C50 48, 52 40, 48 32 C44 24, 35 25, 35 35 C35 45, 50 45, 50 55 C50 65, 38 70, 32 60" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"></path>
+        <circle cx="50" cy="50" r="6" fill="currentColor"></circle>
+      </svg>
+      <span class="logo-text">MindSteps</span>
+    </div>
+
+    <!-- Menu do Administrador -->
+    <nav class="sidebar-menu" *ngIf="userPerfil === 'Administrador'">
+      <a routerLink="/dashboard/admin/resumo" routerLinkActive="active" class="menu-item">
+        <span class="item-icon">📊</span>
+        <span class="item-text">Dashboard</span>
+      </a>
+      <a routerLink="/dashboard/admin/psicologos" routerLinkActive="active" class="menu-item">
+        <span class="item-icon">👨‍⚕️</span>
+        <span class="item-text">Psicólogos</span>
+      </a>
+      <a routerLink="/dashboard/admin/planos" routerLinkActive="active" class="menu-item">
+        <span class="item-icon">📋</span>
+        <span class="item-text">Planos</span>
+      </a>
+      <a class="menu-item placeholder-item">
+        <span class="item-icon">🔑</span>
+        <span class="item-text">Assinaturas</span>
+      </a>
+      <a class="menu-item placeholder-item">
+        <span class="item-icon">💰</span>
+        <span class="item-text">Financeiro</span>
+      </a>
+      <a class="menu-item placeholder-item">
+        <span class="item-icon">📁</span>
+        <span class="item-text">Conteúdos</span>
+      </a>
+      <a class="menu-item placeholder-item">
+        <span class="item-icon">📈</span>
+        <span class="item-text">Relatórios</span>
+      </a>
+      <a class="menu-item placeholder-item">
+        <span class="item-icon">🎧</span>
+        <span class="item-text">Suporte</span>
+      </a>
+      <a class="menu-item placeholder-item">
+        <span class="item-icon">⚙️</span>
+        <span class="item-text">Configurações</span>
+      </a>
+    </nav>
+
+    <!-- Menu do Psicólogo -->
+    <nav class="sidebar-menu" *ngIf="userPerfil === 'Psicologo'">
+      <a routerLink="/dashboard/psicologo/resumo" routerLinkActive="active" class="menu-item">
+        <span class="item-icon">🏠</span>
+        <span class="item-text">Início</span>
+      </a>
+      <a routerLink="/dashboard/psicologo/pacientes" routerLinkActive="active" class="menu-item">
+        <span class="item-icon">👥</span>
+        <span class="item-text">Pacientes</span>
+      </a>
+      <a routerLink="/dashboard/psicologo/atividades" routerLinkActive="active" class="menu-item">
+        <span class="item-icon">📝</span>
+        <span class="item-text">Atividades</span>
+      </a>
+      <a routerLink="/dashboard/psicologo/biblioteca" routerLinkActive="active" class="menu-item">
+        <span class="item-icon">🎮</span>
+        <span class="item-text">Biblioteca</span>
+      </a>
+      <a routerLink="/dashboard/psicologo/relatorios" routerLinkActive="active" class="menu-item">
+        <span class="item-icon">📊</span>
+        <span class="item-text">Relatórios</span>
+      </a>
+      <a routerLink="/dashboard/psicologo/mensagens" routerLinkActive="active" class="menu-item">
+        <span class="item-icon">💬</span>
+        <span class="item-text">Mensagens</span>
+      </a>
+      <a class="menu-item placeholder-item">
+        <span class="item-icon">⚙️</span>
+        <span class="item-text">Configurações</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button class="btn-logout" (click)="logout()">
+        <span class="btn-icon">🚪</span>
+        <span class="btn-text">Sair da Conta</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Painel de Conteúdo (Direita) -->
+  <div class="dashboard-main">
+    <!-- Cabeçalho (Header) -->
+    <header class="dashboard-header">
+      <div class="header-welcome">
+        <h2>Olá, {{ userNome.split(' ')[0] }}! 👋</h2>
+        <p class="role-badge" [class.badge-admin]="userPerfil === 'Administrador'" [class.badge-psi]="userPerfil === 'Psicologo'">
+          {{ userPerfil === 'Administrador' ? 'Painel Administrativo' : 'Portal Clínico' }}
+        </p>
+      </div>
+
+      <!-- Menu de Perfil -->
+      <div class="header-profile">
+        <div class="profile-info">
+          <span class="profile-name">{{ userNome }}</span>
+          <span class="profile-role">{{ userPerfil === 'Administrador' ? 'Administrador' : 'Psicólogo' }}</span>
+        </div>
+        
+        <div class="profile-avatar-wrapper">
+          <img *ngIf="userFoto" [src]="userFoto" alt="Foto de perfil" class="profile-avatar">
+          <div *ngIf="!userFoto" class="profile-avatar-placeholder">
+            {{ userNome.charAt(0).toUpperCase() }}
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Área de Conteúdo Dinâmico -->
+    <main class="dashboard-content">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>

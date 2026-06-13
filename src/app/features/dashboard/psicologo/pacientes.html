@@ -1,0 +1,143 @@
+<div class="pacientes-container">
+  <!-- Topo da Tela -->
+  <div class="page-header">
+    <div class="header-left">
+      <h3>Pacientes</h3>
+      <p>Gerencie seus pacientes e acompanhe a evolução clínica</p>
+    </div>
+    <button class="btn-premium btn-secondary" (click)="openRegisterModal()">
+      <span>+ Novo paciente</span>
+    </button>
+  </div>
+
+  <!-- Filtros -->
+  <div class="filter-bar">
+    <div class="search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" [(ngModel)]="searchTerm" (ngModelChange)="applyFilter()" placeholder="Buscar paciente por nome...">
+
+    </div>
+    
+    <div class="filter-options">
+      <select [(ngModel)]="filterStatus" (change)="applyFilter()" class="select-filter">
+        <option value="todos">Todos os Níveis de Engajamento</option>
+        <option value="ativos">Bom Engajamento (>= 70%)</option>
+        <option value="atencao">Baixo Engajamento (< 70%)</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Tabela de Pacientes -->
+  <div class="table-responsive" *ngIf="!loading">
+    <table class="table-premium table-clickable">
+      <thead>
+        <tr>
+          <th>Nome</th>
+          <th>Idade</th>
+          <th>Última Atividade</th>
+          <th>Engajamento</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let pat of filteredPacientes" (click)="verPaciente(pat.id)">
+          <td>
+            <div class="pat-info-cell">
+              <div class="pat-avatar-mini" [class.danger-avatar]="pat.engajamento < 70">
+                {{ (pat.nome || pat.usuario?.nome)?.charAt(0).toUpperCase() }}
+              </div>
+              <span class="pat-name">{{ pat.nome || pat.usuario?.nome }}</span>
+            </div>
+          </td>
+          <td>{{ pat.idade || 14 }} anos</td>
+          <td>{{ pat.ultimaAtividade || 'Hoje, 14:32' }}</td>
+          <td>
+            <div class="engagement-cell">
+              <span class="eng-val">{{ pat.engajamento }}%</span>
+              <div class="progress-track-mini">
+                <div class="progress-bar-mini" [class.warning-bar]="pat.engajamento < 70" [style.width]="pat.engajamento + '%'"></div>
+              </div>
+            </div>
+          </td>
+          <td>
+            <span class="badge" [class.badge-success]="pat.engajamento >= 70" [class.badge-warning]="pat.engajamento < 70">
+              {{ pat.engajamento >= 70 ? 'Ativo' : 'Atenção' }}
+            </span>
+          </td>
+        </tr>
+        <tr *ngIf="filteredPacientes.length === 0">
+          <td colspan="5" class="text-center">Nenhum paciente cadastrado ou correspondente aos filtros.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Loading State -->
+  <div class="flex-center loading-container" *ngIf="loading">
+    <span class="spinner"></span>
+  </div>
+
+  <!-- Modal Cadastro Paciente -->
+  <div class="modal-overlay" *ngIf="isRegisterModalOpen">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Cadastrar Novo Paciente</h3>
+        <button class="btn-close" (click)="closeRegisterModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <form (ngSubmit)="cadastrar()">
+          <div class="form-group">
+            <label for="nome">Nome Completo</label>
+            <input type="text" id="nome" [(ngModel)]="nome" name="nome" placeholder="Nome do Paciente" required>
+          </div>
+
+          <div class="form-group-row">
+            <div class="form-group">
+              <label for="email">E-mail de Acesso</label>
+              <input type="email" id="email" [(ngModel)]="email" name="email" placeholder="paciente@exemplo.com" required>
+            </div>
+            <div class="form-group">
+              <label for="telefone">Telefone / Responsável</label>
+              <input type="text" id="telefone" [(ngModel)]="telefone" name="telefone" placeholder="(00) 00000-0000">
+            </div>
+          </div>
+
+          <div class="form-group-row">
+            <div class="form-group">
+              <label for="dataNasc">Data de Nascimento</label>
+              <input type="date" id="dataNasc" [(ngModel)]="dataNascimento" name="dataNasc" required>
+            </div>
+            <div class="form-group">
+              <label for="genero">Gênero</label>
+              <select id="genero" [(ngModel)]="genero" name="genero" class="select-field">
+                <option value="Masculino">Masculino</option>
+                <option value="Feminino">Feminino</option>
+                <option value="Outro">Outro</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="alert-info-box">
+            <p>💡 <strong>Atenção:</strong> O paciente usará o e-mail cadastrado e a senha padrão <strong>{{ senhaHash }}</strong> para fazer o primeiro acesso no aplicativo móvel.</p>
+          </div>
+
+          <div *ngIf="errorMessage" class="error-message">
+            <span>⚠️ {{ errorMessage }}</span>
+          </div>
+
+          <div *ngIf="successMessage" class="success-message">
+            <span>✓ {{ successMessage }}</span>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn-premium btn-outline" (click)="closeRegisterModal()">Cancelar</button>
+            <button type="submit" class="btn-premium btn-secondary" [disabled]="isSubmitting">
+              <span *ngIf="!isSubmitting">Salvar</span>
+              <span *ngIf="isSubmitting" class="spinner"></span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

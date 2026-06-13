@@ -1,0 +1,98 @@
+<div class="relatorios-container">
+  <!-- Topo -->
+  <div class="page-header">
+    <div class="header-left">
+      <h3>Relatórios & Indicadores</h3>
+      <p>Acompanhe a evolução clínica e as respostas comportamentais dos pacientes</p>
+    </div>
+    
+    <div class="patient-selector-box">
+      <label for="select-pat">Paciente:</label>
+      <select id="select-pat" [(ngModel)]="selectedPacienteId" (change)="onPacienteChange()" class="select-field">
+        <option *ngFor="let pat of pacientes" [value]="pat.id">{{ pat.nome || pat.usuario?.nome }}</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Sub-abas -->
+  <div class="sub-tabs">
+    <button class="sub-tab-btn" [class.active]="activeSubTab === 'visao'" (click)="mudarSubTab('visao')">Visão Geral</button>
+    <button class="sub-tab-btn" [class.active]="activeSubTab === 'engajamento'" (click)="mudarSubTab('engajamento')">Engajamento</button>
+    <button class="sub-tab-btn" [class.active]="activeSubTab === 'emocoes'" (click)="mudarSubTab('emocoes')">Emoções</button>
+    <button class="sub-tab-btn" [class.active]="activeSubTab === 'habilidades'" (click)="mudarSubTab('habilidades')">Habilidades</button>
+  </div>
+
+  <!-- Painel de Relatórios -->
+  <div class="report-content" *ngIf="!loading && dashboard">
+    <!-- Grid Central -->
+    <div class="report-main-grid">
+      <!-- Card Humor Médio -->
+      <div class="report-card">
+        <h4>Humor Médio</h4>
+        <div class="humor-indicator">
+          <span class="humor-emoji">😊</span>
+          <div class="humor-val">
+            <span class="score">4.2</span>
+            <span class="max">/ 5.0</span>
+          </div>
+        </div>
+        <p class="desc-text">+1.2 vs período anterior</p>
+      </div>
+
+      <!-- Card Engajamento -->
+      <div class="report-card flex-center-col">
+        <h4>Engajamento Geral</h4>
+        <div class="donut-wrapper-mini">
+          <svg viewBox="0 0 100 100" class="donut-chart-mini">
+            <circle cx="50" cy="50" r="35" fill="transparent" stroke="#f1f5f9" stroke-width="8"></circle>
+            <circle cx="50" cy="50" r="35" fill="transparent" stroke="#0eb594" stroke-width="8" stroke-dasharray="202.3 220" stroke-dashoffset="0"></circle>
+          </svg>
+          <div class="donut-center-mini">
+            <span>92%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card Tendência Emocional (Linha) -->
+      <div class="report-card flex-2">
+        <h4>Tendência Emocional</h4>
+        <svg viewBox="0 0 400 120" class="svg-trend-chart">
+          <!-- Grids -->
+          <line x1="30" y1="20" x2="380" y2="20" stroke="#f1f5f9" stroke-width="1"></line>
+          <line x1="30" y1="60" x2="380" y2="60" stroke="#f1f5f9" stroke-width="1"></line>
+          <line x1="30" y1="100" x2="380" y2="100" stroke="#f1f5f9" stroke-width="1"></line>
+          <!-- Eixos X -->
+          <text x="30" y="115" fill="#94a3b8" font-size="8" text-anchor="middle">Seg</text>
+          <text x="117.5" y="115" fill="#94a3b8" font-size="8" text-anchor="middle">Qua</text>
+          <text x="205" y="115" fill="#94a3b8" font-size="8" text-anchor="middle">Sex</text>
+          <text x="292.5" y="115" fill="#94a3b8" font-size="8" text-anchor="middle">Sáb</text>
+          <text x="380" y="115" fill="#94a3b8" font-size="8" text-anchor="middle">Dom</text>
+          
+          <!-- Curva humor -->
+          <path d="M30,100 Q117.5,40 205,50 T380,30" fill="none" stroke="#2563eb" stroke-width="3" stroke-linecap="round"></path>
+          <circle cx="380" cy="30" r="4" fill="#2563eb" stroke="white" stroke-width="2"></circle>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Insights Principais -->
+    <div class="insights-section margin-top">
+      <h4>Principais Insights Clínicos</h4>
+      <div class="insights-list">
+        <div class="insight-item-card" *ngFor="let ins of insights" [class.warning]="ins.tipo === 'warning'">
+          <div class="insight-icon">
+            <span>{{ ins.tipo === 'positive' ? '✓' : '⚠️' }}</span>
+          </div>
+          <div class="insight-text">
+            <p>{{ ins.texto }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div class="flex-center loading-container" *ngIf="loading">
+    <span class="spinner"></span>
+  </div>
+</div>

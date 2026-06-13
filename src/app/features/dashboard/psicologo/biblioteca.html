@@ -1,0 +1,43 @@
+<div class="biblioteca-container">
+  <!-- Topo -->
+  <div class="page-header">
+    <div class="header-left">
+      <h3>Biblioteca de Jogos</h3>
+      <p>Jogos terapêuticos desenvolvidos para treino cognitivo e de habilidades socioemocionais</p>
+    </div>
+  </div>
+
+  <!-- Filtros de Categorias -->
+  <div class="category-tabs">
+    <button class="cat-btn" [class.active]="activeCategory === 'todos'" (click)="filtrarCategoria('todos')">Todos</button>
+    <button class="cat-btn" [class.active]="activeCategory === 'regulacao'" (click)="filtrarCategoria('regulacao')">Regulação Emocional</button>
+    <button class="cat-btn" [class.active]="activeCategory === 'funcoes'" (click)="filtrarCategoria('funcoes')">Funções Executivas</button>
+    <button class="cat-btn" [class.active]="activeCategory === 'autocontrole'" (click)="filtrarCategoria('autocontrole')">Autocontrole</button>
+    <button class="cat-btn" [class.active]="activeCategory === 'atencao'" (click)="filtrarCategoria('atencao')">Atenção</button>
+  </div>
+
+  <!-- Grid de Jogos -->
+  <div class="games-grid">
+    <div class="game-card" *ngFor="let jogo of filteredJogos">
+      <div class="game-media-header" [style.background-color]="jogo.cor + '12'">
+        <span class="game-emoji" [style.color]="jogo.cor">{{ jogo.emoji }}</span>
+      </div>
+      
+      <div class="game-card-body">
+        <span class="game-category">{{ jogo.categoria }}</span>
+        <h4>{{ jogo.titulo }}</h4>
+        <p class="game-desc">{{ jogo.descricao }}</p>
+        
+        <div class="game-meta-footer">
+          <span class="age-badge">👥 {{ jogo.faixaEtaria }}</span>
+        </div>
+      </div>
+      
+      <div class="game-card-footer">
+        <button class="btn-view-game btn-premium">
+          Visualizar detalhes
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

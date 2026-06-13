@@ -21,7 +21,9 @@ export class Auth {
   }
 
   isAuthenticated(): boolean {
-    return !!localStorage.getItem('authToken');
+    const isBrowser = typeof window !== 'undefined';
+    return isBrowser ? !!localStorage.getItem('authToken') : false;
   }
+
 
 }

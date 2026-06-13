@@ -1,0 +1,138 @@
+<div class="psicologo-resumo-container">
+  <!-- Grid de Indicadores -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-header">
+        <span class="stat-title">Pacientes ativos</span>
+        <span class="trend-badge positive">+4</span>
+      </div>
+      <div class="stat-value">{{ stats.pacientesAtivos }}</div>
+      <div class="stat-desc">desde a semana passada</div>
+    </div>
+    
+    <div class="stat-card">
+      <div class="stat-header">
+        <span class="stat-title">Atividades concluídas</span>
+        <span class="trend-badge positive">+12</span>
+      </div>
+      <div class="stat-value">{{ stats.atividadesConcluidas }}</div>
+      <div class="stat-desc">desde a semana passada</div>
+    </div>
+    
+    <div class="stat-card">
+      <div class="stat-header">
+        <span class="stat-title">Engajamento médio</span>
+        <span class="trend-badge positive">+7%</span>
+      </div>
+      <div class="stat-value">{{ stats.engajamentoMedio }}%</div>
+      <div class="stat-desc">desde a semana passada</div>
+    </div>
+    
+    <div class="stat-card alert-card">
+      <div class="stat-header">
+        <span class="stat-title">Alertas de atenção</span>
+        <span class="trend-badge negative">Requer cuidado</span>
+      </div>
+      <div class="stat-value">{{ stats.alertas }}</div>
+      <div class="stat-desc">Pacientes com engajamento sob queda</div>
+    </div>
+  </div>
+
+  <!-- Gráfico de Engajamento e Atividades Recentes -->
+  <div class="charts-row">
+    <!-- Engajamento Semanal -->
+    <div class="chart-card flex-2">
+      <div class="chart-header">
+        <h3>Engajamento semanal</h3>
+      </div>
+      <div class="chart-body">
+        <svg class="line-chart-svg" viewBox="0 0 500 200">
+          <!-- Grids -->
+          <line x1="40" y1="20" x2="480" y2="20" stroke="#f1f5f9" stroke-width="1"></line>
+          <line x1="40" y1="65" x2="480" y2="65" stroke="#f1f5f9" stroke-width="1"></line>
+          <line x1="40" y1="110" x2="480" y2="110" stroke="#f1f5f9" stroke-width="1"></line>
+          <line x1="40" y1="155" x2="480" y2="155" stroke="#f1f5f9" stroke-width="1"></line>
+          
+          <!-- Eixos e Textos -->
+          <text x="15" y="24" fill="#94a3b8" font-size="9" text-anchor="middle">100%</text>
+          <text x="15" y="69" fill="#94a3b8" font-size="9" text-anchor="middle">75%</text>
+          <text x="15" y="114" fill="#94a3b8" font-size="9" text-anchor="middle">50%</text>
+          <text x="15" y="159" fill="#94a3b8" font-size="9" text-anchor="middle">0%</text>
+          
+          <!-- Eixo X e Dias da Semana -->
+          <text x="40" y="175" fill="#94a3b8" font-size="9" text-anchor="middle">Seg</text>
+          <text x="113" y="175" fill="#94a3b8" font-size="9" text-anchor="middle">Ter</text>
+          <text x="186" y="175" fill="#94a3b8" font-size="9" text-anchor="middle">Qua</text>
+          <text x="259" y="175" fill="#94a3b8" font-size="9" text-anchor="middle">Qui</text>
+          <text x="332" y="175" fill="#94a3b8" font-size="9" text-anchor="middle">Sex</text>
+          <text x="405" y="175" fill="#94a3b8" font-size="9" text-anchor="middle">Sáb</text>
+          <text x="480" y="175" fill="#94a3b8" font-size="9" text-anchor="middle">Dom</text>
+
+          <defs>
+            <linearGradient id="grad-teal-psi" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#0eb594" stop-opacity="0.15" />
+              <stop offset="100%" stop-color="#0eb594" stop-opacity="0.0" />
+            </linearGradient>
+          </defs>
+          
+          <!-- Área de Engajamento -->
+          <path d="M40,110 Q113,80 186,60 T332,65 T480,40 L480,155 L40,155 Z" fill="url(#grad-teal-psi)"></path>
+
+          <!-- Curva de Engajamento -->
+          <path d="M40,110 Q113,80 186,60 T332,65 T480,40" fill="none" stroke="#0eb594" stroke-width="3" stroke-linecap="round"></path>
+          
+          <!-- Marcador no final -->
+          <circle cx="480" cy="40" r="5" fill="#0eb594" stroke="#ffffff" stroke-width="2"></circle>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Atividades Recentes -->
+    <div class="chart-card flex-1">
+      <div class="chart-header">
+        <h3>Atividades concluídas</h3>
+      </div>
+      <div class="chart-body flex-col justify-start">
+        <div class="activity-timeline">
+          <div class="timeline-item" *ngFor="let act of atividadesRecentes">
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+              <span class="timeline-time">{{ act.data }}</span>
+              <h4>{{ act.paciente }}</h4>
+              <p>Concluiu: <strong>{{ act.atividade }}</strong></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pacientes com Baixo Engajamento -->
+  <div class="bottom-section">
+    <div class="card">
+      <div class="card-header">
+        <h3>Pacientes com menor engajamento</h3>
+      </div>
+      <div class="card-body">
+        <div class="attention-grid">
+          <div class="attention-card" *ngFor="let pat of pacientesAlerta">
+            <div class="attention-profile">
+              <div class="pat-avatar">
+                {{ pat.nome.charAt(0).toUpperCase() }}
+              </div>
+              <div class="pat-meta">
+                <h4>{{ pat.nome }}</h4>
+                <p>Último check-in: {{ pat.ultimaConexao }}</p>
+              </div>
+            </div>
+            
+            <div class="attention-score">
+              <span class="score-lbl">Engajamento</span>
+              <span class="score-val warning">{{ pat.engajamento }}%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

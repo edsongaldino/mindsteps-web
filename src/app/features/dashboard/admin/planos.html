@@ -1,0 +1,83 @@
+<div class="planos-container">
+  <!-- Cabeçalho -->
+  <div class="page-header">
+    <div class="header-left">
+      <h3>Planos e Assinaturas</h3>
+      <p>Gerenciamento e recursos disponíveis</p>
+    </div>
+  </div>
+
+  <!-- Cartões de Planos -->
+  <div class="plans-grid">
+    <div class="plan-card" *ngFor="let plano of planos" [class.highlighted]="plano.destaque">
+      <div class="highlight-tag" *ngIf="plano.destaque">Mais popular</div>
+      <h4 class="plan-name">{{ plano.nome }}</h4>
+      <div class="plan-price">
+        <span class="currency">R$</span>
+        <span class="value">{{ plano.preco }}</span>
+        <span class="period">/mês</span>
+      </div>
+      
+      <ul class="plan-features">
+        <li>
+          <span class="check-icon">✓</span>
+          <span>{{ plano.pacientes }}</span>
+        </li>
+        <li>
+          <span class="check-icon">✓</span>
+          <span>{{ plano.jogos }}</span>
+        </li>
+        <li>
+          <span class="check-icon">✓</span>
+          <span>{{ plano.suporte }}</span>
+        </li>
+      </ul>
+      
+      <button class="btn-edit-plan btn-premium">
+        Editar plano
+      </button>
+    </div>
+  </div>
+
+  <!-- Tabela de Assinaturas Recentes -->
+  <div class="subscribers-section">
+    <div class="section-header">
+      <h3>Assinaturas recentes</h3>
+    </div>
+    
+    <div class="table-responsive">
+      <table class="table-premium">
+        <thead>
+          <tr>
+            <th>Psicólogo</th>
+            <th>Plano</th>
+            <th>Valor</th>
+            <th>Próxima Cobrança</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let sub of assinaturasRecentes">
+            <td>
+              <div class="psi-cell">
+                <span class="psi-name-cell">{{ sub.nome }}</span>
+              </div>
+            </td>
+            <td>
+              <span class="plan-badge" [class.badge-primary]="sub.plano === 'Profissional'" [class.badge-secondary]="sub.plano === 'Essencial'">
+                {{ sub.plano }}
+              </span>
+            </td>
+            <td>R$ {{ sub.valor | number:'1.2-2' }}</td>
+            <td>{{ sub.proximaCobranca }}</td>
+            <td>
+              <span class="badge" [class.badge-success]="sub.status === 'Ativo'" [class.badge-warning]="sub.status === 'Pendente'">
+                {{ sub.status }}
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

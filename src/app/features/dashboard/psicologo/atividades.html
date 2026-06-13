@@ -1,0 +1,223 @@
+<div class="atividades-container">
+  <!-- Topo -->
+  <div class="page-header">
+    <div class="header-left">
+      <h3>Atividades Terapêuticas</h3>
+      <p>Crie e gerencie atividades para seus pacientes</p>
+    </div>
+    <button class="btn-premium btn-secondary" (click)="openWizard()">
+      <span>+ Nova atividade</span>
+    </button>
+  </div>
+
+  <!-- Tabela de Atividades -->
+  <div class="table-responsive" *ngIf="!loading">
+    <table class="table-premium">
+      <thead>
+        <tr>
+          <th>Atividade</th>
+          <th>Tipo</th>
+          <th>Destinatários</th>
+          <th>Enviado Em</th>
+          <th>Status</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let act of filteredAtividades">
+          <td>
+            <strong>{{ act.titulo }}</strong>
+            <p class="desc-text">{{ act.descricao }}</p>
+          </td>
+          <td>{{ act.tipo === 1 ? 'Jogo Terapêutico' : 'Diário / Exercício' }}</td>
+          <td>👥 {{ act.destinatarios }} pacientes</td>
+          <td>{{ act.enviadoEm | date:'dd/MM/yyyy' }}</td>
+          <td>
+            <span class="badge badge-success">Ativa</span>
+          </td>
+          <td>
+            <button class="btn-action-send btn-premium" (click)="openSendModal(act.id)">
+              Prescrever ✉
+            </button>
+          </td>
+        </tr>
+        <tr *ngIf="filteredAtividades.length === 0">
+          <td colspan="6" class="text-center">Nenhuma atividade cadastrada.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Loading State -->
+  <div class="flex-center loading-container" *ngIf="loading">
+    <span class="spinner"></span>
+  </div>
+
+  <!-- MODAL: WIZARD DE CRIAÇÃO (MULTIESTÁGIOS) -->
+  <div class="modal-overlay" *ngIf="isWizardOpen">
+    <div class="modal-content wizard-modal">
+      <div class="modal-header">
+        <h3>Criar Atividade (Etapa {{ wizardStep }} de 4)</h3>
+        <button class="btn-close" (click)="closeWizard()">×</button>
+      </div>
+      
+      <!-- Indicador de Progresso do Wizard -->
+      <div class="wizard-progress">
+        <div class="progress-step" [class.active]="wizardStep >= 1" [class.completed]="wizardStep > 1">1</div>
+        <div class="progress-line" [class.completed]="wizardStep > 1"></div>
+        <div class="progress-step" [class.active]="wizardStep >= 2" [class.completed]="wizardStep > 2">2</div>
+        <div class="progress-line" [class.completed]="wizardStep > 2"></div>
+        <div class="progress-step" [class.active]="wizardStep >= 3" [class.completed]="wizardStep > 3">3</div>
+        <div class="progress-line" [class.completed]="wizardStep > 3"></div>
+        <div class="progress-step" [class.active]="wizardStep >= 4" [class.completed]="wizardStep > 4">4</div>
+      </div>
+
+      <div class="modal-body wizard-body">
+        
+        <!-- ETAPA 1: INFORMAÇÕES GERAIS -->
+        <div class="step-pane" *ngIf="wizardStep === 1">
+          <div class="form-group">
+            <label for="wiz-titulo">Título da Atividade</label>
+            <input type="text" id="wiz-titulo" [(ngModel)]="titulo" name="wiz-titulo" placeholder="Ex: Diário do Controle da Raiva" required>
+          </div>
+          <div class="form-group">
+            <label for="wiz-desc">Instruções / Descrição</label>
+            <textarea id="wiz-desc" [(ngModel)]="descricao" name="wiz-desc" rows="3" placeholder="Escreva as instruções passo a passo para o paciente..."></textarea>
+          </div>
+          <div class="form-group-row">
+            <div class="form-group">
+              <label for="wiz-cat">Categoria Emocional</label>
+              <select id="wiz-cat" [(ngModel)]="categoriaEmocional" name="wiz-cat">
+                <option value="Regulação Emocional">Regulação Emocional</option>
+                <option value="Ansiedade">Ansiedade</option>
+                <option value="Habilidades Sociais">Habilidades Sociais</option>
+                <option value="Organização/Foco">Organização/Foco</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="wiz-nivel">Nível Recomendado</label>
+              <select id="wiz-nivel" [(ngModel)]="nivelSugerido" name="wiz-nivel">
+                <option value="Fácil">Fácil</option>
+                <option value="Médio">Médio</option>
+                <option value="Difícil">Difícil</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- ETAPA 2: CONFIGURAÇÃO DE RESPOSTAS -->
+        <div class="step-pane" *ngIf="wizardStep === 2">
+          <div class="form-group">
+            <label for="wiz-resposta">Tipo de Retorno Requerido</label>
+            <select id="wiz-resposta" [(ngModel)]="tipoResposta" name="wiz-resposta">
+              <option value="Texto">Texto Livre / Relato escrito</option>
+              <option value="Jogo">Completar Play de Jogo Terapêutico</option>
+              <option value="Escala">Classificação por Escala de Humor (1 a 5)</option>
+            </select>
+          </div>
+          <div class="checkbox-group">
+            <label class="checkbox-label">
+              <input type="checkbox" [(ngModel)]="atividadeObrigatoria" name="wiz-obrig">
+              <span>Atividade obrigatória para evolução semanal</span>
+            </label>
+          </div>
+          <div class="checkbox-group">
+            <label class="checkbox-label">
+              <input type="checkbox" [(ngModel)]="permitirAnexos" name="wiz-anexo">
+              <span>Permitir anexo de fotos / áudios</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- ETAPA 3: FREQUÊNCIA E PRAZOS -->
+        <div class="step-pane" *ngIf="wizardStep === 3">
+          <div class="form-group-row">
+            <div class="form-group">
+              <label for="wiz-freq">Frequência</label>
+              <select id="wiz-freq" [(ngModel)]="frequencia" name="wiz-freq">
+                <option value="Uma vez">Uma única vez</option>
+                <option value="Diário">Diário (Todos os dias)</option>
+                <option value="Semanal">Semanal (Uma vez por semana)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="wiz-prazo">Prazo Limite Padrão</label>
+              <select id="wiz-prazo" [(ngModel)]="prazoConclusao" name="wiz-prazo">
+                <option value="24 horas">24 horas</option>
+                <option value="3 dias">3 dias</option>
+                <option value="7 dias">7 dias</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="wiz-feedback">Mensagem / Feedback Automático após Conclusão</label>
+            <input type="text" id="wiz-feedback" [(ngModel)]="feedbackAutomatico" name="wiz-feedback" placeholder="Ex: Muito bem! Você deu mais um passo importante hoje!">
+          </div>
+        </div>
+
+        <!-- ETAPA 4: ALERTAS & NOTIFICAÇÕES -->
+        <div class="step-pane" *ngIf="wizardStep === 4">
+          <div class="checkbox-group">
+            <label class="checkbox-label">
+              <input type="checkbox" [(ngModel)]="notificarPush" name="wiz-push">
+              <span>Notificar paciente via alerta Push no Celular</span>
+            </label>
+          </div>
+          <div class="checkbox-group">
+            <label class="checkbox-label">
+              <input type="checkbox" [(ngModel)]="notificarEmail" name="wiz-email">
+              <span>Enviar cópia das instruções por E-mail</span>
+            </label>
+          </div>
+          <div class="wizard-summary-box">
+            <h4>Resumo da Atividade</h4>
+            <p><strong>Título:</strong> {{ titulo || 'Sem título' }}</p>
+            <p><strong>Categoria:</strong> {{ categoriaEmocional }} (Nível {{ nivelSugerido }})</p>
+            <p><strong>Formato:</strong> Retorno via {{ tipoResposta }}</p>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="modal-footer wizard-footer">
+        <button type="button" class="btn-premium btn-outline" *ngIf="wizardStep > 1" (click)="prevStep()">Voltar</button>
+        <button type="button" class="btn-premium btn-outline" *ngIf="wizardStep === 1" (click)="closeWizard()">Cancelar</button>
+        
+        <button type="button" class="btn-premium btn-secondary" *ngIf="wizardStep < 4" (click)="nextStep()">Próximo</button>
+        <button type="button" class="btn-premium btn-secondary" *ngIf="wizardStep === 4" [disabled]="isSubmitting" (click)="salvarAtividade()">
+          <span *ngIf="!isSubmitting">Finalizar e Salvar</span>
+          <span *ngIf="isSubmitting" class="spinner"></span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: ENVIAR / PRESCREVER ATIVIDADE -->
+  <div class="modal-overlay" *ngIf="isSendModalOpen">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Prescrever Atividade</h3>
+        <button class="btn-close" (click)="closeSendModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <form (ngSubmit)="enviarAtividade()">
+          <div class="form-group">
+            <label for="send-paciente">Selecionar Paciente</label>
+            <select id="send-paciente" [(ngModel)]="selectedPacienteId" name="send-paciente" class="select-field" required>
+              <option *ngFor="let pat of pacientes" [value]="pat.id">{{ pat.nome || pat.usuario?.nome }}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="send-prazo">Prazo Limite de Conclusão</label>
+            <input type="date" id="send-prazo" [(ngModel)]="dataLimite" name="send-prazo" required>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn-premium btn-outline" (click)="closeSendModal()">Cancelar</button>
+            <button type="submit" class="btn-premium btn-secondary">Prescrever Atividade</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

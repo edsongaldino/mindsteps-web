@@ -1,10 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';  // Para navegação de rotas
+import { Component, ChangeDetectorRef } from '@angular/core';
+import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms'; 
 import { Auth } from '../../core/services/auth';
-import { HttpClient } from '@angular/common/http';
-import { PacienteService } from '../../core/services/paciente.service';
 
 @Component({
   selector: 'app-login',
@@ -16,47 +14,58 @@ export class Login {
   email: string = '';
   senha: string = '';
   errorMessage: string = '';
-  carregando = false;
+  isSubmitting: boolean = false;
 
-  constructor(
-    private http: HttpClient, 
-    private auth : Auth, 
-    private router: Router,
-    private pacienteService: PacienteService
-  ) {}
+  constructor(private auth : Auth, private router: Router, private cdr: ChangeDetectorRef) {}
 
   login() {
-    this.carregando = true;
+    this.isSubmitting = true;
     this.errorMessage = '';
-    
+    this.cdr.markForCheck();
+
     this.auth.login(this.email, this.senha).subscribe({
       next: (response) => {
-        // Salva o token no localStorage
-        localStorage.setItem('authToken', response.token);
+        this.isSubmitting = false;
         
-        // Verifica se é paciente
-        this.pacienteService.obterMe().subscribe({
-          next: (me) => {
-            this.carregando = false;
-            if (me.pacienteId) {
-              this.router.navigate(['/paciente/home']);
-            } else {
-              this.router.navigate(['/home']);
-            }
-          },
-          error: (err) => {
-            this.carregando = false;
-            // Fallback para home padrão
-            this.router.navigate(['/home']);
-          }
-        });
+        const perfilUsuario = response.perfil; // 'Administrador', 'Psicologo' ou 'Paciente'
+
+        // Salva os dados no localStorage
+        localStorage.setItem('authToken', response.token);
+        localStorage.setItem('userProfile', response.perfil);
+        localStorage.setItem('userNome', response.nome);
+        localStorage.setItem('userEmail', response.email);
+        localStorage.setItem('userFotoUrl', response.fotoUrl || '');
+        
+        this.cdr.markForCheck();
+
+        // Redireciona com base no papel
+        if (perfilUsuario === 'Administrador') {
+          this.router.navigate(['/dashboard/admin/resumo']);
+        } else if (perfilUsuario === 'Psicologo') {
+          this.router.navigate(['/dashboard/psicologo/resumo']);
+        } else if (perfilUsuario === 'Paciente') {
+          this.router.navigate(['/paciente/home']);
+        } else {
+          this.errorMessage = 'Perfil de usuário não reconhecido.';
+          this.auth.logout();
+          this.cdr.markForCheck();
+        }
       },
+
       error: (err) => {
-        this.carregando = false;
-        this.errorMessage = 'Falha ao autenticar. Verifique suas credenciais.';
+        this.isSubmitting = false;
+        if (typeof err.error === 'string') {
+          this.errorMessage = err.error;
+        } else {
+          this.errorMessage = err.error?.message || 'Falha ao autenticar. Verifique suas credenciais.';
+        }
+        this.cdr.markForCheck();
         console.error(err);
       }
     });
   }
-}
 
+  voltarHome() {
+    this.router.navigate(['/']);
+  }
+}
