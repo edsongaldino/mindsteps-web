@@ -1,0 +1,175 @@
+<div class="perfil-wrapper animate-fade-in-up" *ngIf="!carregando; else spinner">
+  <header class="perfil-header">
+    <h1>Meu perfil</h1>
+    <p>Gerencie suas informações cadastrais e configurações da conta.</p>
+  </header>
+
+  <!-- Profile Card -->
+  <section class="profile-card">
+    <div class="avatar-wrapper">
+      <div class="avatar-circle" [style.background-image]="avatarUrl ? 'url(' + avatarUrl + ')' : null">
+        <span *ngIf="!me?.fotoUrl">{{ me?.nome?.substring(0, 1) || 'P' }}</span>
+      </div>
+      
+      <!-- hidden input for photo uploading -->
+      <label class="camera-btn" [class.disabled]="subindoFoto">
+        <i class="ti" [class.ti-camera]="!subindoFoto" [class.ti-loader-quarter]="subindoFoto"></i>
+        <input type="file" accept="image/*" (change)="alterarFoto($event)" [disabled]="subindoFoto" style="display: none;">
+      </label>
+    </div>
+
+    <div class="profile-info">
+      <h2>{{ me?.nome }}</h2>
+      <p>{{ me?.email }}</p>
+    </div>
+  </section>
+
+  <!-- Options Menu -->
+  <section class="options-menu">
+    <button type="button" class="option-row" (click)="abrirMeusDados()">
+      <div class="row-left">
+        <i class="ti ti-user"></i>
+        <span>Meus dados</span>
+      </div>
+      <i class="ti ti-chevron-right arrow"></i>
+    </button>
+
+    <button type="button" class="option-row" (click)="abrirMensagens()">
+      <div class="row-left">
+        <i class="ti ti-message-circle"></i>
+        <span>Mensagens da Psicóloga</span>
+      </div>
+      <i class="ti ti-chevron-right arrow"></i>
+    </button>
+
+    <button type="button" class="option-row" (click)="abrirPrivacidade()">
+      <div class="row-left">
+        <i class="ti ti-lock"></i>
+        <span>Privacidade & LGPD</span>
+      </div>
+      <i class="ti ti-chevron-right arrow"></i>
+    </button>
+
+    <button type="button" class="option-row" (click)="abrirAjuda()">
+      <div class="row-left">
+        <i class="ti ti-help"></i>
+        <span>Ajuda & Suporte</span>
+      </div>
+      <i class="ti ti-chevron-right arrow"></i>
+    </button>
+  </section>
+
+  <!-- Logout Button -->
+  <section class="logout-section">
+    <button type="button" class="logout-btn" (click)="logout()">
+      <i class="ti ti-logout"></i>
+      <span>Sair da conta</span>
+    </button>
+  </section>
+
+  <!-- DRAWER: EDIT MEUS DADOS -->
+  <div class="drawer-overlay" *ngIf="modalDadosAtivo" (click)="fecharMeusDados()">
+    <div class="drawer" (click)="$event.stopPropagation()">
+      <div class="drawer-header">
+        <h2>Editar Meus Dados</h2>
+        <button class="btn-close" (click)="fecharMeusDados()"><i class="ti ti-x"></i></button>
+      </div>
+      <div class="drawer-body">
+        <div class="form-group">
+          <label for="edit-nome">Nome completo</label>
+          <input type="text" id="edit-nome" [(ngModel)]="editNome" placeholder="Seu nome completo">
+        </div>
+        <div class="form-group">
+          <label for="edit-email">E-mail</label>
+          <input type="email" id="edit-email" [(ngModel)]="editEmail" placeholder="Seu e-mail">
+        </div>
+        <div class="form-group">
+          <label for="edit-tel">Telefone</label>
+          <input type="text" id="edit-tel" [(ngModel)]="editTelefone" placeholder="(00) 00000-0000">
+        </div>
+      </div>
+      <div class="drawer-footer">
+        <button type="button" class="btn-outline" (click)="fecharMeusDados()">Cancelar</button>
+        <button type="button" class="btn-primary" [disabled]="editNome.trim() === '' || editEmail.trim() === '' || salvandoDados" (click)="salvarMeusDados()">
+          <span *ngIf="!salvandoDados">Salvar</span>
+          <div class="spinner-small" *ngIf="salvandoDados"></div>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DRAWER: MENSAGENS -->
+  <div class="drawer-overlay" *ngIf="modalMensagensAtivo" (click)="fecharMensagens()">
+    <div class="drawer" (click)="$event.stopPropagation()">
+      <div class="drawer-header">
+        <h2>Mensagens recebidas</h2>
+        <button class="btn-close" (click)="fecharMensagens()"><i class="ti ti-x"></i></button>
+      </div>
+      <div class="drawer-body">
+        <div class="spinner-center" *ngIf="carregandoMensagens">
+          <div class="spinner-small"></div>
+        </div>
+        
+        <div class="empty-state" *ngIf="!carregandoMensagens && mensagens.length === 0">
+          <i class="ti ti-message-off"></i>
+          <p>Nenhuma mensagem recebida.</p>
+        </div>
+
+        <ul class="messages-list" *ngIf="!carregandoMensagens && mensagens.length > 0">
+          <li class="message-item" *ngFor="let msg of mensagens" [class.unread]="!msg.lida">
+            <div class="msg-header">
+              <span class="sender-name">Dra. {{ msg.psicologoNome || 'Psicóloga' }}</span>
+              <button class="btn-mark-lida" *ngIf="!msg.lida" (click)="marcarLida(msg.id)">Lida</button>
+            </div>
+            <p class="msg-content">{{ msg.conteudo }}</p>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- DRAWER: PRIVACIDADE -->
+  <div class="drawer-overlay" *ngIf="modalPrivacidadeAtivo" (click)="fecharPrivacidade()">
+    <div class="drawer" (click)="$event.stopPropagation()">
+      <div class="drawer-header">
+        <h2>Privacidade & LGPD</h2>
+        <button class="btn-close" (click)="fecharPrivacidade()"><i class="ti ti-x"></i></button>
+      </div>
+      <div class="drawer-body static-text">
+        <h3>Seus dados estão protegidos</h3>
+        <p>No MindSteps, levamos a sério a segurança das suas informações. Suas anotações clínicas, registros de pensamentos (RPD), e histórico de check-ins são totalmente confidenciais e acessíveis apenas a você e ao seu psicólogo responsável.</p>
+        
+        <h3>Lei Geral de Proteção de Dados (LGPD)</h3>
+        <p>Operamos em total conformidade com a LGPD. Você pode solicitar a exportação ou exclusão dos seus dados a qualquer momento entrando em contato com nosso suporte.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- DRAWER: AJUDA -->
+  <div class="drawer-overlay" *ngIf="modalAjudaAtivo" (click)="fecharAjuda()">
+    <div class="drawer" (click)="$event.stopPropagation()">
+      <div class="drawer-header">
+        <h2>Ajuda & Suporte</h2>
+        <button class="btn-close" (click)="fecharAjuda()"><i class="ti ti-x"></i></button>
+      </div>
+      <div class="drawer-body static-text">
+        <h3>Como podemos te ajudar?</h3>
+        <p>Se você está enfrentando problemas técnicos com o portal, tem dúvidas sobre como registrar seus pensamentos ou realizar o check-in emocional, nossa equipe está pronta para ajudar.</p>
+        
+        <h3>Canais de Atendimento</h3>
+        <div class="contact-methods">
+          <div class="method"><i class="ti ti-mail"></i> <span>suporte@mindsteps.com.br</span></div>
+          <div class="method"><i class="ti ti-phone"></i> <span>(11) 98765-4321</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Loading Template -->
+<ng-template #spinner>
+  <div class="loading-container">
+    <div class="spinner"></div>
+    <p>Carregando perfil...</p>
+  </div>
+</ng-template>

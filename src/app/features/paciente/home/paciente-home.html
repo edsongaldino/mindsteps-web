@@ -1,0 +1,169 @@
+<div class="home-wrapper" *ngIf="!carregando; else spinner">
+  <!-- Top Banner / Header -->
+  <header class="dashboard-header">
+    <div class="header-left">
+      <h1>Olá, {{ resumo?.nome || 'Paciente' }}!</h1>
+      <p>Como você está se sentindo hoje?</p>
+    </div>
+    
+    <div class="header-right">
+      <div class="notification-container">
+        <button class="bell-btn" (click)="toggleNotificacoes()">
+          <i class="ti ti-bell"></i>
+          <span class="badge" *ngIf="resumo?.notificacoes?.length > 0">{{ resumo.notificacoes.length }}</span>
+        </button>
+        
+        <!-- Notifications Modal / Dropdown -->
+        <div class="notifications-dropdown" *ngIf="mostrarNotificacoes">
+          <div class="dropdown-header">
+            <h3>Notificações</h3>
+            <button class="close-dropdown-btn" (click)="toggleNotificacoes()">
+              <i class="ti ti-x"></i>
+            </button>
+          </div>
+          
+          <div class="dropdown-body">
+            <div class="empty-state" *ngIf="!resumo?.notificacoes || resumo.notificacoes.length === 0">
+              <i class="ti ti-circle-check"></i>
+              <p>Nenhuma notificação nova no momento.</p>
+            </div>
+            
+            <ul class="notification-list" *ngIf="resumo?.notificacoes?.length > 0">
+              <li class="notification-item" *ngFor="let item of resumo.notificacoes" (click)="tratarNotificacao(item)">
+                <div class="item-icon" [class.message-icon]="item.tipo === 'message'">
+                  <i class="ti" [class.ti-message-share]="item.tipo === 'message'" [class.ti-clipboard-check]="item.tipo !== 'message'"></i>
+                </div>
+                <div class="item-content">
+                  <span class="item-title">{{ item.titulo }}</span>
+                  <p class="item-body">{{ item.conteudo }}</p>
+                </div>
+                <i class="ti ti-chevron-right arrow"></i>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Daily Check-in Alert Banner -->
+  <div class="alert-banner animate-fade-in-up" *ngIf="!jaFezCheckinHoje">
+    <div class="alert-content">
+      <i class="ti ti-heart-rate-monitor alert-icon"></i>
+      <div class="alert-text">
+        <h3>Check-in diário pendente</h3>
+        <p>Registre suas emoções hoje para acumular XP e atualizar seu progresso clínico!</p>
+      </div>
+    </div>
+    <a routerLink="/paciente/checkin" class="btn-checkin-now">Fazer agora</a>
+  </div>
+
+  <!-- Gamification Card -->
+  <section class="gamification-card animate-fade-in-up">
+    <div class="card-top">
+      <div class="level-badge">
+        <div class="star-icon">
+          <i class="ti ti-star-filled"></i>
+        </div>
+        <span>Nível {{ resumo?.nivel }}</span>
+      </div>
+      <div class="xp-counter">
+        <span>{{ resumo?.pontos }} XP totais</span>
+      </div>
+    </div>
+    
+    <div class="progress-bar-container">
+      <div class="progress-bar" [style.width.%]="obterProgressoNivel() * 100"></div>
+    </div>
+    
+    <div class="card-bottom">
+      <p>Faltam {{ obterPontosRestantes() }} XP para o Nível {{ resumo?.nivel + 1 }} 🚀</p>
+    </div>
+  </section>
+
+  <!-- Motivational Message -->
+  <section class="motivational-card animate-fade-in-up" [class.unread]="resumo?.mensagemMotivacional && !resumo.mensagemMotivacional.lida">
+    <div class="msg-header">
+      <i class="ti" [class.ti-quote]="resumo?.mensagemMotivacional" [class.ti-sparkles]="!resumo?.mensagemMotivacional"></i>
+      <button class="mark-read-btn" *ngIf="resumo?.mensagemMotivacional && !resumo.mensagemMotivacional.lida" (click)="marcarMensagemLida()">
+        <i class="ti ti-check"></i> Marcar como lida
+      </button>
+    </div>
+    
+    <div class="msg-body">
+      <h2>{{ resumo?.mensagemMotivacional ? 'Recado da Dra. ' + (resumo.mensagemMotivacional.psicologoNome || 'Psicóloga') : 'Um passo de cada vez' }}</h2>
+      <p>"{{ resumo?.mensagemMotivacional ? resumo.mensagemMotivacional.conteudo : 'Hoje você não precisa resolver tudo. Respire fundo e faça o seu melhor.' }}"</p>
+    </div>
+  </section>
+
+  <!-- Stats Grid -->
+  <section class="stats-grid animate-fade-in-up">
+    <div class="stat-card stat-green">
+      <div class="stat-icon"><i class="ti ti-clipboard"></i></div>
+      <div class="stat-info">
+        <span class="value">{{ resumo?.atividades }}</span>
+        <span class="label">Atividades</span>
+      </div>
+    </div>
+    
+    <div class="stat-card stat-blue">
+      <div class="stat-icon"><i class="ti ti-circle-check"></i></div>
+      <div class="stat-info">
+        <span class="value">{{ resumo?.concluidas }}</span>
+        <span class="label">Concluídas</span>
+      </div>
+    </div>
+    
+    <div class="stat-card stat-orange">
+      <div class="stat-icon"><i class="ti ti-activity"></i></div>
+      <div class="stat-info">
+        <span class="value">{{ resumo?.checkins }}</span>
+        <span class="label">Check-ins</span>
+      </div>
+    </div>
+    
+    <div class="stat-card stat-purple">
+      <div class="stat-icon"><i class="ti ti-mood-smile"></i></div>
+      <div class="stat-info">
+        <span class="value">{{ resumo?.humorMedio }}</span>
+        <span class="label">Humor médio</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quick Actions -->
+  <section class="quick-actions animate-fade-in-up">
+    <h2>Ações Rápidas</h2>
+    <div class="action-buttons">
+      <a routerLink="/paciente/rpd" class="action-btn action-rpd">
+        <div class="btn-icon">
+          <i class="ti ti-brain"></i>
+        </div>
+        <div class="btn-text">
+          <h3>Registrar pensamento (TCC)</h3>
+          <p>Identifique e desafie pensamentos automáticos</p>
+        </div>
+        <i class="ti ti-arrow-right arrow"></i>
+      </a>
+      
+      <a routerLink="/paciente/checkin" class="action-btn action-checkin">
+        <div class="btn-icon">
+          <i class="ti ti-heart-rate-monitor"></i>
+        </div>
+        <div class="btn-text">
+          <h3>Fazer check-in emocional</h3>
+          <p>Registre seu humor e sentimentos de hoje</p>
+        </div>
+        <i class="ti ti-arrow-right arrow"></i>
+      </a>
+    </div>
+  </section>
+</div>
+
+<!-- Loading Spinner -->
+<ng-template #spinner>
+  <div class="loading-container">
+    <div class="spinner"></div>
+    <p>Carregando seu painel...</p>
+  </div>
+</ng-template>

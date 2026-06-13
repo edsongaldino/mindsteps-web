@@ -1,0 +1,246 @@
+.atividades-wrapper {
+  max-width: 800px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+/* Header */
+.atividades-header {
+  h1 {
+    font-size: 28px;
+    font-weight: 900;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  
+  p {
+    font-size: 14px;
+    color: var(--text-light);
+    font-weight: 500;
+  }
+}
+
+/* Filter Chips */
+.filters-section {
+  overflow-x: auto;
+  padding-bottom: 4px;
+  
+  &::-webkit-scrollbar {
+    height: 4px;
+  }
+}
+
+.filter-chips {
+  display: flex;
+  gap: 10px;
+  white-space: nowrap;
+}
+
+.chip-btn {
+  background: var(--card);
+  border: 1px solid var(--border);
+  color: var(--text-light);
+  font-weight: 600;
+  font-size: 13px;
+  padding: 10px 20px;
+  border-radius: 20px;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  
+  span {
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 700;
+  }
+  
+  &:hover:not(.active) {
+    background: var(--soft-blue);
+    border-color: var(--muted);
+  }
+  
+  &.active {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: white;
+    box-shadow: 0 4px 10px rgba(27, 54, 93, 0.15);
+    
+    span {
+      color: rgba(255, 255, 255, 0.8);
+    }
+  }
+}
+
+/* Activities Cards List */
+.list-section {
+  .empty-state {
+    padding: 60px 20px;
+    text-align: center;
+    color: var(--muted);
+    background: var(--card);
+    border: 1px dashed var(--border);
+    border-radius: var(--radius-md);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    
+    i {
+      font-size: 40px;
+      color: var(--muted);
+    }
+    
+    p {
+      font-size: 14px;
+      font-weight: 500;
+    }
+  }
+}
+
+.activities-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.activity-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  transition: var(--transition);
+  
+  &:hover:not(.concluida) {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--primary);
+  }
+  
+  &.concluida {
+    cursor: default;
+    opacity: 0.85;
+    background: rgba(230, 245, 242, 0.2);
+    border-color: var(--soft-green);
+  }
+  
+  @media (max-width: 576px) {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+}
+
+.card-left {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-grow: 1;
+  overflow: hidden;
+  
+  .activity-icon-container {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--soft-blue);
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+  
+  .activity-details {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    overflow: hidden;
+    
+    h3 {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--text);
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+    
+    p {
+      font-size: 12px;
+      color: var(--text-light);
+      line-height: 1.4;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+  }
+}
+
+/* Alternate colors for icon backgrounds */
+.activities-list .activity-card:nth-child(5n+1) .activity-icon-container { background: var(--soft-purple); color: #7b2cbf; }
+.activities-list .activity-card:nth-child(5n+2) .activity-icon-container { background: var(--soft-green); color: var(--secondary); }
+.activities-list .activity-card:nth-child(5n+3) .activity-icon-container { background: var(--soft-orange); color: var(--warning); }
+.activities-list .activity-card:nth-child(5n+4) .activity-icon-container { background: var(--soft-blue); color: var(--primary); }
+.activities-list .activity-card:nth-child(5n+5) .activity-icon-container { background: #ffe5e5; color: var(--danger); }
+
+/* Badges */
+.card-right {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.status-badge {
+  font-size: 12px;
+  font-weight: 800;
+  padding: 8px 16px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.badge-done {
+  background: var(--soft-green);
+  color: var(--secondary);
+}
+
+.badge-pending {
+  background: var(--soft-blue);
+  color: var(--primary);
+}
+
+/* Spinner */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  gap: 16px;
+  color: var(--text-light);
+  font-weight: 600;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid var(--border);
+  border-top: 4px solid var(--primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

@@ -1,0 +1,77 @@
+<div class="shell-container">
+  <!-- Sidebar Navigation - Only shown on Desktop -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">
+        <img src="/logo.png" alt="MindSteps" class="logo-img">
+      </div>
+    </div>
+    
+    <nav class="sidebar-menu">
+      <a routerLink="/paciente/home" class="menu-item" [class.active]="isActive('/paciente/home')">
+        <i class="ti ti-home"></i>
+        <span>Início</span>
+      </a>
+      <a routerLink="/paciente/atividades" class="menu-item" [class.active]="isActive('/paciente/atividades')">
+        <i class="ti ti-clipboard-list"></i>
+        <span>Atividades</span>
+      </a>
+      <a routerLink="/paciente/progresso" class="menu-item" [class.active]="isActive('/paciente/progresso')">
+        <i class="ti ti-chart-bar"></i>
+        <span>Progresso</span>
+      </a>
+      <a routerLink="/paciente/perfil" class="menu-item" [class.active]="isActive('/paciente/perfil')">
+        <i class="ti ti-user"></i>
+        <span>Perfil</span>
+      </a>
+    </nav>
+    
+    <div class="sidebar-footer">
+      <div class="user-pill">
+        <div class="avatar">{{ patientName.substring(0, 1) || 'P' }}</div>
+        <div class="user-info">
+          <span class="user-name">{{ patientName }}</span>
+          <span class="user-level">Nível {{ patientLevel }}</span>
+        </div>
+      </div>
+      <button class="logout-btn" (click)="logout()" title="Sair da conta">
+        <i class="ti ti-logout"></i>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Mobile Header - Only shown on Mobile -->
+  <header class="mobile-header">
+    <div class="logo">
+      <img src="/logo.png" alt="MindSteps" class="logo-img">
+    </div>
+    <a routerLink="/paciente/perfil" class="mobile-avatar-link">
+      <div class="mobile-avatar">{{ patientName.substring(0, 1) || 'P' }}</div>
+    </a>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="main-content">
+    <router-outlet></router-outlet>
+  </main>
+
+  <!-- Mobile Bottom Navigation - Only shown on Mobile -->
+  <nav class="mobile-nav">
+    <a routerLink="/paciente/home" class="mobile-nav-item" [class.active]="isActive('/paciente/home')">
+      <i class="ti ti-home"></i>
+      <span>Início</span>
+    </a>
+    <a routerLink="/paciente/atividades" class="mobile-nav-item" [class.active]="isActive('/paciente/atividades')">
+      <i class="ti ti-clipboard-list"></i>
+      <span>Atividades</span>
+    </a>
+    <a routerLink="/paciente/progresso" class="mobile-nav-item" [class.active]="isActive('/paciente/progresso')">
+      <i class="ti ti-chart-bar"></i>
+      <span>Progresso</span>
+    </a>
+    <a routerLink="/paciente/perfil" class="mobile-nav-item" [class.active]="isActive('/paciente/perfil')">
+      <i class="ti ti-user"></i>
+      <span>Perfil</span>
+    </a>
+  </nav>
+</div>

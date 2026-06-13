@@ -1,0 +1,108 @@
+<div class="rpd-container animate-fade-in-up" *ngIf="!sucesso; else successState">
+  <header class="rpd-header">
+    <div class="header-text">
+      <h1>Registro de Pensamento</h1>
+      <p *ngIf="etapa === 1">Identifique a situação e seus sentimentos automáticos.</p>
+      <p *ngIf="etapa === 2">Encontre novas formas mais realistas de interpretar os fatos.</p>
+    </div>
+    
+    <div class="steps-indicator">
+      <span class="step-badge" [class.active]="etapa === 1">1</span>
+      <div class="step-line"></div>
+      <span class="step-badge" [class.active]="etapa === 2">2</span>
+    </div>
+  </header>
+
+  <!-- STEP 1 FORM -->
+  <form class="rpd-form" *ngIf="etapa === 1" (ngSubmit)="avancar()">
+    <div class="form-group">
+      <label for="situacao">O que aconteceu? (Situação)</label>
+      <span class="field-desc">Descreva brevemente o evento (onde estava, o que fazia, com quem).</span>
+      <textarea id="situacao" name="situacao" rows="3" [(ngModel)]="situacao" required
+                placeholder="Ex: Estava apresentando meu projeto na reunião de equipe e um colega mexeu no celular..."></textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="pensamento">Que pensamento passou pela sua cabeça?</label>
+      <span class="field-desc">O pensamento automático ou interpretação que gerou desconforto.</span>
+      <textarea id="pensamento" name="pensamentoAutomatico" rows="3" [(ngModel)]="pensamentoAutomatico" required
+                placeholder="Ex: Ele achou minha apresentação péssima e desinteressante. Sou incompetente."></textarea>
+    </div>
+
+    <div class="form-group-row">
+      <div class="form-group flex-2">
+        <label for="emocao">Qual emoção sentiu?</label>
+        <span class="field-desc">Identifique a emoção (ex: Ansiedade, Raiva, Tristeza).</span>
+        <input type="text" id="emocao" name="emocao" [(ngModel)]="emocao" required
+               placeholder="Ex: Ansiedade">
+      </div>
+      
+      <div class="form-group flex-1">
+        <label>Intensidade: {{ intensidadeEmocao }}</label>
+        <span class="field-desc">Nota de 0 a 10.</span>
+        <div class="slider-wrapper">
+          <input type="range" name="intensidadeEmocao" min="0" max="10" step="1" [(ngModel)]="intensidadeEmocao">
+        </div>
+      </div>
+    </div>
+
+    <footer class="form-footer">
+      <a routerLink="/paciente/home" class="btn-outline btn-cancel">Cancelar</a>
+      <button type="submit" class="btn-primary" [disabled]="!podeAvancarEtapa1()">
+        Avançar <i class="ti ti-arrow-right"></i>
+      </button>
+    </footer>
+  </form>
+
+  <!-- STEP 2 FORM -->
+  <form class="rpd-form" *ngIf="etapa === 2" (ngSubmit)="salvarRegistro()">
+    <div class="form-group">
+      <label for="favor">Evidências a favor</label>
+      <span class="field-desc">O que confirma que o pensamento automático é verdade? (Fatos, não opiniões).</span>
+      <textarea id="favor" name="evidenciasAFavor" rows="2" [(ngModel)]="evidenciasAFavor" required
+                placeholder="Ex: Ele realmente desviou o olhar e usou o telefone por alguns minutos."></textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="contra">Evidências contra</label>
+      <span class="field-desc">O que contradiz ou questiona o pensamento automático? (Fatos alternativos).</span>
+      <textarea id="contra" name="evidenciasContra" rows="2" [(ngModel)]="evidenciasContra" required
+                placeholder="Ex: Ele anotou sugestões depois; a apresentação durou 40 minutos e ele usou o celular por 1 minuto; as outras pessoas estavam atentas."></textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="alternativo">Pensamento Alternativo</label>
+      <span class="field-desc">Uma interpretação mais realista e menos catastrófica para a situação.</span>
+      <textarea id="alternativo" name="pensamentoAlternativo" rows="3" [(ngModel)]="pensamentoAlternativo" required
+                placeholder="Ex: Ele pode ter recebido uma mensagem urgente. O fato dele usar o celular por instantes não define a qualidade do meu projeto."></textarea>
+    </div>
+
+    <div class="form-group">
+      <label>Qual a intensidade final da emoção? (0-10): {{ intensidadeFinal }}</label>
+      <div class="slider-wrapper">
+        <input type="range" name="intensidadeFinal" min="0" max="10" step="1" [(ngModel)]="intensidadeFinal">
+      </div>
+    </div>
+
+    <footer class="form-footer">
+      <button type="button" class="btn-outline" (click)="voltar()">
+        <i class="ti ti-arrow-left"></i> Voltar
+      </button>
+      <button type="submit" class="btn-secondary" [disabled]="!podeSalvar() || salvando">
+        <span *ngIf="!salvando">Salvar Registro</span>
+        <div class="spinner-small" *ngIf="salvando"></div>
+      </button>
+    </footer>
+  </form>
+</div>
+
+<!-- Success View Overlay -->
+<ng-template #successState>
+  <div class="success-container animate-scale-in">
+    <div class="success-icon-wrapper">
+      <i class="ti ti-trophy"></i>
+    </div>
+    <h2>Pensamento Reestruturado!</h2>
+    <p>Excelente trabalho! Desafiar seus pensamentos automáticos é o caminho para o bem-estar cognitivo.</p>
+  </div>
+</ng-template>

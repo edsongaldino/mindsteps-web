@@ -1,0 +1,566 @@
+.progresso-wrapper {
+  max-width: 800px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+/* Header */
+.progresso-header {
+  h1 {
+    font-size: 28px;
+    font-weight: 900;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  
+  p {
+    font-size: 14px;
+    color: var(--text-light);
+    font-weight: 500;
+  }
+}
+
+/* Tab Navigation */
+.progresso-tabs {
+  display: flex;
+  border-bottom: 1.5px solid var(--border);
+  gap: 16px;
+  
+  .tab-btn {
+    background: transparent;
+    color: var(--muted);
+    font-weight: 700;
+    font-size: 15px;
+    padding: 16px 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 3.5px solid transparent;
+    border-radius: 0;
+    transition: var(--transition);
+    
+    i {
+      font-size: 18px;
+    }
+    
+    &:hover {
+      color: var(--primary);
+    }
+    
+    &.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+    }
+  }
+}
+
+/* Tab Content Titles */
+.section-title {
+  margin-bottom: 24px;
+  
+  h2 {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--text);
+    margin-bottom: 2px;
+  }
+  
+  p {
+    font-size: 12px;
+    color: var(--text-light);
+    font-weight: 500;
+  }
+}
+
+/* --- TAB 1: CLINICO --- */
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.metric-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 24px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  transition: var(--transition);
+  
+  &:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+  }
+  
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    
+    .icon-wrap {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+    
+    h3 {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--text);
+    }
+  }
+}
+
+/* Category Accent Borders & Backgrounds */
+.border-red { border-left: 4px solid var(--danger); }
+.border-pink { border-left: 4px solid #ec4899; }
+.border-blue { border-left: 4px solid var(--primary); }
+.border-orange { border-left: 4px solid var(--warning); }
+.border-yellow { border-left: 4px solid #ffd166; }
+.border-purple { border-left: 4px solid #7b2cbf; }
+
+.bg-red { background: #ffe5e5; color: var(--danger); }
+.bg-pink { background: #ffe5f2; color: #ec4899; }
+.bg-blue { background: var(--soft-blue); color: var(--primary); }
+.bg-orange { background: var(--soft-orange); color: var(--warning); }
+.bg-yellow { background: #fffbeb; color: #b45309; }
+.bg-purple { background: var(--soft-purple); color: #7b2cbf; }
+
+.card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  
+  .info-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 13px;
+    
+    .label {
+      color: var(--text-light);
+      font-weight: 500;
+    }
+    
+    .value {
+      font-weight: 800;
+      color: var(--text);
+    }
+    
+    .highlight-purple {
+      color: #7b2cbf;
+    }
+  }
+  
+  .sub-label {
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--muted);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+  
+  .empty-text {
+    font-size: 12px;
+    color: var(--muted);
+    font-style: italic;
+  }
+}
+
+/* Lists styling inside clinical cards */
+.crencas-list, .gatilhos-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  
+  li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    
+    .crenca-text {
+      font-style: italic;
+      color: var(--text);
+      font-weight: 500;
+    }
+    
+    .crenca-count, .gatilho-count {
+      font-weight: 800;
+      color: var(--primary);
+    }
+  }
+}
+
+/* Social responses bar charts */
+.social-progress-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.progress-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  
+  .item-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-light);
+  }
+}
+
+.progress-bar-wrap {
+  height: 6px;
+  background: var(--border);
+  border-radius: 3px;
+  overflow: hidden;
+  
+  .bar {
+    height: 100%;
+    border-radius: 3px;
+  }
+}
+
+.bg-green { background: var(--success); }
+.green-text { color: var(--success); }
+.orange-text { color: var(--warning); }
+.red-text { color: var(--danger); }
+.blue-text { color: #2e86de; }
+
+/* --- TAB 2: HUMOR --- */
+.chart-container {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 24px;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 32px;
+}
+
+.chart-wrapper {
+  display: flex;
+  gap: 16px;
+  
+  .y-axis {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 160px; /* aligns with SVG */
+    padding: 20px 0;
+    font-size: 20px;
+    
+    .emoji-green { color: var(--success); }
+    .emoji-blue { color: #2e86de; }
+    .emoji-orange { color: var(--warning); }
+    .emoji-red { color: var(--danger); }
+  }
+}
+
+.svg-area {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  
+  svg {
+    width: 100%;
+    height: 160px;
+  }
+  
+  .x-axis {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 40px 0 40px; /* lines up with paddingX in TS points */
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--muted);
+  }
+}
+
+.empty-chart {
+  background: var(--card);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-md);
+  padding: 60px 20px;
+  text-align: center;
+  color: var(--muted);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 32px;
+  
+  i {
+    font-size: 40px;
+  }
+}
+
+.emotion-summary {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 24px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.emotion-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.progresso-emocao-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  
+  .item-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text);
+  }
+}
+
+/* --- TAB 3: XP & CONQUISTAS --- */
+.xp-trophy-banner {
+  background: linear-gradient(135deg, #11998e, #38ef7d);
+  border-radius: var(--radius-md);
+  padding: 20px 24px;
+  color: white;
+  box-shadow: 0 8px 20px rgba(17, 153, 142, 0.2);
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 24px;
+  
+  .badge-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    color: #ffd166;
+  }
+  
+  .banner-info {
+    h3 {
+      font-size: 16px;
+      font-weight: 900;
+      margin-bottom: 2px;
+    }
+    p {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.85);
+      font-weight: 600;
+    }
+  }
+}
+
+.xp-details-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 24px;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 32px;
+  
+  h3 {
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--text);
+    margin-bottom: 20px;
+  }
+}
+
+.xp-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.xp-detail-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  
+  .row-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    
+    .icon-wrap {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+    
+    .row-desc {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      
+      .title {
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--text);
+      }
+      
+      .sub {
+        font-size: 11px;
+        color: var(--muted);
+        font-weight: 500;
+      }
+    }
+  }
+  
+  .xp-val {
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--primary);
+  }
+}
+
+.history-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  
+  h2 {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--text);
+  }
+  
+  .empty-state {
+    text-align: center;
+    color: var(--muted);
+    padding: 40px 20px;
+    background: var(--card);
+    border: 1px dashed var(--border);
+    border-radius: var(--radius-md);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    
+    i {
+      font-size: 32px;
+    }
+    p {
+      font-size: 13px;
+    }
+  }
+}
+
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.history-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: var(--shadow-sm);
+  
+  .card-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    
+    .icon-wrap {
+      font-size: 20px;
+      color: var(--secondary);
+      display: flex;
+    }
+    
+    .desc {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      
+      h4 {
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--text);
+      }
+      
+      p {
+        font-size: 10px;
+        color: var(--muted);
+        font-weight: 500;
+      }
+    }
+  }
+  
+  .card-right {
+    .xp-pill {
+      background: linear-gradient(135deg, #8E2DE2, #4A00E0);
+      color: white;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 6px 14px;
+      border-radius: 12px;
+    }
+  }
+}
+
+/* Spinner container */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  gap: 16px;
+  color: var(--text-light);
+  font-weight: 600;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid var(--border);
+  border-top: 4px solid var(--primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

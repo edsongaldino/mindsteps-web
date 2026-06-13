@@ -1,0 +1,89 @@
+<div class="checkin-container animate-fade-in-up" *ngIf="!sucesso; else successState">
+  <header class="checkin-header">
+    <div class="header-text">
+      <h1>Check-in de hoje</h1>
+      <p>Como você está se sentindo agora?</p>
+    </div>
+    <a routerLink="/paciente/home" class="btn-close">
+      <i class="ti ti-x"></i>
+    </a>
+  </header>
+
+  <!-- Emoji Picker Section -->
+  <section class="emoji-section">
+    <div class="emoji-grid">
+      <button type="button" class="emoji-btn emoji-sad" [class.selected]="humor === 1" (click)="selecionarHumor(1)">
+        <div class="emoji-icon">
+          <i class="ti ti-mood-sad"></i>
+        </div>
+        <span class="emoji-label">Ruim</span>
+      </button>
+
+      <button type="button" class="emoji-btn emoji-neutral" [class.selected]="humor === 2" (click)="selecionarHumor(2)">
+        <div class="emoji-icon">
+          <i class="ti ti-mood-neutral"></i>
+        </div>
+        <span class="emoji-label">Regular</span>
+      </button>
+
+      <button type="button" class="emoji-btn emoji-good" [class.selected]="humor === 3" (click)="selecionarHumor(3)">
+        <div class="emoji-icon">
+          <i class="ti ti-mood-smile"></i>
+        </div>
+        <span class="emoji-label">Bom</span>
+      </button>
+
+      <button type="button" class="emoji-btn emoji-happy" [class.selected]="humor === 4" (click)="selecionarHumor(4)">
+        <div class="emoji-icon">
+          <i class="ti ti-mood-happy"></i>
+        </div>
+        <span class="emoji-label">Ótimo</span>
+      </button>
+
+      <button type="button" class="emoji-btn emoji-loved" [class.selected]="humor === 5" (click)="selecionarHumor(5)">
+        <div class="emoji-icon">
+          <i class="ti ti-heart"></i>
+        </div>
+        <span class="emoji-label">Excelente</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- Principal Emotion Selection -->
+  <section class="emotion-section">
+    <h2>Qual a emoção principal?</h2>
+    <div class="tags-grid">
+      <button type="button" class="tag-btn" 
+              *ngFor="let emo of emocoes" 
+              [class.selected]="emocaoPrincipal === emo" 
+              (click)="selecionarEmocao(emo)">
+        {{ emo }}
+      </button>
+    </div>
+  </section>
+
+  <!-- Optional Observations -->
+  <section class="notes-section">
+    <h2>Quer adicionar alguma anotação? <span>(Opcional)</span></h2>
+    <textarea rows="4" [(ngModel)]="observacao" placeholder="Opcional: Descreva o que motivou este sentimento ou anote algo marcante do seu dia..."></textarea>
+  </section>
+
+  <!-- Bottom Action Button -->
+  <footer class="checkin-footer">
+    <button type="button" class="btn-secondary btn-submit" [disabled]="salvando" (click)="salvarCheckin()">
+      <span *ngIf="!salvando">Salvar Check-in</span>
+      <div class="spinner-small" *ngIf="salvando"></div>
+    </button>
+  </footer>
+</div>
+
+<!-- Success State View -->
+<ng-template #successState>
+  <div class="success-container animate-scale-in">
+    <div class="success-icon-wrapper">
+      <i class="ti ti-circle-check"></i>
+    </div>
+    <h2>Check-in Realizado!</h2>
+    <p>Seu registro de humor foi salvo com sucesso. Continue cuidando de você!</p>
+  </div>
+</ng-template>

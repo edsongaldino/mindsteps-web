@@ -1,0 +1,63 @@
+<div class="atividades-wrapper animate-fade-in-up" *ngIf="!carregando; else spinner">
+  <header class="atividades-header">
+    <h1>Atividades da semana</h1>
+    <p>Acompanhe e realize os exercícios propostos pelo seu psicólogo.</p>
+  </header>
+
+  <!-- Filter chips -->
+  <section class="filters-section">
+    <div class="filter-chips">
+      <button type="button" class="chip-btn" [class.active]="filtroAtual === 'todas'" (click)="setFiltro('todas')">
+        Todas <span>({{ obterContagem('todas') }})</span>
+      </button>
+      <button type="button" class="chip-btn" [class.active]="filtroAtual === 'pendentes'" (click)="setFiltro('pendentes')">
+        Pendentes <span>({{ obterContagem('pendentes') }})</span>
+      </button>
+      <button type="button" class="chip-btn" [class.active]="filtroAtual === 'concluidas'" (click)="setFiltro('concluidas')">
+        Concluídas <span>({{ obterContagem('concluidas') }})</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- Activities Cards List -->
+  <section class="list-section">
+    <div class="empty-state" *ngIf="atividadesFiltradas.length === 0">
+      <i class="ti ti-clipboard-x"></i>
+      <p>Nenhuma atividade encontrada para esta categoria.</p>
+    </div>
+
+    <div class="activities-list" *ngIf="atividadesFiltradas.length > 0">
+      <div class="activity-card" 
+           *ngFor="let ativ of atividadesFiltradas; let i = index"
+           [class.concluida]="estaConcluida(ativ.status)"
+           (click)="abrirAtividade(ativ)">
+        
+        <div class="card-left">
+          <div class="activity-icon-container">
+            <i class="ti" [class]="obterIconeAtividade(ativ.atividade?.tipo ?? ativ.tipo ?? 1, i)"></i>
+          </div>
+          
+          <div class="activity-details">
+            <h3>{{ ativ.atividade?.titulo || ativ.titulo || 'Atividade' }}</h3>
+            <p>{{ ativ.atividade?.descricao || ativ.descricao || 'Sem descrição.' }}</p>
+          </div>
+        </div>
+
+        <div class="card-right">
+          <span class="status-badge" [class.badge-done]="estaConcluida(ativ.status)" [class.badge-pending]="!estaConcluida(ativ.status)">
+            <i class="ti" [class.ti-check]="estaConcluida(ativ.status)" [class.ti-clock]="!estaConcluida(ativ.status)"></i>
+            {{ obterStatusTexto(ativ.status) }}
+          </span>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- Loading Template -->
+<ng-template #spinner>
+  <div class="loading-container">
+    <div class="spinner"></div>
+    <p>Carregando atividades...</p>
+  </div>
+</ng-template>

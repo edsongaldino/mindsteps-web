@@ -1,17 +1,39 @@
-<div class="login-container">
-  <h2>Login Painel</h2>
-  <form (ngSubmit)="login()">
-    <div>
-      <label for="email">E-mail</label>
-      <input type="email" [(ngModel)]="email" name="email" required>
+<div class="login-page">
+  <div class="login-card animate-scale-in">
+    <div class="login-header">
+      <div class="logo">
+        <img src="/logo.png" alt="MindSteps" class="logo-img">
+      </div>
+      <h2>Bem-vindo de volta!</h2>
+      <p>Acesse sua conta para continuar sua jornada.</p>
     </div>
-    <div>
-      <label for="senha">Senha</label>
-      <input type="password" [(ngModel)]="senha" name="senha" required>
-    </div>
-    <div *ngIf="errorMessage" class="error-message">
-      {{ errorMessage }}
-    </div>
-    <button type="submit">Entrar</button>
-  </form>
+
+    <form (ngSubmit)="login()" class="login-form">
+      <div class="form-group">
+        <label for="email">E-mail</label>
+        <div class="input-wrapper">
+          <i class="ti ti-mail input-icon"></i>
+          <input type="email" id="email" [(ngModel)]="email" name="email" required placeholder="Ex: paciente@email.com">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="senha">Senha</label>
+        <div class="input-wrapper">
+          <i class="ti ti-lock input-icon"></i>
+          <input type="password" id="senha" [(ngModel)]="senha" name="senha" required placeholder="Digite sua senha">
+        </div>
+      </div>
+
+      <div *ngIf="errorMessage" class="error-banner animate-fade-in">
+        <i class="ti ti-alert-triangle"></i>
+        <span>{{ errorMessage }}</span>
+      </div>
+
+      <button type="submit" class="btn-primary login-btn" [disabled]="carregando || email.trim() === '' || senha.trim() === ''">
+        <span *ngIf="!carregando">Entrar na Conta</span>
+        <div class="spinner-small" *ngIf="carregando"></div>
+      </button>
+    </form>
+  </div>
 </div>

@@ -1,0 +1,287 @@
+<div class="responder-container animate-fade-in-up" *ngIf="!carregando; else spinner">
+  <div class="main-flow" *ngIf="!sucesso; else successState">
+    <!-- Header -->
+    <header class="responder-header">
+      <div class="header-left">
+        <a routerLink="/paciente/atividades" class="btn-back">
+          <i class="ti ti-arrow-left"></i>
+        </a>
+        <h1>{{ ativ?.atividade?.titulo || ativ?.titulo || 'Atividade' }}</h1>
+      </div>
+      <div class="header-right">
+        <span class="step-num">Atividade</span>
+      </div>
+    </header>
+
+    <div class="responder-body">
+      <!-- Description -->
+      <p class="description" *ngIf="nomeJogo !== 'Memória Tática' || taticaEtapa === 0">
+        {{ ativ?.atividade?.descricao || ativ?.descricao || 'Realize o exercício recomendado.' }}
+      </p>
+
+      <!-- TYPE 4: CHECKLIST -->
+      <section class="checklist-section" *ngIf="ativ?.atividade?.tipo === 4 || ativ?.tipo === 4">
+        <h2>Marque os itens realizados</h2>
+        <div class="checklist-grid">
+          <label class="check-item" *ngFor="let item of perguntas; let i = index" [class.checked]="checklistStatus[i]">
+            <input type="checkbox" [(ngModel)]="checklistStatus[i]">
+            <span class="checkmark"></span>
+            <span class="item-text">{{ item }}</span>
+          </label>
+        </div>
+      </section>
+
+      <!-- TYPE 7: COGNITIVE GAMES -->
+      <section class="game-section" *ngIf="ativ?.atividade?.tipo === 7 || ativ?.tipo === 7">
+        
+        <!-- GAME A: DETETIVE DOS PENSAMENTOS -->
+        <div class="detetive-game" *ngIf="nomeJogo === 'Detetive dos Pensamentos'">
+          <!-- Header XP Bar -->
+          <div class="game-xp-header">
+            <div class="badge-icon"><i class="ti ti-search"></i></div>
+            <div class="xp-info">
+              <span class="level-title">Nível 2 - Investigador</span>
+              <div class="mini-bar-container">
+                <div class="mini-bar" style="width: 60%"></div>
+              </div>
+            </div>
+            <span class="xp-val">120/200 XP</span>
+          </div>
+
+          <!-- Etapa 1 -->
+          <div class="detetive-step animate-fade-in" *ngIf="detetiveEtapa === 1">
+            <div class="scenario-card">
+              <span class="card-tag">SITUAÇÃO</span>
+              <h3>"Seu amigo visualizou sua mensagem e não respondeu."</h3>
+            </div>
+            
+            <div class="options-container">
+              <h2>Que pensamento passou pela sua cabeça?</h2>
+              <div class="options-list">
+                <button type="button" class="option-btn" 
+                        *ngFor="let p of detetivePensamentos"
+                        [class.selected]="detetivePensamentoEscolhido === p"
+                        (click)="detetivePensamentoEscolhido = p">
+                  <i class="ti" [class.ti-circle]="detetivePensamentoEscolhido !== p" [class.ti-circle-check-filled]="detetivePensamentoEscolhido === p"></i>
+                  <span>{{ p }}</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Etapa 2 -->
+          <div class="detetive-step animate-fade-in" *ngIf="detetiveEtapa === 2">
+            <div class="options-container">
+              <h2>Qual emoção esse pensamento te traz?</h2>
+              <div class="chip-options">
+                <button type="button" class="chip-btn"
+                        *ngFor="let e of detetiveEmocoes"
+                        [class.selected]="detetiveEmocaoEscolhida === e"
+                        (click)="detetiveEmocaoEscolhida = e">
+                  {{ e }}
+                </button>
+              </div>
+            </div>
+
+            <div class="slider-container">
+              <h2>Qual a intensidade dessa emoção? (0-10): <span>{{ detetiveIntensidade }}</span></h2>
+              <div class="slider-wrapper">
+                <input type="range" min="1" max="10" step="1" [(ngModel)]="detetiveIntensidade">
+              </div>
+            </div>
+          </div>
+
+          <!-- Etapa 3 -->
+          <div class="detetive-step animate-fade-in" *ngIf="detetiveEtapa === 3">
+            <div class="textarea-container">
+              <h2>Reestruturação Cognitiva</h2>
+              <p class="section-desc">Pense em um pensamento alternativo mais realista e menos catastrófico para a situação:</p>
+              <textarea rows="4" [(ngModel)]="detetiveRestruturacao" placeholder="Ex: Talvez ele esteja ocupado ou sem bateria. Ele costuma responder quando pode..."></textarea>
+            </div>
+          </div>
+
+          <!-- Detetive buttons -->
+          <div class="detetive-footer">
+            <button type="button" class="btn-primary" 
+                    *ngIf="detetiveEtapa < 3" 
+                    [disabled]="(detetiveEtapa === 1 && !detetivePensamentoEscolhido) || (detetiveEtapa === 2 && !detetiveEmocaoEscolhida)" 
+                    (click)="detetiveAvancarEtapa()">
+              Próximo
+            </button>
+            <button type="button" class="btn-secondary" 
+                    *ngIf="detetiveEtapa === 3" 
+                    [disabled]="detetiveRestruturacao.trim() === '' || salvando"
+                    (click)="detetiveFinalizar()">
+              <span *ngIf="!salvando">Finalizar Desafio</span>
+              <div class="spinner-small" *ngIf="salvando"></div>
+            </button>
+          </div>
+        </div>
+
+        <!-- GAME B: MEMÓRIA TÁTICA -->
+        <div class="tatica-game" *ngIf="nomeJogo === 'Memória Tática'">
+          <!-- Etapa 0: Intro -->
+          <div class="tatica-step tatica-intro animate-fade-in" *ngIf="taticaEtapa === 0">
+            <div class="badge-tag">MEMÓRIA OPERACIONAL</div>
+            <div class="rules-card">
+              <i class="ti ti-eye rules-icon"></i>
+              <h3>Como jogar:</h3>
+              <ol>
+                <li>Memorize a grade de arquivos por alguns segundos.</li>
+                <li>Um dos arquivos irá sumir da grade e aparecerá como "?".</li>
+                <li>Indique qual foi o arquivo removido.</li>
+              </ol>
+            </div>
+            <button type="button" class="btn-secondary start-btn" (click)="taticaIniciar()">Entrar no Servidor</button>
+          </div>
+
+          <!-- Etapa 1: Memorizar -->
+          <div class="tatica-step tatica-memorize animate-fade-in" *ngIf="taticaEtapa === 1">
+            <h2>MEMORIZE OS ARQUIVOS</h2>
+            <p class="countdown">Preste muita atenção. Sumindo em {{ taticaSegundosRestantes }}s...</p>
+            
+            <div class="tatica-grid">
+              <div class="tatica-card" *ngFor="let item of taticaItensAtivos">
+                <i class="ti" [class]="item.icone"></i>
+                <span>{{ item.nome }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Etapa 2: Identificar -->
+          <div class="tatica-step tatica-identify animate-fade-in" *ngIf="taticaEtapa === 2">
+            <h2>QUAL ARQUIVO SUMIU?</h2>
+            <p class="section-desc">Selecione a opção correta abaixo.</p>
+
+            <div class="tatica-grid select-mode">
+              <div class="tatica-card" *ngFor="let item of taticaItensAtivos" [class.sumido]="item.nome === taticaArquivoSumido">
+                <i class="ti" [class]="item.nome === taticaArquivoSumido ? 'ti-help' : item.icone"></i>
+                <span>{{ item.nome === taticaArquivoSumido ? '?' : item.nome }}</span>
+              </div>
+            </div>
+
+            <div class="options-container">
+              <h3>Escolha a sua resposta:</h3>
+              <div class="tags-grid">
+                <button type="button" class="tag-btn"
+                        *ngFor="let f of taticaArquivos"
+                        [class.selected]="taticaArquivoSelecionado === f.nome"
+                        (click)="taticaResponder(f.nome)">
+                  {{ f.nome }}
+                </button>
+              </div>
+            </div>
+
+            <button type="button" class="btn-secondary submit-btn" [disabled]="taticaArquivoSelecionado === '' || salvando" (click)="taticaFinalizar()">
+              <span *ngIf="!salvando">Enviar Resposta</span>
+              <div class="spinner-small" *ngIf="salvando"></div>
+            </button>
+          </div>
+
+          <!-- Etapa 3: Resultado -->
+          <div class="tatica-step tatica-result animate-scale-in" *ngIf="taticaEtapa === 3">
+            <div class="result-icon-wrapper" [class.success]="taticaAcertou" [class.error]="!taticaAcertou">
+              <i class="ti" [class.ti-check]="taticaAcertou" [class.ti-x]="!taticaAcertou"></i>
+            </div>
+            <h2>{{ taticaAcertou ? 'Acurácia: 100%' : 'Mais atenção na próxima!' }}</h2>
+            <p class="result-text" *ngIf="taticaAcertou">
+              Excelente! Você registrou o sumiço do arquivo "{{ taticaArquivoSumido }}" perfeitamente na sua memória.
+            </p>
+            <p class="result-text" *ngIf="!taticaAcertou">
+              O arquivo que sumiu era o "{{ taticaArquivoSumido }}", mas você selecionou "{{ taticaArquivoSelecionado }}". Tente se concentrar nos detalhes visuais da próxima vez.
+            </p>
+            <button type="button" class="btn-primary" (click)="salvar()">Concluir Atividade</button>
+          </div>
+        </div>
+
+        <!-- GAME C: JOGO DE MEMÓRIA (STANDARD FALLBACK) -->
+        <div class="memoria-game" *ngIf="nomeJogo !== 'Detetive dos Pensamentos' && nomeJogo !== 'Memória Tática'">
+          <!-- Status Panel -->
+          <div class="status-panel">
+            <div class="stat-pill"><i class="ti ti-clock"></i> {{ obterTempoFormatado() }}</div>
+            <div class="stat-pill"><i class="ti ti-arrows-left-right"></i> Jogadas: {{ movimentos }}</div>
+            <div class="level-tag">{{ dificuldadeEfetiva }}</div>
+          </div>
+
+          <!-- Cards Grid -->
+          <div class="cards-grid" [style.grid-template-columns]="'repeat(' + (cartas.length <= 8 ? 2 : cartas.length <= 12 ? 3 : 4) + ', 1fr)'">
+            <div class="card-item" 
+                 *ngFor="let c of cartas; let idx = index"
+                 [class.flipped]="c.revelada || c.combinada"
+                 [class.matched]="c.combinada"
+                 (click)="selecionarCarta(idx)">
+              <div class="card-inner">
+                <div class="card-front">
+                  <i class="ti ti-help-circle"></i>
+                </div>
+                <div class="card-back">
+                  <span>{{ c.valor }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Victory Panel -->
+          <div class="victory-panel animate-scale-in" *ngIf="jogoConcluido">
+            <div class="victory-header">
+              <i class="ti ti-sparkles"></i>
+              <h3>Excelente Trabalho!</h3>
+            </div>
+            <p>Você concluiu o jogo de memória em {{ obterTempoFormatado() }} com apenas {{ movimentos }} jogadas!</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- GENERAL FREE RESPONSE -->
+      <section class="free-text-section" *ngIf="ativ?.atividade?.tipo !== 4 && ativ?.tipo !== 4 && ativ?.atividade?.tipo !== 7 && ativ?.tipo !== 7">
+        <h2>Descreva a situação</h2>
+        <p class="section-desc">Conte sobre o que aconteceu em detalhes.</p>
+        <textarea rows="6" [(ngModel)]="respostaTexto" placeholder="Escreva aqui sua resposta..."></textarea>
+      </section>
+
+      <!-- MOOD ASSESSMENT (Not shown on custom interactive Detetive or Tatica step 0/1/2) -->
+      <section class="mood-assessment" *ngIf="nomeJogo !== 'Detetive dos Pensamentos' && (nomeJogo !== 'Memória Tática' || taticaEtapa === 3)">
+        <h2>Como você se sentiu?</h2>
+        <p class="section-desc">Avalie a intensidade da emoção ao realizar este exercício.</p>
+        
+        <div class="mood-slider-card">
+          <div class="slider-icons">
+            <i class="ti ti-mood-sad text-muted"></i>
+            <div class="slider-wrapper flex-grow">
+              <input type="range" min="1" max="10" step="1" [(ngModel)]="notaHumor">
+            </div>
+            <i class="ti ti-mood-smile text-primary"></i>
+          </div>
+          <span class="mood-label">Nota do humor: {{ notaHumor }}/10</span>
+        </div>
+      </section>
+    </div>
+
+    <!-- General Footer (Not shown on custom interactive Detetive or Tatica step 0/1/2) -->
+    <footer class="responder-footer" *ngIf="nomeJogo !== 'Detetive dos Pensamentos' && (nomeJogo !== 'Memória Tática' || taticaEtapa === 3)">
+      <button type="button" class="btn-primary" [disabled]="salvando" (click)="salvar()">
+        <span *ngIf="!salvando">Salvar e continuar</span>
+        <div class="spinner-small" *ngIf="salvando"></div>
+      </button>
+    </footer>
+  </div>
+</div>
+
+<!-- Loading Template -->
+<ng-template #spinner>
+  <div class="loading-container">
+    <div class="spinner"></div>
+    <p>Carregando atividade...</p>
+  </div>
+</ng-template>
+
+<!-- Success View Overlay -->
+<ng-template #successState>
+  <div class="success-container animate-scale-in">
+    <div class="success-icon-wrapper">
+      <i class="ti ti-circle-check"></i>
+    </div>
+    <h2>Atividade Concluída!</h2>
+    <p>Seus dados foram enviados ao seu psicólogo com sucesso. Continue avançando!</p>
+  </div>
+</ng-template>

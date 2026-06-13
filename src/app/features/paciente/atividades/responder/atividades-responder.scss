@@ -1,0 +1,722 @@
+.responder-container {
+  max-width: 680px;
+  margin: 0 auto;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 36px;
+  box-shadow: var(--shadow-md);
+  
+  @media (max-width: 768px) {
+    padding: 20px;
+    border: none;
+    box-shadow: none;
+    background: transparent;
+  }
+}
+
+/* Header */
+.responder-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 24px;
+  margin-bottom: 28px;
+  
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    
+    .btn-back {
+      background: var(--soft-blue);
+      color: var(--text-light);
+      border-radius: 50%;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      transition: var(--transition);
+      
+      &:hover {
+        background: var(--soft-green);
+        color: var(--primary);
+      }
+    }
+    
+    h1 {
+      font-size: 20px;
+      font-weight: 900;
+      color: var(--text);
+    }
+  }
+  
+  .step-num {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--primary);
+    background: var(--soft-blue);
+    padding: 6px 12px;
+    border-radius: 12px;
+  }
+}
+
+.responder-body {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  
+  .description {
+    font-size: 14px;
+    color: var(--text-light);
+    line-height: 1.5;
+  }
+  
+  h2 {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  
+  .section-desc {
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+}
+
+/* Type 4: Checklist */
+.checklist-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.check-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 20px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: var(--transition);
+  position: relative;
+  
+  input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+  }
+  
+  .checkmark {
+    width: 22px;
+    height: 22px;
+    border: 2px solid var(--border);
+    border-radius: 6px;
+    display: inline-block;
+    transition: var(--transition);
+    position: relative;
+    flex-shrink: 0;
+  }
+  
+  .item-text {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--text);
+    transition: var(--transition);
+  }
+  
+  &:hover {
+    border-color: var(--muted);
+  }
+  
+  &.checked {
+    border-color: var(--secondary);
+    background: var(--soft-green);
+    
+    .checkmark {
+      background: var(--secondary);
+      border-color: var(--secondary);
+      
+      &:after {
+        content: "";
+        position: absolute;
+        left: 6px;
+        top: 2px;
+        width: 5px;
+        height: 10px;
+        border: solid white;
+        border-width: 0 2.5px 2.5px 0;
+        transform: rotate(45deg);
+      }
+    }
+    
+    .item-text {
+      text-decoration: line-through;
+      color: var(--text-light);
+    }
+  }
+}
+
+/* TYPE 7: Cognitive Games General */
+.game-section {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* GAME A: Detetive dos Pensamentos */
+.game-xp-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 14px 20px;
+  margin-bottom: 24px;
+  box-shadow: var(--shadow-sm);
+  
+  .badge-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--soft-purple);
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
+  
+  .xp-info {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    
+    .level-title {
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--text);
+    }
+    
+    .mini-bar-container {
+      height: 6px;
+      background: var(--border);
+      border-radius: 3px;
+      overflow: hidden;
+      
+      .mini-bar {
+        height: 100%;
+        background: var(--primary);
+        border-radius: 3px;
+      }
+    }
+  }
+  
+  .xp-val {
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 700;
+  }
+}
+
+.scenario-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 24px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 24px;
+  
+  .card-tag {
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--muted);
+    letter-spacing: 1px;
+  }
+  
+  h3 {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--text);
+    font-style: italic;
+  }
+}
+
+.options-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.option-btn {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 18px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  text-align: left;
+  color: var(--text);
+  font-weight: 600;
+  font-size: 14px;
+  transition: var(--transition);
+  
+  i {
+    font-size: 20px;
+    color: var(--muted);
+    flex-shrink: 0;
+  }
+  
+  &:hover:not(.selected) {
+    background: var(--soft-blue);
+    border-color: var(--muted);
+  }
+  
+  &.selected {
+    border-color: var(--primary);
+    background: rgba(27, 54, 93, 0.03);
+    font-weight: 700;
+    
+    i {
+      color: var(--primary);
+    }
+  }
+}
+
+.chip-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.detetive-footer {
+  display: flex;
+  justify-content: flex-end;
+  border-top: 1px solid var(--border);
+  padding-top: 24px;
+  margin-top: 24px;
+}
+
+/* GAME B: Memória Tática */
+.tatica-intro {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  text-align: center;
+  padding: 24px 0;
+  
+  .badge-tag {
+    background: var(--soft-blue);
+    color: var(--primary);
+    border: 1px solid rgba(27, 54, 93, 0.1);
+    font-size: 11px;
+    font-weight: 800;
+    padding: 6px 14px;
+    border-radius: 20px;
+  }
+}
+
+.rules-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 24px;
+  max-width: 420px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  
+  .rules-icon {
+    font-size: 40px;
+    color: var(--secondary);
+  }
+  
+  h3 {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--text);
+  }
+  
+  ol {
+    text-align: left;
+    padding-left: 20px;
+    font-size: 13px;
+    color: var(--text-light);
+    line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+}
+
+.countdown {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--secondary);
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.tatica-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  
+  .tatica-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    box-shadow: var(--shadow-sm);
+    
+    i {
+      font-size: 32px;
+      color: var(--primary);
+    }
+    
+    span {
+      font-weight: 700;
+      font-size: 15px;
+      color: var(--text);
+    }
+  }
+  
+  &.select-mode {
+    margin-bottom: 32px;
+    
+    .tatica-card.sumido {
+      border-color: var(--secondary);
+      box-shadow: 0 0 12px rgba(46, 154, 142, 0.1);
+      
+      i {
+        color: var(--secondary);
+      }
+      
+      span {
+        color: var(--secondary);
+      }
+    }
+  }
+}
+
+.tatica-result {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 20px;
+  padding: 40px 0;
+  
+  .result-icon-wrapper {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 44px;
+    
+    &.success {
+      background: var(--soft-green);
+      color: var(--success);
+      border: 2px solid var(--success);
+    }
+    
+    &.error {
+      background: #ffe5e5;
+      color: var(--danger);
+      border: 2px solid var(--danger);
+    }
+  }
+  
+  h2 {
+    font-size: 20px;
+    font-weight: 900;
+  }
+  
+  .result-text {
+    font-size: 14px;
+    color: var(--text-light);
+    line-height: 1.5;
+    max-width: 440px;
+  }
+}
+
+/* GAME C: Jogo de Memória */
+.status-panel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  margin-bottom: 24px;
+  box-shadow: var(--shadow-sm);
+  
+  .stat-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--text);
+  }
+  
+  .level-tag {
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--secondary);
+    background: var(--soft-green);
+    padding: 4px 10px;
+    border-radius: 6px;
+  }
+}
+
+.cards-grid {
+  display: grid;
+  gap: 12px;
+  perspective: 800px;
+}
+
+.card-item {
+  aspect-ratio: 1;
+  cursor: pointer;
+  
+  .card-inner {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+  
+  .card-front, .card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow-sm);
+  }
+  
+  .card-front {
+    background: var(--primary);
+    color: white;
+    font-size: 28px;
+  }
+  
+  .card-back {
+    background: white;
+    border: 2px solid var(--primary);
+    color: var(--text);
+    font-size: 32px;
+    font-weight: 700;
+    transform: rotateY(180deg);
+  }
+  
+  &.flipped .card-inner {
+    transform: rotateY(180deg);
+  }
+  
+  &.matched {
+    cursor: default;
+    
+    .card-back {
+      background: var(--soft-green);
+      border-color: var(--secondary);
+    }
+  }
+}
+
+.victory-panel {
+  margin-top: 24px;
+  background: var(--soft-green);
+  border: 1px solid var(--secondary);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  
+  .victory-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: var(--primary);
+    font-size: 18px;
+    font-weight: 800;
+    
+    i {
+      color: var(--secondary);
+    }
+  }
+  
+  p {
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.4;
+  }
+}
+
+/* Mood Assessment Card */
+.mood-assessment {
+  border-top: 1px solid var(--border);
+  padding-top: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.mood-slider-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  box-shadow: var(--shadow-sm);
+  
+  .slider-icons {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    gap: 16px;
+    
+    i {
+      font-size: 22px;
+    }
+  }
+  
+  .mood-label {
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--text);
+  }
+}
+
+/* Custom range input inside slider-wrapper */
+.slider-wrapper.flex-grow {
+  flex-grow: 1;
+}
+
+/* Footer & Buttons */
+.responder-footer {
+  display: flex;
+  justify-content: flex-end;
+  border-top: 1px solid var(--border);
+  padding-top: 28px;
+  margin-top: 20px;
+  
+  button {
+    min-width: 180px;
+    @media (max-width: 576px) {
+      width: 100%;
+    }
+  }
+}
+
+/* Loading/Success spinners */
+.spinner-small {
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top: 2px solid white;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  gap: 16px;
+  color: var(--text-light);
+  font-weight: 600;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid var(--border);
+  border-top: 4px solid var(--primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* Success View Overlay */
+.success-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+  gap: 16px;
+  max-width: 400px;
+  margin: 60px auto;
+  
+  .success-icon-wrapper {
+    background: var(--soft-green);
+    color: var(--success);
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 44px;
+    box-shadow: 0 8px 20px rgba(53, 201, 137, 0.2);
+  }
+  
+  h2 {
+    font-size: 22px;
+    font-weight: 900;
+    color: var(--text);
+  }
+  
+  p {
+    font-size: 14px;
+    color: var(--text-light);
+    line-height: 1.5;
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
