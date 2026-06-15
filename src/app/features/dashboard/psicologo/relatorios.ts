@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { AppDataService } from '../../../core/services/app-data.service';
 
 @Component({
@@ -18,42 +19,72 @@ export class PsicologoRelatorios implements OnInit {
 
   dashboard: any = null;
 
-  // Insights gerados
+  // Plano e bloqueios
+  psicologoPlano: string = 'Starter';
+  isIaLocked: boolean = true;
+  iaInsights: string[] = [];
+  loadingIaInsights: boolean = false;
+  iaInsightsError: string = '';
+
+  // Insights genéricos para o fallback mock
   insights = [
     { texto: 'Melhora de 15% no controle inibitório após o treino com Mestre Mandou.', tipo: 'positive' },
     { texto: 'Dificuldade observada em lidar com frustração em universos paralelos (jogo).', tipo: 'warning' },
     { texto: 'Excelente hábito de check-ins emocionais registrado consecutivamente.', tipo: 'positive' }
   ];
 
-  constructor(private dataService: AppDataService) {}
+  constructor(private dataService: AppDataService, private router: Router) {}
 
   ngOnInit(): void {
     if (typeof window !== 'undefined') {
-      const psicologoId = localStorage.getItem('psicologoId') || '';
-      
-      this.dataService.getPacientesPorPsicologo(psicologoId).subscribe({
-        next: (pats) => {
-          this.pacientes = pats;
-          if (this.pacientes.length > 0) {
-            this.selectedPacienteId = this.pacientes[0].id;
-            this.carregarDashboard(this.selectedPacienteId);
+      this.loading = true;
+      this.dataService.getMe().subscribe({
+        next: (me) => {
+          this.psicologoPlano = me.plano || 'Starter';
+          const p = this.psicologoPlano.toLowerCase();
+          this.isIaLocked = p !== 'profissional' && p !== 'clinica';
+
+          const psicologoId = me.psicologoId || '';
+          if (psicologoId) {
+            this.dataService.getPacientesPorPsicologo(psicologoId).subscribe({
+              next: (pats) => {
+                this.pacientes = pats;
+                if (this.pacientes.length > 0) {
+                  this.selectedPacienteId = this.pacientes[0].id;
+                  this.carregarDashboard(this.selectedPacienteId);
+                  if (!this.isIaLocked) {
+                    this.carregarInsightsIa(this.selectedPacienteId);
+                  }
+                } else {
+                  this.loading = false;
+                }
+              },
+              error: () => {
+                this.carregarFallbackPacientes();
+              }
+            });
           } else {
             this.loading = false;
           }
         },
         error: () => {
-          // Fallback mock patients list
-          this.pacientes = [
-            { id: '847c5798-8265-4e73-8f74-a199da5cb8cc', nome: 'Lucas Oliveira' },
-            { id: '2', nome: 'Maria Eduarda' }
-          ];
-          this.selectedPacienteId = this.pacientes[0].id;
-          this.carregarDashboard(this.selectedPacienteId);
+          this.psicologoPlano = 'Starter';
+          this.isIaLocked = true;
+          this.carregarFallbackPacientes();
         }
       });
     } else {
       this.loading = false;
     }
+  }
+
+  carregarFallbackPacientes() {
+    this.pacientes = [
+      { id: '847c5798-8265-4e73-8f74-a199da5cb8cc', nome: 'Lucas Oliveira' },
+      { id: '2', nome: 'Maria Eduarda' }
+    ];
+    this.selectedPacienteId = this.pacientes[0].id;
+    this.carregarDashboard(this.selectedPacienteId);
   }
 
   carregarDashboard(pacienteId: string) {
@@ -69,10 +100,33 @@ export class PsicologoRelatorios implements OnInit {
     });
   }
 
+  carregarInsightsIa(pacienteId: string) {
+    this.loadingIaInsights = true;
+    this.iaInsightsError = '';
+    this.iaInsights = [];
+    this.dataService.getIaInsights(pacienteId).subscribe({
+      next: (res) => {
+        this.iaInsights = res;
+        this.loadingIaInsights = false;
+      },
+      error: (err) => {
+        this.loadingIaInsights = false;
+        this.iaInsightsError = err.error?.message || 'Erro ao carregar insights da IA.';
+      }
+    });
+  }
+
   onPacienteChange() {
     if (this.selectedPacienteId) {
       this.carregarDashboard(this.selectedPacienteId);
+      if (!this.isIaLocked) {
+        this.carregarInsightsIa(this.selectedPacienteId);
+      }
     }
+  }
+
+  irParaPlanos() {
+    this.router.navigate(['/registrar'], { queryParams: { upgrade: 'true' } });
   }
 
   mudarSubTab(tabName: string) {

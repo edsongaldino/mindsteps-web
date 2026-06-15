@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { Login } from './features/login/login';
 import { Landing } from './features/landing/landing';
+import { Registro } from './features/auth/registro/registro';
 import { PacienteShell } from './features/paciente/shell/paciente-shell';
 import { PacienteHome } from './features/paciente/home/paciente-home';
 import { Atividades } from './features/paciente/atividades/atividades';
@@ -29,6 +30,7 @@ import { PsicologoMensagens } from './features/dashboard/psicologo/mensagens';
 export const appRoutes: Routes = [
   { path: '', component: Landing },
   { path: 'login', component: Login },
+  { path: 'registrar', component: Registro },
   {
     path: 'paciente',
     component: PacienteShell,

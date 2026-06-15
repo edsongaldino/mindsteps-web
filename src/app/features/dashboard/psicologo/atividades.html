@@ -115,6 +115,52 @@
               <option value="Escala">Classificação por Escala de Humor (1 a 5)</option>
             </select>
           </div>
+
+          <!-- Seleção do Jogo se tipoResposta === Jogo -->
+          <div class="form-group" *ngIf="tipoResposta === 'Jogo'">
+            <label for="wiz-jogo">Selecione o Jogo</label>
+            <select id="wiz-jogo" [(ngModel)]="jogoSelecionado" name="wiz-jogo" (change)="onJogoSelecionadoChange()">
+              <option *ngFor="let jogo of jogosDisponiveis" [value]="jogo">{{ jogo }}</option>
+            </select>
+          </div>
+
+          <!-- Opções de personalização para os Jogos de Memória -->
+          <div class="game-config-subpanel" *ngIf="tipoResposta === 'Jogo' && (jogoSelecionado === 'Memória Tática' || jogoSelecionado === 'Jogo de Memória')">
+            <div class="form-group-row">
+              <div class="form-group">
+                <label for="wiz-game-modo">Modo do Jogo</label>
+                <select id="wiz-game-modo" [(ngModel)]="modoJogo" name="wiz-game-modo">
+                  <option value="Imagens">Imagens / Emojis</option>
+                  <option value="Palavras">Palavras textuais</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="wiz-game-dificuldade">Dificuldade</label>
+                <select id="wiz-game-dificuldade" [(ngModel)]="dificuldadeJogo" name="wiz-game-dificuldade">
+                  <option value="Fácil">Fácil</option>
+                  <option value="Médio">Médio</option>
+                  <option value="Difícil">Difícil</option>
+                  <option value="Evolutivo">Evolutivo (Nível do Paciente)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="wiz-game-tema">Tema do Jogo</label>
+              <select id="wiz-game-tema" [(ngModel)]="temaJogo" name="wiz-game-tema">
+                <option value="Expressões/Emoções" *ngIf="modoJogo === 'Imagens'">Expressões/Emoções</option>
+                <option value="Sentimentos/Emoções" *ngIf="modoJogo === 'Palavras'">Sentimentos/Emoções</option>
+                <option value="Animais">Animais</option>
+                <option value="Natureza" *ngIf="modoJogo === 'Imagens'">Natureza</option>
+                <option value="Personalizado" *ngIf="modoJogo === 'Palavras'">Palavras Personalizadas</option>
+              </select>
+            </div>
+
+            <div class="form-group" *ngIf="modoJogo === 'Palavras' && temaJogo === 'Personalizado'">
+              <label for="wiz-game-palavras">Palavras Personalizadas (separadas por vírgula)</label>
+              <textarea id="wiz-game-palavras" [(ngModel)]="palavrasPersonalizadas" name="wiz-game-palavras" rows="2" placeholder="Alegria, Calma, Foco, Força..."></textarea>
+            </div>
+          </div>
           <div class="checkbox-group">
             <label class="checkbox-label">
               <input type="checkbox" [(ngModel)]="atividadeObrigatoria" name="wiz-obrig">

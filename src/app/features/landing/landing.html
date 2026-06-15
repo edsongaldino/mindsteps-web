@@ -11,7 +11,7 @@
         <a (click)="scrollToSection('planos')">Planos</a>
         <a (click)="scrollToSection('contato')">Contato</a>
       </nav>
-      <a class="btn btn-primary" (click)="openRegisterModal()">Solicitar demonstração →</a>
+      <a class="btn btn-primary" (click)="openRegisterModal()">Começar teste grátis →</a>
     </div>
   </header>
 
@@ -22,14 +22,19 @@
           <div class="pill">Plataforma terapêutica para psicólogos</div>
           <h1>A terapia continua mesmo depois da <span>sessão.</span></h1>
           <p>Acompanhe emoções, atividades terapêuticas e evolução cognitiva dos seus pacientes adolescentes em um único lugar.</p>
-          <div class="actions">
-            <a class="btn btn-primary btn-lg" (click)="openRegisterModal()">Solicitar demonstração →</a>
-            <a class="btn btn-outline btn-lg" (click)="scrollToSection('recursos')">Conhecer recursos ↓</a>
+          <div class="actions-wrapper">
+            <div class="actions">
+              <div class="cta-wrapper">
+                <a class="btn btn-primary btn-lg" (click)="openRegisterModal()">Começar teste grátis →</a>
+                <span class="cta-subtext">7 dias grátis • Sem cartão de crédito</span>
+              </div>
+              <a class="btn btn-outline btn-lg" (click)="scrollToSection('contato')">Agendar demonstração</a>
+            </div>
           </div>
           <div class="trust-row">
-            <span>🛡️ Seguro e criptografado</span>
-            <span>🔒 Conforme a LGPD</span>
-            <span>✅ Testado por psicólogos</span>
+            <span>✅ 7 dias grátis</span>
+            <span>✅ Sem cartão de crédito</span>
+            <span>✅ Cancele quando quiser</span>
           </div>
         </div>
 
@@ -154,7 +159,7 @@
             <ul>
               <li *ngFor="let f of plan.features">{{ f }}</li>
             </ul>
-            <a class="btn" [class.btn-primary]="plan.popular" [class.btn-outline]="!plan.popular" (click)="openRegisterModal()">{{ plan.cta }}</a>
+            <a class="btn" [class.btn-primary]="plan.popular" [class.btn-outline]="!plan.popular" (click)="openRegisterModal(plan.name)">{{ plan.cta }}</a>
           </article>
         </div>
         <div class="pricing-notes"><span>🛡️ Sem cartão de crédito</span><span>✓ Cancele quando quiser</span><span>✓ Migre de plano a qualquer momento</span></div>
@@ -195,7 +200,7 @@
         <h2>Leve sua terapia para além dos <span>50 minutos</span> de sessão.</h2>
         <p>Acompanhe adolescentes, aumente o engajamento e tome decisões clínicas baseadas em dados.</p>
       </div>
-      <div class="actions"><a class="btn btn-green" (click)="openRegisterModal()">Solicitar demonstração →</a><a class="btn btn-light" (click)="scrollToSection('planos')">Ver planos</a></div>
+      <div class="actions"><a class="btn btn-green" (click)="openRegisterModal()">Começar teste grátis →</a><a class="btn btn-light" (click)="scrollToSection('contato')">Agendar demonstração</a></div>
     </section>
   </main>
 
@@ -234,7 +239,7 @@
         </div>
         <div class="form-group">
           <label>E-mail Profissional</label>
-          <input type="email" [(ngModel)]="email" name="email" required email placeholder="Ex: contato@clinica.com" #emailInput="ngModel">
+          <input type="email" [(ngModel)]="email" name="email" required email placeholder="Ex: contato@psicologo.com" #emailInput="ngModel">
         </div>
         <div class="form-row">
           <div class="form-group">

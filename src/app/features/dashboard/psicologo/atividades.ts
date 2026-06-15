@@ -37,6 +37,36 @@ export class PsicologoAtividades implements OnInit {
   feedbackAutomatico: string = '';
   isSubmitting: boolean = false;
 
+  // Configuração do Jogo (Wizard)
+  jogoSelecionado: string = 'Memória Tática';
+  modoJogo: string = 'Imagens';
+  temaJogo: string = 'Expressões/Emoções';
+  dificuldadeJogo: string = 'Evolutivo';
+  palavrasPersonalizadas: string = '';
+
+  jogosDisponiveis: string[] = [
+    'Decisão Sob Pressão',
+    'Missão Foco',
+    'Memória Tática',
+    'Investigação',
+    'Modo Piloto',
+    'Laboratório Mental',
+    'Mente Flexível',
+    'Shark Mind',
+    'Universos Paralelos',
+    'Reação Zero',
+    'Detetive dos Pensamentos',
+    'Tribunal dos Pensamentos',
+    'Caçador de Gatilhos',
+    'Missão Coragem',
+    'O Monstro da Ansiedade',
+    'Ilha das Emoções',
+    'Cartas dos Sabotadores',
+    'Escape Room Terapêutico',
+    'Jornada do Herói Interior',
+    'Jogo de Memória'
+  ];
+
   // Modal de Envio
   isSendModalOpen: boolean = false;
   selectedAtividadeId: string = '';
@@ -141,13 +171,41 @@ export class PsicologoAtividades implements OnInit {
     }
   }
 
+  onJogoSelecionadoChange() {
+    if (this.jogoSelecionado === 'Jogo de Memória') {
+      this.titulo = 'Jogo de Memória';
+      this.descricao = 'Treine sua memória de trabalho encontrando os pares de cartas.';
+    } else if (this.jogoSelecionado === 'Memória Tática') {
+      this.titulo = 'Memória Tática';
+      this.descricao = 'Treino de memória operacional visual. O paciente memoriza uma grade de pastas e arquivos, descobre qual deles sumiu e o identifica na lista.';
+    } else {
+      this.titulo = this.jogoSelecionado;
+      this.descricao = `Realize a atividade terapêutica do jogo: ${this.jogoSelecionado}.`;
+    }
+  }
+
   salvarAtividade() {
     this.isSubmitting = true;
+
+    let conteudoReal: any = null;
+    if (this.tipoResposta === 'Jogo') {
+      conteudoReal = {
+        tipoJogo: this.jogoSelecionado,
+        modo: this.modoJogo,
+        tema: this.temaJogo,
+        dificuldade: this.dificuldadeJogo,
+        palavrasPersonalizadas: this.modoJogo === 'Palavras' && this.temaJogo === 'Personalizado'
+          ? this.palavrasPersonalizadas.split(',').map(e => e.trim()).filter(e => e.length > 0)
+          : null
+      };
+    }
+
     const payload = {
       psicologoId: this.psicologoId,
       titulo: this.titulo,
       descricao: this.descricao,
-      tipo: this.tipoResposta === 'Jogo' ? 1 : 2, // 1 = Jogo, 2 = Diário/Outros
+      tipo: this.tipoResposta === 'Jogo' ? 7 : (this.tipoResposta === 'Escala' ? 2 : 1), // 7 = Jogo, 2 = Registro/Escala, 1 = Texto/Reflexão
+      conteudo: conteudoReal ? JSON.stringify(conteudoReal) : null,
       categoriaEmocional: this.categoriaEmocional,
       nivelSugerido: this.nivelSugerido,
       tipoResposta: this.tipoResposta,
@@ -178,7 +236,8 @@ export class PsicologoAtividades implements OnInit {
           id: Math.random().toString(),
           titulo: this.titulo,
           descricao: this.descricao,
-          tipo: this.tipoResposta === 'Jogo' ? 1 : 2,
+          tipo: this.tipoResposta === 'Jogo' ? 7 : (this.tipoResposta === 'Escala' ? 2 : 1),
+          conteudo: conteudoReal ? JSON.stringify(conteudoReal) : null,
           destinatarios: 0,
           enviadoEm: new Date().toISOString(),
           status: 'Ativa'
@@ -204,6 +263,12 @@ export class PsicologoAtividades implements OnInit {
     this.notificarPush = true;
     this.notificarEmail = false;
     this.feedbackAutomatico = '';
+
+    this.jogoSelecionado = 'Memória Tática';
+    this.modoJogo = 'Imagens';
+    this.temaJogo = 'Expressões/Emoções';
+    this.dificuldadeJogo = 'Evolutivo';
+    this.palavrasPersonalizadas = '';
   }
 
   // Métodos de Envio

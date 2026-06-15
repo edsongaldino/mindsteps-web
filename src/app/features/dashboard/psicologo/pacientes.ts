@@ -31,32 +31,52 @@ export class PsicologoPacientes implements OnInit {
   errorMessage: string = '';
   successMessage: string = '';
 
+  // Limitações de plano
+  psicologoPlano: string = 'Starter';
+  planoLimite: number = 5;
+  limiteAtingido: boolean = false;
+
   constructor(private dataService: AppDataService, private router: Router) {}
 
   ngOnInit(): void {
     if (typeof window !== 'undefined') {
-      this.psicologoId = localStorage.getItem('psicologoId') || '';
-      
-      if (this.psicologoId) {
-        this.carregarPacientes(this.psicologoId);
-      } else {
-        this.dataService.getMe().subscribe({
-          next: (me) => {
-            this.psicologoId = me.psicologoId || '';
-            if (this.psicologoId) {
-              localStorage.setItem('psicologoId', this.psicologoId);
-              this.carregarPacientes(this.psicologoId);
-            } else {
-              this.loading = false;
-            }
-          },
-          error: () => {
+      this.loading = true;
+      this.dataService.getMe().subscribe({
+        next: (me) => {
+          this.psicologoId = me.psicologoId || '';
+          this.psicologoPlano = me.plano || 'Starter';
+          this.atualizarLimite();
+          if (this.psicologoId) {
+            localStorage.setItem('psicologoId', this.psicologoId);
+            this.carregarPacientes(this.psicologoId);
+          } else {
             this.loading = false;
           }
-        });
-      }
+        },
+        error: () => {
+          this.psicologoId = localStorage.getItem('psicologoId') || '';
+          this.psicologoPlano = 'Starter';
+          this.atualizarLimite();
+          if (this.psicologoId) {
+            this.carregarPacientes(this.psicologoId);
+          } else {
+            this.loading = false;
+          }
+        }
+      });
     } else {
       this.loading = false;
+    }
+  }
+
+  atualizarLimite() {
+    const p = this.psicologoPlano.toLowerCase();
+    if (p === 'starter') {
+      this.planoLimite = 5;
+    } else if (p === 'essencial') {
+      this.planoLimite = 20;
+    } else {
+      this.planoLimite = 999999;
     }
   }
 
@@ -65,6 +85,8 @@ export class PsicologoPacientes implements OnInit {
     this.dataService.getPacientesPorPsicologo(psicologoId).subscribe({
       next: (data) => {
         this.pacientes = data;
+        const contagemAtivos = this.pacientes.filter(p => p.usuario?.ativo !== false && p.ativo !== false).length;
+        this.limiteAtingido = contagemAtivos >= this.planoLimite;
         this.applyFilter();
         this.loading = false;
       },
@@ -80,6 +102,8 @@ export class PsicologoPacientes implements OnInit {
           { id: '5', usuario: { nome: 'Pedro Silva', email: 'pedro@gmail.com', ativo: true }, idade: 14, ultimaAtividade: '2 dias atrás', engajamento: 57, status: 'Atenção' },
           { id: '6', usuario: { nome: 'Beatriz Lima', email: 'beatriz@gmail.com', ativo: true }, idade: 13, ultimaAtividade: '3 dias atrás', engajamento: 61, status: 'Atenção' }
         ];
+        const contagemAtivos = this.pacientes.filter(p => p.usuario?.ativo !== false && p.ativo !== false).length;
+        this.limiteAtingido = contagemAtivos >= this.planoLimite;
         this.applyFilter();
       }
     });
@@ -112,9 +136,15 @@ export class PsicologoPacientes implements OnInit {
   }
 
   openRegisterModal() {
+    if (this.limiteAtingido) {
+      this.errorMessage = 'Você atingiu o limite de pacientes ativos para o seu plano. Faça o upgrade para continuar cadastrando.';
+    }
     this.isRegisterModalOpen = true;
-    this.errorMessage = '';
     this.successMessage = '';
+  }
+
+  irParaPlanos() {
+    this.router.navigate(['/registrar'], { queryParams: { upgrade: 'true' } });
   }
 
   closeRegisterModal() {

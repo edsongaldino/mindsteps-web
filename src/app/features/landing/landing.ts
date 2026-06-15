@@ -90,43 +90,43 @@ export class Landing {
   plans = [
     {
       name: 'Starter',
-      desc: 'Ideal para quem está iniciando ou atende poucos pacientes.',
+      desc: 'Ideal para conhecer a plataforma e iniciar a digitalização.',
       price: '39,90',
-      patients: 'Até 10 pacientes ativos',
+      patients: 'Até 5 pacientes ativos',
       popular: false,
-      cta: 'Começar agora',
-      trial: 'Teste gratuito por 7 dias',
-      features: ['App para pacientes', 'Diário emocional', 'Jogos terapêuticos básicos', 'Relatórios simples', 'Suporte por e-mail']
+      cta: 'Começar teste grátis',
+      trial: '7 dias grátis',
+      features: ['Diário emocional', 'Jogos terapêuticos básicos', 'App para pacientes', 'Relatórios simples', 'Suporte por e-mail']
     },
     {
       name: 'Essencial',
-      desc: 'Para quem está estruturando e digitalizando seu consultório.',
+      desc: 'Aqui está a maioria dos psicólogos autônomos.',
       price: '89',
-      patients: 'Até 30 pacientes ativos',
-      popular: false,
-      cta: 'Começar agora',
-      trial: '',
-      features: ['Tudo do Starter', 'Jogos terapêuticos completos', 'Relatórios básicos', 'Painel de evolução', 'Suporte prioritário']
+      patients: 'Até 20 pacientes ativos',
+      popular: true,
+      cta: 'Começar teste grátis',
+      trial: '7 dias grátis',
+      features: ['Todos os jogos (completos)', 'Relatórios básicos', 'Painel de evolução', 'App para pacientes', 'Suporte prioritário']
     },
     {
-      name: 'Profissional ⭐',
+      name: 'Profissional',
       desc: 'Para psicólogos que desejam acompanhar mais e melhor.',
       price: '149',
-      patients: 'Até 80 pacientes ativos',
-      popular: true,
-      cta: 'Começar agora',
-      trial: '',
-      features: ['Tudo do Essencial', 'Indicadores avançados', 'Relatórios comparativos', 'Histórico completo do paciente', 'Exportação de relatórios em PDF', 'Prioridade no suporte']
+      patients: 'Pacientes ilimitados',
+      popular: false,
+      cta: 'Começar teste grátis',
+      trial: '7 dias grátis',
+      features: ['Pacientes ilimitados', 'Indicadores avançados', 'Exportação de relatórios em PDF', 'Relatórios e Insights gerados por IA', 'Suporte VIP']
     },
     {
       name: 'Clínica',
-      desc: 'Para equipes e clínicas com maior volume de atendimentos.',
-      price: '299',
-      patients: 'Até 300 pacientes ativos',
+      desc: 'Para clínicas com múltiplos profissionais e demandas personalizadas.',
+      price: 'Sob consulta',
+      patients: 'Multi-profissionais',
       popular: false,
-      cta: 'Começar agora',
+      cta: 'Solicitar demonstração',
       trial: '',
-      features: ['Tudo do Profissional', 'Até 5 psicólogos inclusos', 'Dashboard da clínica', 'Gestão de equipe', 'Compartilhamento interno', 'Suporte prioritário']
+      features: ['Múltiplos profissionais', 'Gestão de equipe e permissões', 'Dashboard consolidado', 'Suporte dedicado', 'Integrações customizadas']
     }
   ];
 
@@ -148,15 +148,18 @@ export class Landing {
 
   constructor(private http: HttpClient, private router: Router) {}
 
-  openRegisterModal() {
-    this.isRegisterModalOpen = true;
-    this.successMessage = '';
-    this.errorMessage = '';
+  openRegisterModal(plano?: string) {
+    if (plano === 'Clínica') {
+      this.isRegisterModalOpen = true;
+    } else if (plano) {
+      this.router.navigate(['/registrar'], { queryParams: { plano } });
+    } else {
+      this.router.navigate(['/registrar']);
+    }
   }
 
   closeRegisterModal() {
     this.isRegisterModalOpen = false;
-    this.resetForm();
   }
 
   openFeatureModal(feature: any) {

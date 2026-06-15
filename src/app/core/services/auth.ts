@@ -25,5 +25,9 @@ export class Auth {
     return isBrowser ? !!localStorage.getItem('authToken') : false;
   }
 
+  registrarPsicologo(dados: any): Observable<any> {
+    return this.http.post(`${environment.apiUrl}/psicologos/registrar`, dados);
+  }
+
 
 }

@@ -10,6 +10,15 @@
     </button>
   </div>
 
+  <!-- Banner de Limite de Plano -->
+  <div class="limit-warning-banner" *ngIf="limiteAtingido">
+    <span class="warning-icon">⚠️</span>
+    <div class="warning-text">
+      <strong>Limite de pacientes ativos atingido!</strong> Você está usando o plano <strong>{{ psicologoPlano }}</strong> (máximo de {{ planoLimite }} pacientes). Faça o upgrade para cadastrar novos pacientes.
+    </div>
+    <button class="btn-upgrade-banner" (click)="irParaPlanos()">Fazer Upgrade</button>
+  </div>
+
   <!-- Filtros -->
   <div class="filter-bar">
     <div class="search-box">
@@ -131,7 +140,7 @@
 
           <div class="modal-footer">
             <button type="button" class="btn-premium btn-outline" (click)="closeRegisterModal()">Cancelar</button>
-            <button type="submit" class="btn-premium btn-secondary" [disabled]="isSubmitting">
+            <button type="submit" class="btn-premium btn-secondary" [disabled]="isSubmitting || limiteAtingido">
               <span *ngIf="!isSubmitting">Salvar</span>
               <span *ngIf="isSubmitting" class="spinner"></span>
             </button>

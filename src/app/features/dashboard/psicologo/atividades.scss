@@ -226,3 +226,12 @@
   justify-content: flex-end;
   gap: 12px;
 }
+
+.game-config-subpanel {
+  background-color: #f8fafc;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  padding: 16px;
+  margin-top: 12px;
+  margin-bottom: 16px;
+}

@@ -1,0 +1,196 @@
+<div class="registro-page">
+  <div class="registro-container">
+    
+    <!-- Esquerda: Banner / Info -->
+    <div class="registro-banner">
+      <div class="banner-content">
+        <div class="logo-wrapper" (click)="voltarLogin()">
+          <img src="/logo.png" alt="MindSteps" class="logo-img">
+        </div>
+        
+        <h2 class="banner-title">Junte-se à <span class="highlight">revolução</span> na <span class="highlight-teal">terapia cognitiva</span></h2>
+        <p class="banner-desc">
+          Prescreva jogos terapêuticos personalizados, acompanhe a evolução de seus pacientes de forma visual e estenda o cuidado além do consultório.
+        </p>
+
+        <!-- Benefícios curtos -->
+        <div class="benefit-list">
+          <div class="benefit-item">
+            <span class="check-icon">✓</span>
+            <span>20+ Jogos Cognitivos exclusivos</span>
+          </div>
+          <div class="benefit-item">
+            <span class="check-icon">✓</span>
+            <span>Relatórios automáticos gerados por IA</span>
+          </div>
+          <div class="benefit-item">
+            <span class="check-icon">✓</span>
+            <span>Integração e chat direto com pacientes</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Decoração de fundo com curvas SVG (idêntica ao login) -->
+      <div class="banner-bg-decor">
+        <svg viewBox="0 0 500 500" fill="none">
+          <path d="M0,500 C150,450 250,350 200,200 C150,50 300,100 500,0 L500,500 Z" fill="rgba(76, 53, 189, 0.03)"></path>
+          <path d="M0,500 C100,480 180,420 180,300 C180,180 280,150 500,100 L500,500 Z" fill="rgba(14, 181, 148, 0.02)"></path>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Direita: Formulário Multistep -->
+    <div class="registro-form-container">
+      <div class="form-card" [class.wide-card]="step === 3">
+        
+        <!-- Indicador de Passos -->
+        <div class="steps-indicator" *ngIf="step < 4">
+          <div class="step-dot" [class.active]="step === 1" [class.completed]="step > 1">1</div>
+          <div class="step-line" [class.completed]="step > 1"></div>
+          <div class="step-dot" [class.active]="step === 2" [class.completed]="step > 2">2</div>
+          <div class="step-line" [class.completed]="step > 2"></div>
+          <div class="step-dot" [class.active]="step === 3">3</div>
+        </div>
+
+        <!-- Passo 1: Informações Básicas -->
+        <div class="step-content" *ngIf="step === 1">
+          <h3>Informações Profissionais</h3>
+          <p class="step-subtitle">Primeiro, configure sua conta e dados de acesso.</p>
+
+          <div class="form-group">
+            <label for="nome">Nome Completo</label>
+            <input type="text" id="nome" [(ngModel)]="nome" placeholder="Dr(a). Seu Nome" required>
+          </div>
+
+          <div class="form-group">
+            <label for="crp">CRP (Conselho Regional de Psicologia)</label>
+            <input type="text" id="crp" [(ngModel)]="crp" placeholder="Ex: 06/123456" required>
+          </div>
+
+          <div class="form-group">
+            <label for="email">E-mail Profissional</label>
+            <input type="email" id="email" [(ngModel)]="email" placeholder="seu@email.com" required>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="senha">Senha</label>
+              <input type="password" id="senha" [(ngModel)]="senha" placeholder="Mínimo 6 caracteres" required>
+            </div>
+            <div class="form-group">
+              <label for="confirmarSenha">Confirmar Senha</label>
+              <input type="password" id="confirmarSenha" [(ngModel)]="confirmarSenha" placeholder="Repita a senha" required>
+            </div>
+          </div>
+
+          <div *ngIf="errorMessage" class="error-message">
+            {{ errorMessage }}
+          </div>
+
+          <div class="actions">
+            <button type="button" class="btn-primary" (click)="nextStep()">Próximo Passo</button>
+            <button type="button" class="btn-text" (click)="voltarLogin()">Voltar ao Login</button>
+          </div>
+        </div>
+
+        <!-- Passo 2: Faturamento -->
+        <div class="step-content" *ngIf="step === 2">
+          <h3>Dados de Faturamento</h3>
+          <p class="step-subtitle">Insira seus dados de faturamento para emissão das notas fiscais e assinatura do Asaas.</p>
+
+          <div class="form-group">
+            <label for="documento">CPF ou CNPJ</label>
+            <input type="text" id="documento" [value]="documento" (input)="onDocumentoInput($event)" placeholder="000.000.000-00 ou 00.000.000/0000-00" required>
+          </div>
+
+          <div class="form-group">
+            <label for="telefone">Telefone / WhatsApp</label>
+            <input type="text" id="telefone" [value]="telefone" (input)="onTelefoneInput($event)" placeholder="(11) 99999-9999" required>
+          </div>
+
+          <div *ngIf="errorMessage" class="error-message">
+            {{ errorMessage }}
+          </div>
+
+          <div class="actions">
+            <button type="button" class="btn-primary" (click)="nextStep()">Ver Planos</button>
+            <button type="button" class="btn-secondary" (click)="prevStep()">Voltar</button>
+          </div>
+        </div>
+
+        <!-- Passo 3: Escolha do Plano -->
+        <div class="step-content plans-step" *ngIf="step === 3">
+          <h3>Escolha o seu Plano</h3>
+          <p class="step-subtitle">Selecione o plano ideal para a sua prática profissional.</p>
+
+          <div class="plans-grid">
+            <div class="plan-card" *ngFor="let plano of planos" 
+                 [class.featured]="plano.destaque" 
+                 [class.selected]="planoSelecionado === plano.id"
+                 (click)="selecionarPlano(plano.id)">
+              <div class="badge" *ngIf="plano.destaque">MAIS POPULAR</div>
+              <h4 class="plan-name">{{ plano.name }}</h4>
+              <div class="plan-price">
+                <span class="currency">R$</span>
+                <span class="amount">{{ plano.preco }}</span>
+                <span class="period">/mês</span>
+              </div>
+              <p class="plan-limit">{{ plano.recursos[0] }}</p>
+              <button type="button" class="btn-select-plan" [class.btn-featured]="plano.destaque">
+                {{ planoSelecionado === plano.id ? 'Selecionado' : 'Selecionar' }}
+              </button>
+            </div>
+          </div>
+
+          <div *ngIf="errorMessage" class="error-message">
+            {{ errorMessage }}
+          </div>
+
+          <div class="actions plans-actions">
+            <button type="button" class="btn-primary btn-finalize" [disabled]="isSubmitting" (click)="finalizarCadastro()">
+              <span *ngIf="!isSubmitting">Finalizar e Pagar</span>
+              <span *ngIf="isSubmitting" class="spinner"></span>
+            </button>
+            <button type="button" class="btn-secondary" (click)="prevStep()">Voltar</button>
+          </div>
+        </div>
+
+        <!-- Passo 4: Detalhes de Pagamento (Asaas) -->
+        <div class="step-content success-step" *ngIf="step === 4">
+          <div class="success-icon">✓</div>
+          <h3>Cadastro Realizado com Sucesso!</h3>
+          <p class="step-subtitle">Sua assinatura foi gerada no Asaas. Efetue o pagamento para liberar seu acesso.</p>
+
+          <div class="payment-box">
+            <h4>Pague com Pix (Rápido e imediato)</h4>
+            <p>Copie o código abaixo e pague no app do seu banco:</p>
+
+            <div class="pix-copy-paste-container" *ngIf="pixCopyPaste">
+              <input type="text" class="pix-input" readonly [value]="pixCopyPaste">
+              <button type="button" class="btn-copy" (click)="copiarPix()">
+                {{ pixCopiado ? 'Copiado!' : 'Copiar' }}
+              </button>
+            </div>
+
+            <div class="external-link-container" *ngIf="paymentUrl">
+              <p>Ou, se preferir pagar com <strong>Cartão de Crédito</strong> ou boleto:</p>
+              <a [href]="paymentUrl" target="_blank" class="btn-pay-link">
+                Ir para Página de Pagamento Asaas
+              </a>
+            </div>
+          </div>
+
+          <div class="activation-info">
+            <p>💡 <strong>Ativação Automática</strong>: O seu acesso será liberado assim que o pagamento for detectado pelo nosso sistema (em geral em menos de 2 minutos para pagamentos no Pix).</p>
+          </div>
+
+          <div class="actions">
+            <button type="button" class="btn-primary" (click)="voltarLogin()">Ir para o Login</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>

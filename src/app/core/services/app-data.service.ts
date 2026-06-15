@@ -78,6 +78,10 @@ export class AppDataService {
     return this.http.patch(`${this.apiUrl}/pacientes/${id}/anotacoes`, { anotacoes });
   }
 
+  getIaInsights(pacienteId: string): Observable<string[]> {
+    return this.http.get<string[]>(`${this.apiUrl}/pacientes/${pacienteId}/ia-insights`);
+  }
+
   // ==========================================
   // 4. ATIVIDADES TERAPÊUTICAS
   // ==========================================

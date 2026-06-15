@@ -263,3 +263,136 @@
 .loading-container {
   padding: 100px;
 }
+
+/* IA Insights Styles */
+.insights-header-ia {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+
+  h4 {
+    margin-bottom: 0 !important;
+  }
+}
+
+.badge-ia {
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  background-color: #e0f2fe;
+  color: #0284c7;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+
+  &.badge-locked {
+    background-color: #f1f5f9;
+    color: #475569;
+  }
+}
+
+.ia-locked-card {
+  border: 2px dashed #cbd5e1;
+  background-color: #fafbfe;
+  border-radius: var(--border-radius-md, 8px);
+  padding: 32px 24px;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+
+  .locked-content {
+    max-width: 450px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+
+    .lock-icon {
+      font-size: 2.5rem;
+      margin-bottom: 4px;
+    }
+
+    h5 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin: 0;
+    }
+
+    p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+      margin: 0;
+    }
+
+    .btn-upgrade-premium {
+      margin-top: 8px;
+      padding: 10px 20px;
+      background: linear-gradient(135deg, #4c35bd 0%, #6344ff 100%);
+      color: #ffffff;
+      border: none;
+      font-weight: 700;
+      font-size: 0.875rem;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(99, 68, 255, 0.25);
+      transition: all 0.2s ease;
+
+      &:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 16px rgba(99, 68, 255, 0.35);
+      }
+    }
+  }
+}
+
+.ia-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 30px;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  font-weight: 600;
+
+  .mini-spinner {
+    width: 18px;
+    height: 18px;
+    border-width: 2px;
+    border-top-color: #4c35bd;
+  }
+}
+
+.ia-error {
+  padding: 12px;
+  background-color: #fef2f2;
+  border: 1.5px solid #fca5a5;
+  color: #b91c1c;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.ia-empty {
+  text-align: center;
+  padding: 24px;
+  font-size: 0.875rem;
+  color: var(--text-light);
+  font-weight: 600;
+}
+
+.insight-item-card.ia-card {
+  border-color: rgba(99, 68, 255, 0.15);
+  background-color: #f8f7ff;
+
+  .ia-icon {
+    background-color: rgba(99, 68, 255, 0.15);
+    color: #6344ff;
+  }
+}
+

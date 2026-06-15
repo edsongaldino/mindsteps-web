@@ -68,4 +68,8 @@ export class Login {
   voltarHome() {
     this.router.navigate(['/']);
   }
+
+  irParaRegistro() {
+    this.router.navigate(['/registrar']);
+  }
 }

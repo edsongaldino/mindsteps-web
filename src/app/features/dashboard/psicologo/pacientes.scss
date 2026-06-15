@@ -257,3 +257,54 @@
   justify-content: flex-end;
   gap: 12px;
 }
+
+/* Banner de Limite de Plano */
+.limit-warning-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  background-color: #fffbeb;
+  border: 1.5px solid #fde68a;
+  padding: 16px 20px;
+  border-radius: var(--border-radius-md, 8px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+
+  .warning-icon {
+    font-size: 1.5rem;
+  }
+
+  .warning-text {
+    flex: 1;
+    font-size: 0.9rem;
+    color: #92400e;
+    line-height: 1.5;
+  }
+
+  .btn-upgrade-banner {
+    padding: 8px 16px;
+    background-color: #d97706;
+    color: #ffffff;
+    border: none;
+    font-weight: 700;
+    font-size: 0.825rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background var(--transition-fast, 0.2s);
+
+    &:hover {
+      background-color: #b45309;
+    }
+  }
+
+  @media (max-width: 640px) {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+
+    .btn-upgrade-banner {
+      width: 100%;
+    }
+  }
+}
+

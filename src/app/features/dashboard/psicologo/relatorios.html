@@ -75,17 +75,51 @@
       </div>
     </div>
 
-    <!-- Insights Principais -->
+    <!-- Insights Principais por IA -->
     <div class="insights-section margin-top">
-      <h4>Principais Insights Clínicos</h4>
-      <div class="insights-list">
-        <div class="insight-item-card" *ngFor="let ins of insights" [class.warning]="ins.tipo === 'warning'">
-          <div class="insight-icon">
-            <span>{{ ins.tipo === 'positive' ? '✓' : '⚠️' }}</span>
+      <div class="insights-header-ia">
+        <h4>Insights Clínicos por IA</h4>
+        <span class="badge-ia" [class.badge-locked]="isIaLocked">
+          {{ isIaLocked ? '🔒 Plano Profissional' : '✨ Inteligência Artificial' }}
+        </span>
+      </div>
+
+      <!-- Estado Bloqueado: Upgrade -->
+      <div class="ia-locked-card" *ngIf="isIaLocked">
+        <div class="locked-content">
+          <span class="lock-icon">🔒</span>
+          <h5>Análise Clínica Avançada por IA</h5>
+          <p>Tenha acesso a diagnósticos preditivos e insights clínicos baseados nas sessões de jogos cognitivos e diários emocionais de seus pacientes.</p>
+          <button class="btn-upgrade-premium" (click)="irParaPlanos()">Liberar IA no Plano Profissional</button>
+        </div>
+      </div>
+
+      <!-- Estado Liberado -->
+      <div class="insights-list" *ngIf="!isIaLocked">
+        <!-- Loading -->
+        <div class="ia-loading" *ngIf="loadingIaInsights">
+          <span class="spinner mini-spinner"></span>
+          <span>Processando dados terapêuticos e gerando insights clínicos com IA...</span>
+        </div>
+
+        <!-- Erro -->
+        <div class="ia-error" *ngIf="iaInsightsError && !loadingIaInsights">
+          <span>⚠️ {{ iaInsightsError }}</span>
+        </div>
+
+        <!-- Resultados -->
+        <div class="insight-item-card ia-card" *ngFor="let ins of iaInsights">
+          <div class="insight-icon ia-icon">
+            <span>✨</span>
           </div>
           <div class="insight-text">
-            <p>{{ ins.texto }}</p>
+            <p>{{ ins }}</p>
           </div>
+        </div>
+
+        <!-- Se não houver insights ainda -->
+        <div class="ia-empty" *ngIf="iaInsights.length === 0 && !loadingIaInsights && !iaInsightsError">
+          <p>Nenhum insight gerado para este paciente no momento.</p>
         </div>
       </div>
     </div>

@@ -212,7 +212,22 @@ nav {
   display: flex;
   gap: 18px;
   flex-wrap: wrap;
+  align-items: flex-start;
   margin-top: 36px;
+}
+
+.cta-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.cta-subtext {
+  font-size: 12px;
+  font-weight: 700;
+  color: $purple;
+  letter-spacing: 0.02em;
 }
 
 .trust-row {
