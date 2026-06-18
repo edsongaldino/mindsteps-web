@@ -59,13 +59,23 @@ export class AtividadesResponder implements OnInit, OnDestroy {
 
   // --- GAME 3: Memória Tática ---
   taticaEtapa = 0; // 0: Intro, 1: Memorizar, 2: Identificar, 3: Concluido
+  taticaRodada = 1;
+  taticaMaxRodadas = 5;
+  taticaAcertos = 0;
+  taticaFaseConcluida = false;
   taticaArquivos = [
     { nome: 'Contratos', icone: 'ti-file-text' },
     { nome: 'Fotos', icone: 'ti-photo' },
     { nome: 'Vídeos', icone: 'ti-video' },
     { nome: 'Mensagens', icone: 'ti-message-circle' },
     { nome: 'Backup', icone: 'ti-database' },
-    { nome: 'Finanças', icone: 'ti-coin' }
+    { nome: 'Finanças', icone: 'ti-coin' },
+    { nome: 'Configurações', icone: 'ti-settings' },
+    { nome: 'E-mails', icone: 'ti-mail' },
+    { nome: 'Projetos', icone: 'ti-briefcase' },
+    { nome: 'Músicas', icone: 'ti-music' },
+    { nome: 'Downloads', icone: 'ti-download' },
+    { nome: 'Relatórios', icone: 'ti-chart-bar' }
   ];
   taticaItensAtivos: any[] = [];
   taticaArquivoSumido = '';
@@ -179,6 +189,9 @@ export class AtividadesResponder implements OnInit, OnDestroy {
     if (this.nomeJogo === 'Memória Tática' || this.nomeJogo === 'Caçador de Memórias' || this.nomeJogo === 'Jogo de Memória') {
       if (this.nomeJogo === 'Memória Tática') {
         this.taticaEtapa = 0;
+        this.taticaRodada = 1;
+        this.taticaAcertos = 0;
+        this.taticaFaseConcluida = false;
       } else {
         this.iniciarJogoDeMemoria(conteudo);
       }
@@ -368,16 +381,41 @@ export class AtividadesResponder implements OnInit, OnDestroy {
 
   // --- GAME 3: Memória Tática Logic ---
   taticaIniciar() {
+    this.taticaArquivoSelecionado = '';
+    this.taticaFaseConcluida = false;
+
+    // Calculate grid size and memorize time based on current round
+    // Round 1: 3 items, 5 seconds
+    // Round 2: 4 items, 4 seconds
+    // Round 3: 5 items, 4 seconds
+    // Round 4: 6 items, 3 seconds
+    // Round 5+: 7 items, 3 seconds
+    let itensCount = 3;
+    let tempoMemorizar = 5;
+
+    if (this.taticaRodada === 2) {
+      itensCount = 4;
+      tempoMemorizar = 4;
+    } else if (this.taticaRodada === 3) {
+      itensCount = 5;
+      tempoMemorizar = 4;
+    } else if (this.taticaRodada === 4) {
+      itensCount = 6;
+      tempoMemorizar = 3;
+    } else if (this.taticaRodada >= 5) {
+      itensCount = 7;
+      tempoMemorizar = 3;
+    }
+
     const randomSorted = [...this.taticaArquivos].sort(() => Math.random() - 0.5);
-    this.taticaItensAtivos = randomSorted.slice(0, 4);
+    this.taticaItensAtivos = randomSorted.slice(0, itensCount);
     
     // Choose one to disappear
     const indexSumido = Math.floor(Math.random() * this.taticaItensAtivos.length);
     this.taticaArquivoSumido = this.taticaItensAtivos[indexSumido].nome;
     
     this.taticaEtapa = 1; // Memorize
-    this.taticaSegundosRestantes = 4;
-    this.taticaArquivoSelecionado = '';
+    this.taticaSegundosRestantes = tempoMemorizar;
 
     if (this.taticaTimer) clearInterval(this.taticaTimer);
     this.taticaTimer = setInterval(() => {
@@ -391,28 +429,53 @@ export class AtividadesResponder implements OnInit, OnDestroy {
   }
 
   taticaResponder(nome: string) {
-    if (this.taticaArquivoSelecionado !== '') return;
+    if (this.taticaArquivoSelecionado !== '' || this.taticaFaseConcluida) return;
     this.taticaArquivoSelecionado = nome;
+  }
+
+  taticaAvancarRodada() {
+    this.taticaRodada++;
+    this.taticaIniciar();
   }
 
   taticaFinalizar() {
     if (this.taticaArquivoSelecionado === '') return;
+    
+    const acertou = this.taticaArquivoSelecionado === this.taticaArquivoSumido;
+    
+    if (acertou) {
+      this.taticaAcertos++;
+      if (this.taticaRodada < this.taticaMaxRodadas) {
+        // Correct, proceed to next round
+        this.taticaFaseConcluida = true;
+        return;
+      }
+    }
+
+    // If we reach here, either they got it wrong (fail game), or they completed all rounds.
     this.salvando = true;
-    this.taticaAcertou = this.taticaArquivoSelecionado === this.taticaArquivoSumido;
+    this.taticaAcertou = acertou && (this.taticaAcertos === this.taticaMaxRodadas);
 
     const dadosPlay = {
       acerto: this.taticaAcertou,
+      rodada_final: this.taticaRodada,
+      rodadas_concluidas: this.taticaAcertos,
+      total_rodadas: this.taticaMaxRodadas,
       arquivo_esperado: this.taticaArquivoSumido,
       arquivo_respondido: this.taticaArquivoSelecionado,
       itens_mostrados: this.taticaItensAtivos.map(e => e.nome).join(',')
     };
 
     this.service.registrarJogo('memoria_tatica', dadosPlay, this.id).subscribe({
-      next: () => {
+      next: (resultado) => {
+        // Calculate XP: 6 XP per correct round (max 30 XP)
+        const xpGanhos = this.taticaAcertos * 6;
         this.service.responderAtividade(this.id, JSON.stringify({
           jogo: 'Memória Tática',
           acertou: this.taticaAcertou,
-          resposta: this.taticaArquivoSelecionado
+          rodadasConcluidas: this.taticaAcertos,
+          totalRodadas: this.taticaMaxRodadas,
+          pontosXP: xpGanhos
         }), this.notaHumor).subscribe({
           next: () => {
             this.salvando = false;

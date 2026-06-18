@@ -120,6 +120,18 @@
 
         <!-- GAME B: MEMÓRIA TÁTICA -->
         <div class="tatica-game" *ngIf="nomeJogo === 'Memória Tática'">
+          <!-- Round indicator header -->
+          <div class="game-xp-header" *ngIf="taticaEtapa === 1 || taticaEtapa === 2">
+            <div class="badge-icon"><i class="ti ti-target"></i></div>
+            <div class="xp-info">
+              <span class="level-title">Rodada {{ taticaRodada }} de {{ taticaMaxRodadas }}</span>
+              <div class="mini-bar-container">
+                <div class="mini-bar" [style.width.%]="(taticaRodada / taticaMaxRodadas) * 100"></div>
+              </div>
+            </div>
+            <span class="xp-val">Acertos: {{ taticaAcertos }}</span>
+          </div>
+
           <!-- Etapa 0: Intro -->
           <div class="tatica-step tatica-intro animate-fade-in" *ngIf="taticaEtapa === 0">
             <div class="badge-tag">MEMÓRIA OPERACIONAL</div>
@@ -130,9 +142,10 @@
                 <li>Memorize a grade de arquivos por alguns segundos.</li>
                 <li>Um dos arquivos irá sumir da grade e aparecerá como "?".</li>
                 <li>Indique qual foi o arquivo removido.</li>
+                <li>A cada rodada a grade aumenta e o tempo diminui. Se errar, o jogo acaba!</li>
               </ol>
             </div>
-            <button type="button" class="btn-secondary start-btn" (click)="taticaIniciar()">Iniciar Jogo</button>
+            <button type="button" class="btn-secondary start-btn" (click)="taticaIniciar()">Iniciar Desafio</button>
           </div>
 
           <!-- Etapa 1: Memorizar -->
@@ -140,7 +153,7 @@
             <h2>MEMORIZE OS ARQUIVOS</h2>
             <p class="countdown">Preste muita atenção. Sumindo em {{ taticaSegundosRestantes }}s...</p>
             
-            <div class="tatica-grid">
+            <div class="tatica-grid" [style.grid-template-columns]="taticaItensAtivos.length <= 4 ? 'repeat(2, 1fr)' : 'repeat(3, 1fr)'">
               <div class="tatica-card" *ngFor="let item of taticaItensAtivos">
                 <i class="ti" [class]="item.icone"></i>
                 <span>{{ item.nome }}</span>
@@ -148,48 +161,69 @@
             </div>
           </div>
 
-          <!-- Etapa 2: Identificar -->
+          <!-- Etapa 2: Identificar / Intermediária -->
           <div class="tatica-step tatica-identify animate-fade-in" *ngIf="taticaEtapa === 2">
-            <h2>QUAL ARQUIVO SUMIU?</h2>
-            <p class="section-desc">Selecione a opção correta abaixo.</p>
+            <!-- Normal gameplay -->
+            <div *ngIf="!taticaFaseConcluida">
+              <h2>QUAL ARQUIVO SUMIU?</h2>
+              <p class="section-desc">Selecione a opção correta abaixo.</p>
 
-            <div class="tatica-grid select-mode">
-              <div class="tatica-card" *ngFor="let item of taticaItensAtivos" [class.sumido]="item.nome === taticaArquivoSumido">
-                <i class="ti" [class]="item.nome === taticaArquivoSumido ? 'ti-help' : item.icone"></i>
-                <span>{{ item.nome === taticaArquivoSumido ? '?' : item.nome }}</span>
+              <div class="tatica-grid select-mode" [style.grid-template-columns]="taticaItensAtivos.length <= 4 ? 'repeat(2, 1fr)' : 'repeat(3, 1fr)'">
+                <div class="tatica-card" *ngFor="let item of taticaItensAtivos" [class.sumido]="item.nome === taticaArquivoSumido">
+                  <i class="ti" [class]="item.nome === taticaArquivoSumido ? 'ti-help' : item.icone"></i>
+                  <span>{{ item.nome === taticaArquivoSumido ? '?' : item.nome }}</span>
+                </div>
               </div>
+
+              <div class="options-container">
+                <h3>Escolha a sua resposta:</h3>
+                <div class="tags-grid">
+                  <button type="button" class="tag-btn"
+                          *ngFor="let f of taticaArquivos"
+                          [class.selected]="taticaArquivoSelecionado === f.nome"
+                          (click)="taticaResponder(f.nome)">
+                    {{ f.nome }}
+                  </button>
+                </div>
+              </div>
+
+              <button type="button" class="btn-secondary submit-btn" [disabled]="taticaArquivoSelecionado === '' || salvando" (click)="taticaFinalizar()">
+                <span *ngIf="!salvando">Enviar Resposta</span>
+                <div class="spinner-small" *ngIf="salvando"></div>
+              </button>
             </div>
 
-            <div class="options-container">
-              <h3>Escolha a sua resposta:</h3>
-              <div class="tags-grid">
-                <button type="button" class="tag-btn"
-                        *ngFor="let f of taticaArquivos"
-                        [class.selected]="taticaArquivoSelecionado === f.nome"
-                        (click)="taticaResponder(f.nome)">
-                  {{ f.nome }}
-                </button>
+            <!-- Round completed transition screen -->
+            <div class="tatica-step tatica-result animate-scale-in" *ngIf="taticaFaseConcluida">
+              <div class="result-icon-wrapper success">
+                <i class="ti ti-check"></i>
               </div>
+              <h2>Rodada {{ taticaRodada }} Concluída!</h2>
+              <p class="result-text">
+                Excelente! Você identificou corretamente que o arquivo "<strong>{{ taticaArquivoSumido }}</strong>" sumiu.
+              </p>
+              <button type="button" class="btn-primary" (click)="taticaAvancarRodada()">Ir para Rodada {{ taticaRodada + 1 }}</button>
             </div>
-
-            <button type="button" class="btn-secondary submit-btn" [disabled]="taticaArquivoSelecionado === '' || salvando" (click)="taticaFinalizar()">
-              <span *ngIf="!salvando">Enviar Resposta</span>
-              <div class="spinner-small" *ngIf="salvando"></div>
-            </button>
           </div>
 
-          <!-- Etapa 3: Resultado -->
+          <!-- Etapa 3: Resultado Final -->
           <div class="tatica-step tatica-result animate-scale-in" *ngIf="taticaEtapa === 3">
             <div class="result-icon-wrapper" [class.success]="taticaAcertou" [class.error]="!taticaAcertou">
-              <i class="ti" [class.ti-check]="taticaAcertou" [class.ti-x]="!taticaAcertou"></i>
+              <i class="ti" [class.ti-trophy]="taticaAcertou" [class.ti-x]="!taticaAcertou"></i>
             </div>
-            <h2>{{ taticaAcertou ? 'Acurácia: 100%' : 'Mais atenção na próxima!' }}</h2>
+            <h2>{{ taticaAcertou ? 'Vitória Total! 🏆' : 'Desafio Finalizado' }}</h2>
+            
             <p class="result-text" *ngIf="taticaAcertou">
-              Excelente! Você registrou o sumiço do arquivo "{{ taticaArquivoSumido }}" perfeitamente na sua memória.
+              Incrível! Você concluiu todas as {{ taticaMaxRodadas }} rodadas com sucesso e provou ter uma memória tática excelente!
+              <br><strong>Pontos ganhos: +30 XP</strong>
             </p>
+            
             <p class="result-text" *ngIf="!taticaAcertou">
-              O arquivo que sumiu era o "{{ taticaArquivoSumido }}", mas você selecionou "{{ taticaArquivoSelecionado }}". Tente se concentrar nos detalhes visuais da próxima vez.
+              Você concluiu {{ taticaAcertos }} de {{ taticaMaxRodadas }} rodadas.
+              <br>Na rodada {{ taticaRodada }}, o arquivo sumido era "<strong>{{ taticaArquivoSumido }}</strong>", mas você selecionou "<strong>{{ taticaArquivoSelecionado }}</strong>".
+              <br><strong>Pontos ganhos: +{{ taticaAcertos * 6 }} XP</strong>
             </p>
+            
             <button type="button" class="btn-primary" (click)="salvar()">Concluir Atividade</button>
           </div>
         </div>
