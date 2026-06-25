@@ -15,6 +15,27 @@ export class Registro implements OnInit {
   step: number = 1;
   isSubmitting: boolean = false;
   errorMessage: string = '';
+  isMobileMenuOpen: boolean = false;
+
+  toggleMobileMenu() {
+    this.isMobileMenuOpen = !this.isMobileMenuOpen;
+  }
+
+  voltarHome(section?: string) {
+    this.isMobileMenuOpen = false;
+    if (section) {
+      this.router.navigate(['/']).then(() => {
+        setTimeout(() => {
+          const el = document.getElementById(section);
+          if (el) {
+            el.scrollIntoView({ behavior: 'smooth' });
+          }
+        }, 150);
+      });
+    } else {
+      this.router.navigate(['/']);
+    }
+  }
 
   // Step 1 Form Data
   nome: string = '';

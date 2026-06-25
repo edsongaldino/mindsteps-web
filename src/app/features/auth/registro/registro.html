@@ -1,4 +1,23 @@
 <div class="registro-page">
+  <header class="header">
+    <div class="container nav">
+      <a class="brand" (click)="voltarHome()" aria-label="MindSteps">
+        <img src="/logo.png" alt="MindSteps" />
+      </a>
+      <nav>
+        <a (click)="voltarHome('recursos')">Recursos</a>
+        <a (click)="voltarHome('jogos')">Jogos</a>
+        <a (click)="voltarHome('psicologos')">Para psicólogos</a>
+        <a (click)="voltarHome('download')">Download</a>
+        <a (click)="voltarHome('planos')">Planos</a>
+        <a (click)="voltarHome('contato')">Contato</a>
+      </nav>
+      <button class="mobile-menu-toggle" (click)="toggleMobileMenu()" aria-label="Menu">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"></line><line x1="4" y1="6" x2="20" y2="6"></line><line x1="4" y1="18" x2="20" y2="18"></line></svg>
+      </button>
+    </div>
+  </header>
+
   <div class="registro-container">
     
     <!-- Esquerda: Banner / Info -->
@@ -89,7 +108,7 @@
 
           <div class="actions">
             <button type="button" class="btn-primary" (click)="nextStep()">Próximo Passo</button>
-            <button type="button" class="btn-text" (click)="voltarLogin()">Voltar ao Login</button>
+            <button type="button" class="btn-text" (click)="voltarLogin()">Já tenho cadastro! Fazer Login</button>
           </div>
         </div>
 
@@ -193,4 +212,25 @@
     </div>
 
   </div>
+  <!-- Mobile Sidebar Menu -->
+  <div class="mobile-sidebar" [class.open]="isMobileMenuOpen">
+    <div class="mobile-sidebar-header">
+      <a class="brand" (click)="voltarHome()" aria-label="MindSteps">
+        <img src="/logo.png" alt="MindSteps" />
+      </a>
+      <button class="mobile-menu-close" (click)="toggleMobileMenu()" aria-label="Close">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+    </div>
+    <div class="mobile-sidebar-links">
+      <a (click)="voltarHome('recursos')">Recursos</a>
+      <a (click)="voltarHome('jogos')">Jogos</a>
+      <a (click)="voltarHome('psicologos')">Para psicólogos</a>
+      <a (click)="voltarHome('download')">Download</a>
+      <a (click)="voltarHome('planos')">Planos</a>
+      <a (click)="voltarHome('contato')">Contato</a>
+      <a (click)="voltarLogin()" style="border-top: 1px solid rgba(16, 32, 61, 0.08); padding-top: 20px; margin-top: 10px;">Já tenho cadastro! Fazer Login</a>
+    </div>
+  </div>
+  <div class="mobile-sidebar-backdrop" *ngIf="isMobileMenuOpen" (click)="toggleMobileMenu()"></div>
 </div>

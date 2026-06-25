@@ -13,6 +13,7 @@ import { environment } from '../../../environments/environment';
 })
 export class Landing {
   isScrolled: boolean = false;
+  isMobileMenuOpen: boolean = false;
 
   @HostListener('window:scroll', [])
   onWindowScroll() {
@@ -148,7 +149,12 @@ export class Landing {
 
   constructor(private http: HttpClient, private router: Router) {}
 
+  toggleMobileMenu() {
+    this.isMobileMenuOpen = !this.isMobileMenuOpen;
+  }
+
   openRegisterModal(plano?: string) {
+    this.isMobileMenuOpen = false;
     if (plano === 'Clínica') {
       this.isRegisterModalOpen = true;
     } else if (plano) {
@@ -210,6 +216,7 @@ export class Landing {
   }
 
   scrollToSection(sectionId: string) {
+    this.isMobileMenuOpen = false;
     const element = document.getElementById(sectionId);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });

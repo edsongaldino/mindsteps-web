@@ -8,10 +8,14 @@
         <a (click)="scrollToSection('recursos')">Recursos</a>
         <a (click)="scrollToSection('jogos')">Jogos</a>
         <a (click)="scrollToSection('psicologos')">Para psicólogos</a>
+        <a (click)="scrollToSection('download')">Download</a>
         <a (click)="scrollToSection('planos')">Planos</a>
         <a (click)="scrollToSection('contato')">Contato</a>
       </nav>
-      <a class="btn btn-primary" (click)="openRegisterModal()">Começar teste grátis →</a>
+      <a class="btn btn-primary header-desktop-btn" (click)="openRegisterModal()">Começar teste grátis →</a>
+      <button class="mobile-menu-toggle" (click)="toggleMobileMenu()" aria-label="Menu">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"></line><line x1="4" y1="6" x2="20" y2="6"></line><line x1="4" y1="18" x2="20" y2="18"></line></svg>
+      </button>
     </div>
   </header>
 
@@ -28,7 +32,6 @@
                 <a class="btn btn-primary btn-lg" (click)="openRegisterModal()">Começar teste grátis →</a>
                 <span class="cta-subtext">7 dias grátis • Sem cartão de crédito</span>
               </div>
-              <a class="btn btn-outline btn-lg" (click)="scrollToSection('contato')">Agendar demonstração</a>
             </div>
           </div>
           <div class="trust-row">
@@ -140,6 +143,78 @@
       </div>
     </section>
 
+    <section id="download" class="section app-download-section">
+      <div class="container app-download-grid">
+        <div class="app-download-copy">
+          <div class="pill">APLICATIVO DO PACIENTE</div>
+          <h2>Leve sua terapia para além dos <span>50 minutos</span> de sessão.</h2>
+          <p class="app-desc">
+            O MindSteps é um aplicativo interativo <span class="highlight-teal">exclusivo para pacientes.</span> Registre suas emoções, realize atividades e acompanhamentos recomendados pelo seu psicólogo e acompanhe sua evolução de forma engajadora — tudo conectado em tempo real ao seu <span class="highlight-teal">painel clínico.</span>
+          </p>
+
+          <div class="app-features">
+            <div class="app-feature-item">
+              <div class="feature-icon-wrapper">
+                <i class="ti ti-lock"></i>
+              </div>
+              <div class="feature-text">
+                <strong>Exclusivo e seguro</strong>
+                <span>Acesso restrito a pacientes de psicólogos e clínicas cadastradas.</span>
+              </div>
+            </div>
+
+            <div class="app-feature-item">
+              <div class="feature-icon-wrapper">
+                <i class="ti ti-git-fork"></i>
+              </div>
+              <div class="feature-text">
+                <strong>Acompanhamento em tempo real</strong>
+                <span>Suas informações são sincronizadas com o seu psicólogo.</span>
+              </div>
+            </div>
+
+            <div class="app-feature-item">
+              <div class="feature-icon-wrapper">
+                <i class="ti ti-mood-smile"></i>
+              </div>
+              <div class="feature-text">
+                <strong>Mais autonomia no seu dia a dia</strong>
+                <span>Atividades personalizadas para apoiar seu bem-estar emocional.</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="app-badges">
+            <a href="https://play.google.com/store" target="_blank" class="store-btn">
+              <i class="ti ti-brand-google-play store-icon"></i>
+              <div class="store-text">
+                <span class="store-sub">DISPONÍVEL NO</span>
+                <span class="store-title">Google Play</span>
+              </div>
+            </a>
+            <a href="https://www.apple.com/app-store" target="_blank" class="store-btn">
+              <i class="ti ti-brand-apple store-icon"></i>
+              <div class="store-text">
+                <span class="store-sub">BAIXAR NA</span>
+                <span class="store-title">App Store</span>
+              </div>
+            </a>
+          </div>
+
+          <div class="app-security-footer">
+            <i class="ti ti-lock"></i>
+            <span>Seus dados são protegidos com criptografia e sigilo profissional.</span>
+          </div>
+        </div>
+        <div class="app-download-visual">
+          <div class="app-mockup-container">
+            <div class="glow-effect"></div>
+            <img class="phone-mockup" src="assets/images/app-paciente.svg" alt="Aplicativo do paciente adolescente" />
+          </div>
+        </div>
+      </div>
+    </section>
+
     <section id="planos" class="section pricing-section">
       <div class="container">
         <div class="section-title centered">
@@ -200,7 +275,7 @@
         <h2>Leve sua terapia para além dos <span>50 minutos</span> de sessão.</h2>
         <p>Acompanhe adolescentes, aumente o engajamento e tome decisões clínicas baseadas em dados.</p>
       </div>
-      <div class="actions"><a class="btn btn-green" (click)="openRegisterModal()">Começar teste grátis →</a><a class="btn btn-light" (click)="scrollToSection('contato')">Agendar demonstração</a></div>
+      <div class="actions"><a class="btn btn-green" (click)="openRegisterModal()">Começar teste grátis →</a></div>
     </section>
   </main>
 
@@ -301,5 +376,28 @@
       </div>
     </div>
   </div>
+  <!-- Mobile Sidebar Menu -->
+  <div class="mobile-sidebar" [class.open]="isMobileMenuOpen">
+    <div class="mobile-sidebar-header">
+      <a class="brand" (click)="scrollToSection('top')" aria-label="MindSteps">
+        <img src="/logo.png" alt="MindSteps" />
+      </a>
+      <button class="mobile-menu-close" (click)="toggleMobileMenu()" aria-label="Close">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+    </div>
+    <div class="mobile-sidebar-links">
+      <a (click)="scrollToSection('recursos')">Recursos</a>
+      <a (click)="scrollToSection('jogos')">Jogos</a>
+      <a (click)="scrollToSection('psicologos')">Para psicólogos</a>
+      <a (click)="scrollToSection('download')">Download</a>
+      <a (click)="scrollToSection('planos')">Planos</a>
+      <a (click)="scrollToSection('contato')">Contato</a>
+    </div>
+    <div class="mobile-sidebar-footer">
+      <a class="btn btn-primary" style="width: 100%;" (click)="openRegisterModal()">Começar teste grátis →</a>
+    </div>
+  </div>
+  <div class="mobile-sidebar-backdrop" *ngIf="isMobileMenuOpen" (click)="toggleMobileMenu()"></div>
 </div>
 

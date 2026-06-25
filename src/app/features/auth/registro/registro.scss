@@ -1,5 +1,15 @@
+$navy: #10203d;
+$blue: #2563eb;
+$purple: #6046d8;
+$teal: #14b8a6;
+$muted: #65748d;
+$line: #e6edf7;
+$bg: #f8fbff;
+$dark: #0f2344;
+
 .registro-page {
   display: flex;
+  flex-direction: column;
   min-height: 100vh;
   background-color: #f8fafc;
   font-family: 'Inter', system-ui, sans-serif;
@@ -570,5 +580,190 @@
       max-width: none;
     }
   }
+}
+
+// ============================================
+// HEADER & NAVIGATION (COPIED FOR CONSISTENCY)
+// ============================================
+.header {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  z-index: 100;
+  backdrop-filter: blur(18px);
+  background: rgba(255, 255, 255, 0.84);
+  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  .container {
+    width: min(1180px, calc(100% - 48px));
+    margin: 0 auto;
+  }
+}
+
+.nav {
+  height: 82px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+
+  img {
+    height: 52px;
+    width: auto;
+    object-fit: contain;
+  }
+}
+
+nav {
+  display: flex;
+  align-items: center;
+  gap: 34px;
+  color: #53637b;
+  font-weight: 700;
+
+  a {
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+    transition: all .25s ease;
+
+    &:hover {
+      color: $purple;
+    }
+  }
+}
+
+.mobile-menu-toggle {
+  display: none;
+}
+
+@media (max-width: 1024px) {
+  nav {
+    display: none;
+  }
+
+  .mobile-menu-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    color: $navy;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 8px;
+    
+    &:hover {
+      background: rgba($purple, 0.08);
+      color: $purple;
+    }
+  }
+
+  .nav {
+    height: 64px;
+    padding: 0 16px;
+  }
+
+  .brand img {
+    height: 38px;
+  }
+}
+
+// ============================================
+// MOBILE SIDEBAR MENU
+// ============================================
+.mobile-sidebar {
+  position: fixed;
+  top: 0;
+  right: -320px;
+  width: 320px;
+  height: 100vh;
+  background: white;
+  z-index: 1000;
+  box-shadow: -10px 0 30px rgba(16, 32, 61, 0.15);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 24px;
+
+  &.open {
+    transform: translateX(-320px);
+  }
+
+  .mobile-sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 32px;
+
+    .brand img {
+      height: 40px;
+    }
+
+    .mobile-menu-close {
+      background: none;
+      border: none;
+      color: $navy;
+      cursor: pointer;
+      padding: 8px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      &:hover {
+        background: rgba($purple, 0.08);
+        color: $purple;
+      }
+    }
+  }
+
+  .mobile-sidebar-links {
+    display: flex;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    a {
+      font-size: 18px;
+      font-weight: 700;
+      color: $navy;
+      text-decoration: none;
+      padding: 8px 12px;
+      border-radius: 8px;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background: rgba($purple, 0.05);
+        color: $purple;
+        padding-left: 18px;
+      }
+    }
+  }
+}
+
+.mobile-sidebar-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(16, 32, 61, 0.4);
+  backdrop-filter: blur(4px);
+  z-index: 999;
+  animation: fade-in 0.25s ease;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
