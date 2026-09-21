@@ -64,21 +64,21 @@ export class PsicologoBiblioteca {
     },
     {
       id: 'foguete',
-      titulo: 'Foguete do Foco',
+      titulo: 'Missão Foco',
       categoria: 'Atenção sustentada',
       categoriaChave: 'atencao',
       faixaEtaria: '6-12 anos',
-      descricao: 'Mantém o paciente concentrado guiando um foguete desviando de meteoros (distratores de atenção).',
-      emoji: '🚀',
+      descricao: 'Mantém o paciente concentrado exercitando atenção seletiva e inibição de distratores.',
+      emoji: '🎯',
       cor: '#f59e0b'
     },
     {
       id: 'decisao_pressao',
-      titulo: 'Decisão Sob Pressão',
+      titulo: 'Respire',
       categoria: 'Controle de impulsos',
       categoriaChave: 'autocontrole',
       faixaEtaria: '8-15 anos',
-      descricao: 'O paciente deve controlar a impulsividade e agir sob tempo limite com foco e calma.',
+      descricao: 'O paciente deve controlar a impulsividade e agir com pausa respiratória guiada e escolhas conscientes.',
       emoji: '⏳',
       cor: '#1e3a8a'
     },
@@ -88,17 +88,17 @@ export class PsicologoBiblioteca {
       categoria: 'Memória verbal',
       categoriaChave: 'funcoes',
       faixaEtaria: '7-12 anos',
-      descricao: 'Mistério lógico onde o paciente deve memorizar depoimentos textuais e responder perguntas de compreensão.',
+      descricao: 'Mistério lógico onde o paciente deve memorizar depoimentos textuais e responder perguntas de compreensão com treino ilimitado.',
       emoji: '🕵️',
       cor: '#78350f'
     },
     {
       id: 'modo_piloto',
       titulo: 'Modo Piloto',
-      categoria: 'Relaxamento e Foco',
+      categoria: 'Controle Inibitório',
       categoriaChave: 'atencao',
       faixaEtaria: '6-12 anos',
-      descricao: 'Checklist interativo de desaceleração guiada para momentos de alta ansiedade ou agitação.',
+      descricao: 'Checklist interativo em 4 situações críticas de impulso para desativar o modo piloto automático.',
       emoji: '✈️',
       cor: '#4338ca'
     },
@@ -148,7 +148,7 @@ export class PsicologoBiblioteca {
       categoria: 'Reestruturação cognitiva',
       categoriaChave: 'regulacao',
       faixaEtaria: '7-15 anos',
-      descricao: 'Desafia o paciente a identificar pensamentos automáticos disfuncionais e propor reestruturações realistas.',
+      descricao: 'Desafia o paciente a identificar pensamentos automáticos disfuncionais em 3 situações e propor reestruturações realistas.',
       emoji: '🔍',
       cor: '#0f766e'
     },
@@ -184,21 +184,21 @@ export class PsicologoBiblioteca {
     },
     {
       id: 'monstro',
-      titulo: 'O Monstro da Ansiedade',
+      titulo: 'Ansiedade Social',
       categoria: 'Externalização da ansiedade',
       categoriaChave: 'regulacao',
-      faixaEtaria: '5-11 anos',
-      descricao: 'Ajudar a criança a desenhar, batizar e externalizar sua ansiedade em formato de monstrinho tratável.',
+      faixaEtaria: '5-15 anos',
+      descricao: 'Mapear em quais partes do corpo sente os sintomas físicos e capturar o pensamento automático.',
       emoji: '👾',
       cor: '#6d28d9'
     },
     {
       id: 'ilha',
       titulo: 'Ilha das Emoções',
-      categoria: 'Identificação emocional',
+      categoria: 'Psicoeducação & Regulação',
       categoriaChave: 'regulacao',
       faixaEtaria: '6-12 anos',
-      descricao: 'Navegar por regiões correspondentes às emoções básicas para classificar sentimentos do dia a dia.',
+      descricao: 'Navegar por dilemas emocionais e descobrir a melhor estratégia de regulação emocional.',
       emoji: '🌴',
       cor: '#047857'
     },
@@ -214,11 +214,11 @@ export class PsicologoBiblioteca {
     },
     {
       id: 'escape',
-      titulo: 'Escape Room Terapêutico',
+      titulo: 'Ache a Distorção',
       categoria: 'Identificação de distorções',
       categoriaChave: 'funcoes',
       faixaEtaria: '9-15 anos',
-      descricao: 'Decifrar enigmas identificando distorções cognitivas clássicas em diálogos de personagens.',
+      descricao: 'Decifrar enigmas identificando distorções cognitivas clássicas para abrir portas virtuais.',
       emoji: '🚪',
       cor: '#374151'
     },

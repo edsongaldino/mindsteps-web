@@ -45,7 +45,7 @@ export class PsicologoAtividades implements OnInit {
   palavrasPersonalizadas: string = '';
 
   jogosDisponiveis: string[] = [
-    'Decisão Sob Pressão',
+    'Respire',
     'Missão Foco',
     'Memória Tática',
     'Investigação',
@@ -59,10 +59,11 @@ export class PsicologoAtividades implements OnInit {
     'Tribunal dos Pensamentos',
     'Caçador de Gatilhos',
     'Missão Coragem',
-    'O Monstro da Ansiedade',
+    'Ansiedade Social',
     'Ilha das Emoções',
     'Cartas dos Sabotadores',
-    'Escape Room Terapêutico',
+    'Ache a Distorção',
+    'Check-List (Saúde)',
     'Jornada do Herói Interior',
     'Jogo de Memória'
   ];
