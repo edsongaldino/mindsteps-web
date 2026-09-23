@@ -41,10 +41,10 @@ export class Login {
         // Redireciona com base no papel
         if (perfilUsuario === 'Administrador') {
           this.router.navigate(['/dashboard/admin/resumo']);
-        } else if (perfilUsuario === 'Psicologo') {
-          this.router.navigate(['/dashboard/psicologo/resumo']);
-        } else if (perfilUsuario === 'Paciente') {
-          this.router.navigate(['/paciente/home']);
+        } else if (perfilUsuario === 'Psicologo' || perfilUsuario === 'Paciente') {
+          this.errorMessage = 'O acesso pelo painel web agora é exclusivo para Administradores. Por favor, baixe o aplicativo MindSteps no seu celular para acessar sua conta.';
+          this.auth.logout();
+          this.cdr.markForCheck();
         } else {
           this.errorMessage = 'Perfil de usuário não reconhecido.';
           this.auth.logout();

@@ -22,7 +22,7 @@ export class DashboardLayout implements OnInit {
 
   ngOnInit(): void {
     if (typeof window !== 'undefined') {
-      this.userPerfil = localStorage.getItem('userProfile') || 'Psicologo';
+      this.userPerfil = 'Administrador';
       
       this.dataService.getMe().subscribe({
         next: (me) => {
