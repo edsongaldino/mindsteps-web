@@ -29,5 +29,15 @@ export class Auth {
     return this.http.post(`${environment.apiUrl}/psicologos/registrar`, dados);
   }
 
+  recuperarSenha(email: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/recuperar-senha`, { email });
+  }
 
+  validarCodigoRecuperacao(email: string, codigo: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/validar-codigo-recuperacao`, { email, codigo });
+  }
+
+  redefinirSenha(email: string, codigo: string, novaSenha: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/redefinir-senha`, { email, codigo, novaSenha });
+  }
 }

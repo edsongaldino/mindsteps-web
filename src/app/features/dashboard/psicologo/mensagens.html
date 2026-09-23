@@ -20,8 +20,8 @@
       </div>
     </div>
     
-    <div class="flex-center loading-sidebar" *ngIf="loadingPacientes">
-      <span class="spinner"></span>
+    <div class="flex-center loading-sidebar" *ngIf="loadingPacientes" style="padding: 30px; display: flex; justify-content: center;">
+      <span class="spinner" style="border: 3px solid #f3f3f3; border-top: 3px solid var(--secondary); border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; display: inline-block;"></span>
     </div>
   </aside>
 
@@ -74,10 +74,13 @@
     </footer>
   </main>
   
-  <div class="chat-empty-state" *ngIf="!selectedPaciente && !loadingPacientes">
-    <div class="empty-box">
-      <span>💬</span>
+  <div class="chat-empty-state" *ngIf="!selectedPaciente">
+    <div class="empty-box" *ngIf="!loadingPacientes">
+      <span class="empty-icon">💬</span>
       <p>Selecione um paciente na barra lateral para iniciar a conversa.</p>
+    </div>
+    <div class="flex-center loading-chat" *ngIf="loadingPacientes">
+      <span class="spinner" style="border: 3px solid #f3f3f3; border-top: 3px solid var(--secondary); border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; display: inline-block;"></span>
     </div>
   </div>
 </div>

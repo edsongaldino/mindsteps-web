@@ -23,10 +23,8 @@ export class PsicologoPacientes implements OnInit {
   isRegisterModalOpen: boolean = false;
   nome: string = '';
   email: string = '';
-  senhaHash: string = 'MstepsPac@123'; // Senha padrão de acesso inicial
+  senhaHash: string = '';
   telefone: string = '';
-  dataNascimento: string = '';
-  genero: string = 'Masculino';
   isSubmitting: boolean = false;
   errorMessage: string = '';
   successMessage: string = '';
@@ -167,9 +165,7 @@ export class PsicologoPacientes implements OnInit {
       nome: this.nome,
       email: this.email,
       telefone: this.telefone,
-      senha: this.senhaHash,
-      dataNascimento: this.dataNascimento ? new Date(this.dataNascimento) : null,
-      genero: this.genero
+      senha: this.senhaHash
     };
 
     this.dataService.criarPaciente(payload).subscribe({
@@ -191,7 +187,6 @@ export class PsicologoPacientes implements OnInit {
     this.nome = '';
     this.email = '';
     this.telefone = '';
-    this.dataNascimento = '';
-    this.genero = 'Masculino';
+    this.senhaHash = '';
   }
 }

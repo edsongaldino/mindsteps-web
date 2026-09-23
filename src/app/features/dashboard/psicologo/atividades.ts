@@ -15,71 +15,65 @@ export class PsicologoAtividades implements OnInit {
   filteredAtividades: any[] = [];
   pacientes: any[] = [];
   loading: boolean = true;
-  activeTab: string = 'ativas'; // 'ativas', 'agendadas', 'rascunhos', 'concluidas'
+  activeTab: string = 'ativas';
   psicologoId: string = '';
 
-  // Modal Wizard (Nova Atividade)
   isWizardOpen: boolean = false;
-  wizardStep: number = 1; // 1, 2, 3, 4
+  wizardStep: number = 1; // 1 a 5
 
-  // Dados do Wizard
+  // Passo 1: Tipo
+  tipoSelecionado: number = 1;
+  tiposAtividade = [
+    { id: 1, titulo: 'Reflexão', desc: 'Perguntas para reflexão emocional.', cor: '#F0ECFF', icone: '🧠' },
+    { id: 2, titulo: 'Registro de pensamentos', desc: 'Identificação de pensamentos automáticos de TCC.', cor: '#FFF3E3', icone: '💬' },
+    { id: 3, titulo: 'Exercício prático', desc: 'Atividade prática, mindfulness ou tarefa terapêutica.', cor: '#FFF9E6', icone: '🧘' },
+    { id: 4, titulo: 'Check-list', desc: 'Lista de ações simples para o paciente marcar.', cor: '#E6F5F2', icone: '✅' },
+    { id: 5, titulo: 'Áudio', desc: 'Áudio explicativo ou meditação guiada.', cor: '#EAF4F7', icone: '🎧' },
+    { id: 6, titulo: 'Leitura', desc: 'Textos psicoeducativos para o paciente ler.', cor: '#FFF0F0', icone: '📖' },
+    { id: 7, titulo: 'Jogo', desc: 'Jogos interativos de memória e cognitivos.', cor: '#E8F5E9', icone: '🎮' },
+    { id: 8, titulo: 'Atividade personalizada', desc: 'Crie uma atividade com perguntas e campos.', cor: '#EDE9FE', icone: '✏️' }
+  ];
+
+  // Passo 2: Conteúdo
   titulo: string = '';
   descricao: string = '';
-  categoriaEmocional: string = 'Regulação Emocional';
-  nivelSugerido: string = 'Médio';
-  tipoResposta: string = 'Texto'; // 'Texto', 'Jogo', 'Escala'
-  atividadeObrigatoria: boolean = true;
-  permitirAnexos: boolean = false;
-  frequencia: string = 'Uma vez'; // 'Uma vez', 'Diário', 'Semanal'
-  prazoConclusao: string = '3 dias';
-  notificarPush: boolean = true;
-  notificarEmail: boolean = false;
-  feedbackAutomatico: string = '';
-  isSubmitting: boolean = false;
-
-  // Configuração do Jogo (Wizard)
+  perguntasGuiadas: string = 'O que aconteceu na situação?\nQuais emoções você sentiu?';
+  
+  // Conteúdo Específico
   jogoSelecionado: string = 'Memória Tática';
   modoJogo: string = 'Imagens';
   temaJogo: string = 'Expressões/Emoções';
   dificuldadeJogo: string = 'Evolutivo';
   palavrasPersonalizadas: string = '';
 
-  jogosDisponiveis: string[] = [
-    'Respire',
-    'Missão Foco',
-    'Memória Tática',
-    'Investigação',
-    'Modo Piloto',
-    'Laboratório Mental',
-    'Mente Flexível',
-    'Shark Mind',
-    'Universos Paralelos',
-    'Reação Zero',
-    'Detetive dos Pensamentos',
-    'Tribunal dos Pensamentos',
-    'Caçador de Gatilhos',
-    'Missão Coragem',
-    'Ansiedade Social',
-    'Ilha das Emoções',
-    'Cartas dos Sabotadores',
-    'Ache a Distorção',
-    'Check-List (Saúde)',
-    'Jornada do Herói Interior',
-    'Jogo de Memória'
-  ];
+  jogosDisponiveis: string[] = ['Respire', 'Missão Foco', 'Memória Tática', 'Investigação', 'Modo Piloto'];
 
-  // Modal de Envio
-  isSendModalOpen: boolean = false;
-  selectedAtividadeId: string = '';
+  // Passo 3: Configurações
+  tipoResposta: string = 'Texto (resposta livre)';
+  atividadeObrigatoria: boolean = true;
+  permitirAnexos: boolean = true;
+  feedbackAutomatico: string = 'Parabéns por concluir sua atividade!';
+  categoriaEmocional: string = 'Ansiedade';
+  nivelSugerido: string = 'Moderado';
+
+  // Passo 4: Agendamento
+  frequencia: string = 'Semanal';
+  diasSemana: string = 'Seg, Qui';
+  horarioSugerido: string = '20:00';
+  prazoConclusao: string = '7 dias após o envio';
+  notificarPush: boolean = true;
+  notificarEmail: boolean = true;
+
+  // Passo 5: Envio
+  isSubmitting: boolean = false;
+  tipoDestino: string = 'todos'; // todos, especifico, nenhum
   selectedPacienteId: string = '';
-  dataLimite: string = '';
 
   constructor(private dataService: AppDataService) {}
 
   ngOnInit(): void {
     if (typeof window !== 'undefined') {
       this.psicologoId = localStorage.getItem('psicologoId') || '';
-      
       if (this.psicologoId) {
         this.carregarDados();
       } else {
@@ -93,9 +87,7 @@ export class PsicologoAtividades implements OnInit {
               this.loading = false;
             }
           },
-          error: () => {
-            this.loading = false;
-          }
+          error: () => { this.loading = false; }
         });
       }
     } else {
@@ -105,8 +97,6 @@ export class PsicologoAtividades implements OnInit {
 
   carregarDados() {
     this.loading = true;
-
-    // Carregar atividades
     this.dataService.getAtividadesPorPsicologo(this.psicologoId).subscribe({
       next: (data) => {
         this.atividades = data;
@@ -116,88 +106,119 @@ export class PsicologoAtividades implements OnInit {
       error: (err) => {
         console.error(err);
         this.loading = false;
-        // Fallback mock
         this.atividades = [
-          { id: '1', titulo: 'Cartas Sabotadores', descricao: 'Jogar o módulo de identificação de sabotadores de TCC', tipo: 1, destinatarios: 5, enviadoEm: '2026-06-08T10:00:00', status: 'Ativa' },
-          { id: '2', titulo: 'Diário Emocional', descricao: 'Registro de humor ao fim do dia', tipo: 2, destinatarios: 12, enviadoEm: '2026-06-07T08:00:00', status: 'Ativa' },
-          { id: '3', titulo: 'Desafio da Respiração', descricao: 'Treino de controle de ansiedade guiado', tipo: 2, destinatarios: 3, enviadoEm: '2026-06-09T09:00:00', status: 'Ativa' }
+          { id: '1', titulo: 'Cartas Sabotadores', descricao: 'Jogar o módulo', tipo: 7, destinatarios: 5, enviadoEm: '2026-06-08T10:00:00', status: 'Ativa' },
+          { id: '2', titulo: 'Diário Emocional', descricao: 'Registro de humor', tipo: 1, destinatarios: 12, enviadoEm: '2026-06-07T08:00:00', status: 'Ativa' }
         ];
         this.applyFilter();
       }
     });
 
-    // Carregar pacientes para o dropdown de envio
     this.dataService.getPacientesPorPsicologo(this.psicologoId).subscribe({
       next: (patData) => {
         this.pacientes = patData;
+        if(this.pacientes.length > 0) this.selectedPacienteId = this.pacientes[0].id;
       },
       error: () => {
         this.pacientes = [
           { id: '847c5798-8265-4e73-8f74-a199da5cb8cc', nome: 'Lucas Oliveira' },
           { id: '2', nome: 'Maria Eduarda' }
         ];
+        this.selectedPacienteId = this.pacientes[0].id;
       }
     });
   }
 
   applyFilter() {
     this.filteredAtividades = this.atividades;
-    // Opcionalmente implementar filtros por tab no futuro (ativas/arquivadas/etc.)
   }
 
   mudarTab(tabName: string) {
     this.activeTab = tabName;
   }
 
-  // Métodos do Wizard
   openWizard() {
     this.isWizardOpen = true;
     this.wizardStep = 1;
+    this.aplicarTemplate(this.tipoSelecionado);
   }
 
   closeWizard() {
     this.isWizardOpen = false;
-    this.resetWizard();
   }
 
   nextStep() {
-    if (this.wizardStep < 4) {
-      this.wizardStep++;
-    }
+    if (this.wizardStep < 5) this.wizardStep++;
   }
 
   prevStep() {
-    if (this.wizardStep > 1) {
-      this.wizardStep--;
-    }
+    if (this.wizardStep > 1) this.wizardStep--;
   }
 
-  onJogoSelecionadoChange() {
-    if (this.jogoSelecionado === 'Jogo de Memória') {
-      this.titulo = 'Jogo de Memória';
-      this.descricao = 'Treine sua memória de trabalho encontrando os pares de cartas.';
-    } else if (this.jogoSelecionado === 'Memória Tática') {
-      this.titulo = 'Memória Tática';
-      this.descricao = 'Treino de memória operacional visual. O paciente memoriza uma grade de pastas e arquivos, descobre qual deles sumiu e o identifica na lista.';
-    } else {
-      this.titulo = this.jogoSelecionado;
-      this.descricao = `Realize a atividade terapêutica do jogo: ${this.jogoSelecionado}.`;
+  selecionarTipo(id: number) {
+    this.tipoSelecionado = id;
+    this.aplicarTemplate(id);
+  }
+
+  aplicarTemplate(tipo: number) {
+    switch(tipo) {
+      case 1:
+        this.titulo = 'Reflexão sobre emoções';
+        this.descricao = 'Refletir sobre situações recentes.';
+        this.perguntasGuiadas = 'O que aconteceu?\nQuais emoções sentiu?\nO que pensou?';
+        this.tipoResposta = 'Texto livre';
+        break;
+      case 2:
+        this.titulo = 'Registro de Pensamentos (RPD)';
+        this.descricao = 'Identifique a situação gatilho e pensamentos automáticos.';
+        this.tipoResposta = 'Estrutura RPD';
+        break;
+      case 3:
+        this.titulo = 'Respiração 4-2-6';
+        this.descricao = 'Exercício prático de regulação.';
+        this.tipoResposta = 'Avaliação Pré/Pós';
+        break;
+      case 4:
+        this.titulo = 'Check-list de Autocuidado';
+        this.descricao = 'Marque os hábitos que concluiu.';
+        this.tipoResposta = 'Checklist';
+        break;
+      case 5:
+        this.titulo = 'Áudio de Relaxamento';
+        this.descricao = 'Ouça o áudio antes de dormir.';
+        this.tipoResposta = 'Texto livre';
+        break;
+      case 6:
+        this.titulo = 'O que é a Ansiedade?';
+        this.descricao = 'Texto psicoeducativo.';
+        this.tipoResposta = 'Perguntas de Fixação';
+        break;
+      case 7:
+        this.titulo = 'Memória Tática';
+        this.descricao = 'Jogo de atenção visual.';
+        this.tipoResposta = 'Jogo Interativo';
+        break;
+      case 8:
+        this.titulo = '';
+        this.descricao = '';
+        this.tipoResposta = 'Formulário Personalizado';
+        break;
     }
   }
 
   salvarAtividade() {
     this.isSubmitting = true;
 
-    let conteudoReal: any = null;
-    if (this.tipoResposta === 'Jogo') {
+    let conteudoReal: any = {
+      perguntas: this.perguntasGuiadas.split('\n')
+    };
+    if (this.tipoSelecionado === 7) {
       conteudoReal = {
         tipoJogo: this.jogoSelecionado,
         modo: this.modoJogo,
         tema: this.temaJogo,
         dificuldade: this.dificuldadeJogo,
-        palavrasPersonalizadas: this.modoJogo === 'Palavras' && this.temaJogo === 'Personalizado'
-          ? this.palavrasPersonalizadas.split(',').map(e => e.trim()).filter(e => e.length > 0)
-          : null
+        palavrasPersonalizadas: this.palavrasPersonalizadas
       };
     }
 
@@ -205,108 +226,41 @@ export class PsicologoAtividades implements OnInit {
       psicologoId: this.psicologoId,
       titulo: this.titulo,
       descricao: this.descricao,
-      tipo: this.tipoResposta === 'Jogo' ? 7 : (this.tipoResposta === 'Escala' ? 2 : 1), // 7 = Jogo, 2 = Registro/Escala, 1 = Texto/Reflexão
-      conteudo: conteudoReal ? JSON.stringify(conteudoReal) : null,
-      categoriaEmocional: this.categoriaEmocional,
-      nivelSugerido: this.nivelSugerido,
-      tipoResposta: this.tipoResposta,
-      atividadeObrigatoria: this.atividadeObrigatoria,
-      permitirAnexos: this.permitirAnexos,
-      frequencia: this.frequencia,
-      prazoConclusao: this.prazoConclusao,
-      notificarPush: this.notificarPush,
-      notificarEmail: this.notificarEmail,
-      feedbackAutomatico: this.feedbackAutomatico,
-      nivel: 1
+      tipo: this.tipoSelecionado,
+      conteudo: JSON.stringify(conteudoReal),
+      configuracoes: {
+        tipoResposta: this.tipoResposta,
+        atividadeObrigatoria: this.atividadeObrigatoria,
+        frequencia: this.frequencia,
+        notificarPush: this.notificarPush
+      }
     };
 
     this.dataService.criarAtividade(payload).subscribe({
       next: (novaAct) => {
         this.isSubmitting = false;
+        
+        if (this.tipoDestino !== 'nenhum') {
+          // Mock send
+          alert('Atividade criada e enviada!');
+        } else {
+          alert('Atividade criada com sucesso!');
+        }
+        
         this.carregarDados();
         this.closeWizard();
-        
-        // Abre imediatamente modal de envio se desejar prescrever
-        this.openSendModal(novaAct.id);
       },
       error: (err) => {
         this.isSubmitting = false;
         console.error(err);
-        // Fallback local se a API estiver offline
-        const mockNovaAct = {
-          id: Math.random().toString(),
-          titulo: this.titulo,
-          descricao: this.descricao,
-          tipo: this.tipoResposta === 'Jogo' ? 7 : (this.tipoResposta === 'Escala' ? 2 : 1),
-          conteudo: conteudoReal ? JSON.stringify(conteudoReal) : null,
-          destinatarios: 0,
-          enviadoEm: new Date().toISOString(),
-          status: 'Ativa'
-        };
-        this.atividades.push(mockNovaAct);
-        this.applyFilter();
+        alert('Atividade criada (fallback local).');
         this.closeWizard();
-        this.openSendModal(mockNovaAct.id);
       }
     });
   }
 
-  resetWizard() {
-    this.titulo = '';
-    this.descricao = '';
-    this.categoriaEmocional = 'Regulação Emocional';
-    this.nivelSugerido = 'Médio';
-    this.tipoResposta = 'Texto';
-    this.atividadeObrigatoria = true;
-    this.permitirAnexos = false;
-    this.frequencia = 'Uma vez';
-    this.prazoConclusao = '3 dias';
-    this.notificarPush = true;
-    this.notificarEmail = false;
-    this.feedbackAutomatico = '';
-
-    this.jogoSelecionado = 'Memória Tática';
-    this.modoJogo = 'Imagens';
-    this.temaJogo = 'Expressões/Emoções';
-    this.dificuldadeJogo = 'Evolutivo';
-    this.palavrasPersonalizadas = '';
-  }
-
-  // Métodos de Envio
-  openSendModal(atividadeId: string) {
-    this.selectedAtividadeId = atividadeId;
-    this.isSendModalOpen = true;
-    this.selectedPacienteId = this.pacientes[0]?.id || '';
-    this.dataLimite = '';
-  }
-
-  closeSendModal() {
-    this.isSendModalOpen = false;
-  }
-
-  enviarAtividade() {
-    if (!this.selectedPacienteId) {
-      alert('Selecione um paciente!');
-      return;
-    }
-
-    const payload = {
-      atividadeId: this.selectedAtividadeId,
-      pacienteId: this.selectedPacienteId,
-      dataLimite: this.dataLimite ? new Date(this.dataLimite).toISOString() : undefined
-    };
-
-    this.dataService.enviarAtividadeParaPaciente(payload).subscribe({
-      next: () => {
-        alert('Atividade enviada com sucesso!');
-        this.closeSendModal();
-        this.carregarDados();
-      },
-      error: () => {
-        // Fallback local
-        alert('Atividade enviada com sucesso ao aplicativo do paciente (fallback local).');
-        this.closeSendModal();
-      }
-    });
+  getTipoNome(tipoId: number): string {
+    const tipo = this.tiposAtividade.find(t => t.id === tipoId);
+    return tipo ? tipo.titulo : 'Atividade';
   }
 }

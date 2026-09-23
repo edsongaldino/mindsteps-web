@@ -77,7 +77,10 @@
         </div>
         
         <div class="form-group">
-          <label for="senha">Senha</label>
+          <div class="label-row" style="display: flex; justify-content: space-between; align-items: center;">
+            <label for="senha">Senha</label>
+            <a routerLink="/recuperar-senha" class="forgot-password" style="font-size: 13px; color: #4c35bd; text-decoration: none; font-weight: 500;">Esqueci minha senha</a>
+          </div>
           <div class="input-wrapper">
             <input type="password" id="senha" [(ngModel)]="senha" name="senha" placeholder="••••••••" required>
             <span class="input-icon">

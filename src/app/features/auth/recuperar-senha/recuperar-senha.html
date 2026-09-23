@@ -1,0 +1,160 @@
+<div class="login-page">
+  <!-- Coluna Esquerda: Banner Institucional -->
+  <div class="login-banner">
+    <div class="banner-content">
+      <div class="logo-wrapper" (click)="voltarParaLogin()">
+        <img src="/logo.png" alt="MindSteps" class="logo-img">
+      </div>
+      
+      <p class="logo-tagline">Um passo de cada vez.</p>
+      
+      <h1 class="banner-title">Recuperação<br>de <span class="highlight">Senha</span></h1>
+      <p class="banner-desc">Siga as instruções para voltar a acessar a plataforma.</p>
+    </div>
+    
+    <!-- Decoração de fundo com curvas SVG -->
+    <div class="banner-bg-decor">
+      <svg viewBox="0 0 500 500" fill="none">
+        <path d="M0,500 C150,450 250,350 200,200 C150,50 300,100 500,0 L500,500 Z" fill="rgba(76, 53, 189, 0.03)"></path>
+        <path d="M0,500 C100,480 180,420 180,300 C180,180 280,150 500,100 L500,500 Z" fill="rgba(14, 181, 148, 0.02)"></path>
+      </svg>
+    </div>
+  </div>
+  
+  <!-- Coluna Direita: Formulário -->
+  <div class="login-form-container">
+    <div class="form-card">
+      <div class="form-header">
+        <div class="mobile-logo" (click)="voltarParaLogin()">
+          <img src="/logo.png" alt="MindSteps" class="logo-img">
+        </div>
+        
+        <ng-container *ngIf="etapa === 1">
+          <h2>Esqueceu a senha?</h2>
+          <p>Informe seu e-mail para receber um código de validação</p>
+        </ng-container>
+
+        <ng-container *ngIf="etapa === 2">
+          <h2>Validar Código</h2>
+          <p>Insira o código de 6 dígitos enviado para <strong>{{email}}</strong></p>
+        </ng-container>
+
+        <ng-container *ngIf="etapa === 3">
+          <h2>Nova Senha</h2>
+          <p>Crie uma nova senha de acesso</p>
+        </ng-container>
+      </div>
+      
+      <div *ngIf="successMessage" class="success-message" style="background: #e8f5e9; color: #2e7d32; padding: 12px; border-radius: 8px; margin-bottom: 20px; font-size: 14px; text-align: center;">
+        {{ successMessage }}
+      </div>
+
+      <!-- ETAPA 1: Solicitar E-mail -->
+      <form *ngIf="etapa === 1 && !successMessage" (ngSubmit)="solicitarRecuperacao()">
+        <div class="form-group">
+          <label for="email">E-mail</label>
+          <div class="input-wrapper">
+            <input type="email" id="email" [(ngModel)]="email" name="email" placeholder="seu@email.com" required>
+            <span class="input-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                <polyline points="22,6 12,13 2,6"></polyline>
+              </svg>
+            </span>
+          </div>
+        </div>
+        
+        <div *ngIf="errorMessage" class="error-message">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+          <span>{{ errorMessage }}</span>
+        </div>
+        
+        <button type="submit" class="btn-login" [class.loading]="isSubmitting" [disabled]="isSubmitting">
+          <span *ngIf="!isSubmitting">Enviar Código</span>
+          <span *ngIf="isSubmitting" class="spinner"></span>
+        </button>
+      </form>
+
+      <!-- ETAPA 2: Validar Código -->
+      <form *ngIf="etapa === 2 && !successMessage" (ngSubmit)="validarCodigo()">
+        <div class="form-group">
+          <label for="codigo">Código de Validação</label>
+          <div class="input-wrapper">
+            <input type="text" id="codigo" [(ngModel)]="codigo" name="codigo" placeholder="000000" maxlength="6" style="letter-spacing: 5px; font-size: 18px; font-weight: bold; text-align: center;" required>
+            <span class="input-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+              </svg>
+            </span>
+          </div>
+        </div>
+        
+        <div *ngIf="errorMessage" class="error-message">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+          <span>{{ errorMessage }}</span>
+        </div>
+        
+        <button type="submit" class="btn-login" [class.loading]="isSubmitting" [disabled]="isSubmitting">
+          <span *ngIf="!isSubmitting">Validar Código</span>
+          <span *ngIf="isSubmitting" class="spinner"></span>
+        </button>
+      </form>
+
+      <!-- ETAPA 3: Redefinir Senha -->
+      <form *ngIf="etapa === 3 && !successMessage" (ngSubmit)="redefinirSenha()">
+        <div class="form-group">
+          <label for="novaSenha">Nova Senha</label>
+          <div class="input-wrapper">
+            <input type="password" id="novaSenha" [(ngModel)]="novaSenha" name="novaSenha" placeholder="••••••••" required>
+            <span class="input-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+              </svg>
+            </span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="confirmarSenha">Confirmar Nova Senha</label>
+          <div class="input-wrapper">
+            <input type="password" id="confirmarSenha" [(ngModel)]="confirmarSenha" name="confirmarSenha" placeholder="••••••••" required>
+            <span class="input-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+              </svg>
+            </span>
+          </div>
+        </div>
+        
+        <div *ngIf="errorMessage" class="error-message">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+          <span>{{ errorMessage }}</span>
+        </div>
+        
+        <button type="submit" class="btn-login" [class.loading]="isSubmitting" [disabled]="isSubmitting">
+          <span *ngIf="!isSubmitting">Salvar Nova Senha</span>
+          <span *ngIf="isSubmitting" class="spinner"></span>
+        </button>
+      </form>
+      
+      <div class="form-footer">
+        <p><a (click)="voltarParaLogin()" class="link-fale-conosco" style="cursor: pointer;">Voltar para o Login</a></p>
+      </div>
+    </div>
+  </div>
+</div>

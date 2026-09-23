@@ -3,6 +3,7 @@ import { Login } from './features/login/login';
 import { Landing } from './features/landing/landing';
 import { PoliticaPrivacidade } from './features/landing/politica-privacidade';
 import { Registro } from './features/auth/registro/registro';
+import { RecuperarSenha } from './features/auth/recuperar-senha/recuperar-senha';
 import { PacienteShell } from './features/paciente/shell/paciente-shell';
 import { PacienteHome } from './features/paciente/home/paciente-home';
 import { Atividades } from './features/paciente/atividades/atividades';
@@ -33,6 +34,7 @@ export const appRoutes: Routes = [
   { path: 'politica-de-privacidade', component: PoliticaPrivacidade },
   { path: 'login', component: Login },
   { path: 'registrar', component: Registro },
+  { path: 'recuperar-senha', component: RecuperarSenha },
   {
     path: 'paciente',
     component: PacienteShell,
