@@ -246,23 +246,63 @@ nav {
 .hero-visual {
   position: relative;
   min-height: 550px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.dashboard {
-  position: absolute;
-  width: 78%;
-  right: 8%;
-  top: 36px;
-  border-radius: 28px;
-  box-shadow: 0 28px 70px rgba(16, 32, 61, 0.16);
+.phone-mockup {
+  border-radius: 24px;
+  box-shadow: 0 25px 50px rgba(16, 32, 61, 0.15);
+  transition: transform 0.3s ease;
+  z-index: 10;
 }
 
-.phone {
-  position: absolute;
-  width: 28%;
-  right: 0;
-  top: 185px;
-  filter: drop-shadow(0 25px 38px rgba(16, 32, 61, 0.28));
+.mobile-only-visual {
+  position: relative;
+  
+  .phone-left, .phone-right {
+    position: absolute;
+    width: 30%;
+    top: 50px;
+    opacity: 0.85;
+    z-index: 1;
+    filter: blur(1px);
+    transition: all 0.4s ease;
+  }
+  
+  .phone-left {
+    left: 5%;
+    transform: rotate(-10deg) scale(0.9);
+  }
+  
+  .phone-right {
+    right: 5%;
+    transform: rotate(10deg) scale(0.9);
+  }
+  
+  .phone-center {
+    position: relative;
+    width: 45%;
+    z-index: 5;
+    transform: translateY(-15px);
+  }
+
+  &:hover {
+    .phone-left {
+      transform: rotate(-5deg) scale(0.95) translateX(-10px);
+      filter: blur(0);
+      opacity: 1;
+    }
+    .phone-right {
+      transform: rotate(5deg) scale(0.95) translateX(10px);
+      filter: blur(0);
+      opacity: 1;
+    }
+    .phone-center {
+      transform: translateY(-25px) scale(1.02);
+    }
+  }
 }
 
 .blob {
@@ -623,59 +663,25 @@ nav {
   align-items: center;
 }
 
-.insight-dashboard {
-  display: grid;
-  grid-template-columns: 210px 1fr;
-  min-height: 420px;
-  background: white;
-  border: 1px solid $line;
-  border-radius: 30px;
-  overflow: hidden;
-  box-shadow: 0 26px 70px rgba(16, 32, 61, 0.10);
-
-  aside {
-    background: $navy;
-    color: white;
-    padding: 32px;
-  }
-
-  .avatar {
-    width: 72px;
-    height: 72px;
+.insight-mobile-showcase {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(96, 70, 216, 0.1) 0%, transparent 70%);
     border-radius: 50%;
-    display: grid;
-    place-items: center;
-    background: #2c3e5d;
-    font-size: 30px;
-    margin-bottom: 22px;
+    z-index: 0;
   }
 
-  aside h3 {
-    margin: 0 0 8px;
-    font-size: 18px;
-    font-weight: 700;
-  }
-
-  aside p {
-    color: #b3c1d4;
-    margin: 0 0 28px;
-    font-size: 13px;
-  }
-
-  aside nav {
-    display: grid;
-    gap: 12px;
-    color: #d9e4f2;
-    font-size: 14px;
-
-    span {
-      cursor: pointer;
-      opacity: 0.8;
-
-      &:hover {
-        opacity: 1;
-      }
-    }
+  .phone-mockup {
+    position: relative;
+    z-index: 2;
   }
 }
 
